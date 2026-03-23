@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+/* ============================================
+   ORMA — Tailwind v4 Theme (CSS-based config)
+   ============================================ */
+@theme {
+  /* ORMA Brand Colors */
+  --color-orma-primary: #FF385C;
+  --color-orma-primary-dark: #E31C5F;
+  --color-orma-primary-light: #FF5A7E;
+  --color-orma-secondary: #00A699;
+  --color-orma-dark: #222222;
+  --color-orma-gray: #717171;
+  --color-orma-light-gray: #B0B0B0;
+  --color-orma-super-light: #F7F7F7;
+  --color-orma-border: #DDDDDD;
+  --color-orma-border-light: #EBEBEB;
+  --color-orma-star: #FFC107;
+  --color-orma-success: #008A05;
+  --color-orma-warning: #C13515;
+
+  /* Font */
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Custom Shadows */
+  --shadow-card: 0 6px 16px rgba(0,0,0,0.12);
+  --shadow-card-hover: 0 6px 20px rgba(0,0,0,0.2);
+  --shadow-navbar: 0 1px 0 rgba(0,0,0,0.08);
+  --shadow-search: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-search-hover: 0 2px 4px rgba(0,0,0,0.18);
+  --shadow-modal: 0 8px 28px rgba(0,0,0,0.28);
+  --shadow-sticky: 0 2px 8px rgba(0,0,0,0.08);
+
+  /* Border Radius */
+  --radius-card: 12px;
+  --radius-search: 32px;
+  --radius-button: 8px;
+  --radius-modal: 16px;
+
+  /* Animations */
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-fade-in: fadeIn 0.3s ease-in-out;
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-slide-down: slideDown 0.3s ease-out;
+
+  /* Breakpoints */
+  --breakpoint-xs: 480px;
+
+  /* Max widths */
+  --width-container: 1760px;
+}
+
+/* Keyframes */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #222222;
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove default input styling */
+input, textarea, select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Smooth transition for interactive elements */
+button, a, input, textarea, select {
+  transition: all 0.2s ease;
+}
+
+/* ============================================
+   Custom Utility Classes
+   ============================================ */
+
+/* Hide scrollbar but allow scroll */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Shimmer loading effect */
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* Image aspect ratio for listing cards */
+.aspect-card {
+  aspect-ratio: 20 / 19;
+}
+
+/* Line clamps */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
