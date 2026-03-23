@@ -7,8 +7,9 @@ import { createClient } from '@/lib/supabase/client'
 import { useListingFormStore } from '@/store/listingFormStore'
 import { useAuth } from '@/hooks/useAuth'
 import { formatPrice } from '@/lib/utils'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
 import { useState } from 'react'
+import { sanitizeInput } from '@/lib/sanitize'
 
 export default function StepReview() {
   const { formData, resetForm } = useListingFormStore()
@@ -36,29 +37,29 @@ export default function StepReview() {
         .insert({
           owner_id: user.id,
           category_id: formData.category_id,
-          title: formData.title.trim(),
-          description: formData.description.trim(),
+          title: sanitizeInput(formData.title.trim()),
+          description: sanitizeInput(formData.description.trim()),
           condition: formData.condition,
-          brand: formData.brand.trim(),
-          model: formData.model.trim(),
+          brand: sanitizeInput(formData.brand.trim()),
+          model: sanitizeInput(formData.model.trim()),
           images: formData.imageUrls,
           price_per_hour: formData.price_per_hour ? parseFloat(formData.price_per_hour) : null,
           price_per_day: parseFloat(formData.price_per_day),
           price_per_week: formData.price_per_week ? parseFloat(formData.price_per_week) : null,
           price_per_month: formData.price_per_month ? parseFloat(formData.price_per_month) : null,
           security_deposit: formData.security_deposit ? parseFloat(formData.security_deposit) : 0,
-          city: formData.city.trim(),
-          area: formData.area.trim(),
+          city: sanitizeInput(formData.city.trim()),
+          area: sanitizeInput(formData.area.trim()),
           state: formData.state,
-          pincode: formData.pincode.trim(),
-          contact_phone: formData.contact_phone,
-          contact_whatsapp: formData.contact_whatsapp,
-          contact_email: formData.contact_email,
+          pincode: sanitizeInput(formData.pincode.trim()),
+          contact_phone: sanitizeInput(formData.contact_phone || ''),
+          contact_whatsapp: sanitizeInput(formData.contact_whatsapp || ''),
+          contact_email: sanitizeInput(formData.contact_email || ''),
           preferred_contact: formData.preferred_contact,
-          terms_and_conditions: formData.terms_and_conditions.trim(),
+          terms_and_conditions: sanitizeInput(formData.terms_and_conditions.trim()),
           id_proof_required: formData.id_proof_required,
           delivery_available: formData.delivery_available,
-          minimum_rental_period: formData.minimum_rental_period,
+          minimum_rental_period: sanitizeInput(formData.minimum_rental_period || ''),
           status: 'active',
           is_available: true,
         })
@@ -79,11 +80,11 @@ export default function StepReview() {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-[#222222] mb-2">Review and publish</h2>
-      <p className="text-[#717171] mb-6">Here&apos;s a preview of your listing. Once published, renters can discover and contact you.</p>
+      <h2 className="text-2xl font-semibold text-[#222222] dark:text-white dark:text-[#121212] mb-2">Review and publish</h2>
+      <p className="text-[#717171] dark:text-[#A0A0A0] mb-6">Here&apos;s a preview of your listing. Once published, renters can discover and contact you.</p>
 
       {/* Preview Card */}
-      <div className="border border-[#DDDDDD] rounded-2xl overflow-hidden mb-6">
+      <div className="border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-2xl overflow-hidden mb-6">
         {/* Cover Image */}
         {formData.imageUrls[0] && (
           <div className="relative h-52 bg-gray-100">
@@ -93,9 +94,9 @@ export default function StepReview() {
 
         <div className="p-5 space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-[#222222]">{formData.title || 'Untitled item'}</h3>
-            <p className="text-sm text-[#717171]">{formData.category_name}</p>
-            <div className="flex items-center gap-1 text-sm text-[#717171] mt-1">
+            <h3 className="text-lg font-semibold text-[#222222] dark:text-white dark:text-[#121212]">{formData.title || 'Untitled item'}</h3>
+            <p className="text-sm text-[#717171] dark:text-[#A0A0A0]">{formData.category_name}</p>
+            <div className="flex items-center gap-1 text-sm text-[#717171] dark:text-[#A0A0A0] mt-1">
               <MapPin size={14} />
               <span>{[formData.area, formData.city, formData.state].filter(Boolean).join(', ') || 'No location set'}</span>
             </div>
@@ -104,13 +105,13 @@ export default function StepReview() {
           {/* Pricing summary */}
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             {formData.price_per_day && (
-              <span className="font-semibold text-[#222222]">{formatPrice(parseFloat(formData.price_per_day))}/day</span>
+              <span className="font-semibold text-[#222222] dark:text-white dark:text-[#121212]">{formatPrice(parseFloat(formData.price_per_day))}/day</span>
             )}
             {formData.price_per_week && (
-              <span className="text-sm text-[#717171]">{formatPrice(parseFloat(formData.price_per_week))}/week</span>
+              <span className="text-sm text-[#717171] dark:text-[#A0A0A0]">{formatPrice(parseFloat(formData.price_per_week))}/week</span>
             )}
             {formData.price_per_month && (
-              <span className="text-sm text-[#717171]">{formatPrice(parseFloat(formData.price_per_month))}/month</span>
+              <span className="text-sm text-[#717171] dark:text-[#A0A0A0]">{formatPrice(parseFloat(formData.price_per_month))}/month</span>
             )}
           </div>
 
@@ -125,8 +126,8 @@ export default function StepReview() {
               { label: 'Contact method provided', ok: !!(formData.contact_phone || formData.contact_whatsapp || formData.contact_email) },
             ].map(({ label, ok }) => (
               <div key={label} className="flex items-center gap-2 text-sm">
-                <CheckCircle2 size={16} className={ok ? 'text-green-500' : 'text-[#B0B0B0]'} />
-                <span className={ok ? 'text-[#222222]' : 'text-[#B0B0B0]'}>{label}</span>
+                <CheckCircle2 size={16} className={ok ? 'text-[#222222] dark:text-white dark:text-[#121212]' : 'text-[#B0B0B0] dark:text-[#6B6B6B]'} />
+                <span className={ok ? 'text-[#222222] dark:text-white dark:text-[#121212]' : 'text-[#B0B0B0] dark:text-[#6B6B6B]'}>{label}</span>
               </div>
             ))}
           </div>
@@ -134,7 +135,7 @@ export default function StepReview() {
       </div>
 
       {/* Info box */}
-      <div className="flex gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-sm">
+      <div className="flex gap-3 bg-gray-100 border border-blue-200 rounded-xl p-4 mb-6 text-sm">
         <Phone size={18} className="text-blue-500 flex-shrink-0 mt-0.5" />
         <div>
           <p className="font-semibold text-blue-800">Contact info stays private</p>
@@ -146,7 +147,7 @@ export default function StepReview() {
       <button
         onClick={handlePublish}
         disabled={isPublishing}
-        className="w-full py-4 bg-[#FF385C] text-white text-base font-semibold rounded-xl hover:bg-[#E31C5F] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-4 bg-[#000000] dark:bg-white text-white dark:text-[#121212] text-base font-semibold rounded-xl hover:bg-[#333333] dark:hover:bg-[#EBEBEB] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isPublishing ? (
           <>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================
    ORMA — Tailwind v4 Theme (CSS-based config)
@@ -7,7 +8,7 @@
   /* ORMA Brand Colors */
   --color-orma-primary: #FF385C;
   --color-orma-primary-dark: #E31C5F;
-  --color-orma-primary-light: #FF5A7E;
+  --color-orma-primary-light: #FFF0F2;
   --color-orma-secondary: #00A699;
   --color-orma-dark: #222222;
   --color-orma-gray: #717171;
@@ -15,21 +16,21 @@
   --color-orma-super-light: #F7F7F7;
   --color-orma-border: #DDDDDD;
   --color-orma-border-light: #EBEBEB;
-  --color-orma-star: #FFC107;
+  --color-orma-star: #222222;
   --color-orma-success: #008A05;
   --color-orma-warning: #C13515;
 
   /* Font */
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Custom Shadows */
-  --shadow-card: 0 6px 16px rgba(0,0,0,0.12);
-  --shadow-card-hover: 0 6px 20px rgba(0,0,0,0.2);
-  --shadow-navbar: 0 1px 0 rgba(0,0,0,0.08);
+  /* Custom Shadows (Ambient) */
+  --shadow-card: 0 12px 32px -4px rgba(26,28,28,0.06);
+  --shadow-card-hover: 0 16px 40px -4px rgba(26,28,28,0.1);
+  --shadow-navbar: none;
   --shadow-search: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
   --shadow-search-hover: 0 2px 4px rgba(0,0,0,0.18);
   --shadow-modal: 0 8px 28px rgba(0,0,0,0.28);
-  --shadow-sticky: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-sticky: 0px 4px 12px rgba(0,0,0,0.05);
 
   /* Border Radius */
   --radius-card: 12px;
@@ -83,6 +84,7 @@ body {
   background-color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @apply dark:text-white dark:bg-[#121212] transition-colors duration-300;
 }
 
 /* Remove default input styling */
@@ -146,5 +148,52 @@ button, a, input, textarea, select {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ============================================
+   Accessibility — Focus Indicators
+   ============================================ */
+*:focus-visible {
+  outline: 2px solid var(--color-orma-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove outline on mouse-click (only shows on keyboard) */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   Accessibility — Skip to Content
+   ============================================ */
+.skip-to-content {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 12px 24px;
+  background-color: #FF385C;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ============================================
+   Accessibility — Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 

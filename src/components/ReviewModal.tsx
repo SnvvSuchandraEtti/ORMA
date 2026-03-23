@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { X, Star } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
+import { sanitizeInput } from '@/lib/sanitize'
 
 interface ReviewModalProps {
   isOpen: boolean
@@ -22,6 +24,16 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { user } = useAuth()
   const supabase = createClient()
+  const modalRef = useRef<HTMLDivElement>(null)
+  useFocusTrap(modalRef, isOpen)
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [isOpen, onClose])
 
   if (!isOpen) return null
 
@@ -44,8 +56,8 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
         reviewer_id: user.id,
         owner_id: ownerId,
         rating,
-        title,
-        comment,
+        title: sanitizeInput(title.trim()),
+        comment: sanitizeInput(comment.trim()),
       })
       if (error) throw error
       toast.success('Review submitted! Thank you.')
@@ -60,21 +72,21 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    <div ref={modalRef} className="fixed inset-0 z-50 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
       <div className="absolute inset-0 modal-backdrop" onClick={onClose} />
-      <div className="relative bg-white w-full sm:max-w-[480px] sm:rounded-2xl shadow-[0_8px_28px_rgba(0,0,0,0.28)] z-10 overflow-hidden animate-[slideUp_0.3s_ease-out]">
-        <div className="flex items-center justify-between border-b border-[#EBEBEB] px-6 py-4">
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100" aria-label="Close">
+      <div className="relative bg-white dark:bg-[#1E1E1E] w-full sm:max-w-[480px] sm:rounded-2xl shadow-[0_8px_28px_rgba(0,0,0,0.28)] z-10 overflow-hidden animate-[slideUp_0.3s_ease-out]">
+        <div className="flex items-center justify-between border-b border-[#EBEBEB] dark:border-[#3D3D3D] px-6 py-4">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#2D2D2D]" aria-label="Close">
             <X size={16} />
           </button>
-          <span className="font-semibold text-[16px]">Write a Review</span>
+          <span id="review-modal-title" className="font-semibold text-[16px]">Write a Review</span>
           <div className="w-8" />
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-6 space-y-5">
           {/* Star Rating */}
           <div>
-            <label className="block text-sm font-semibold text-[#222222] mb-2">Rating *</label>
+            <label className="block text-sm font-semibold text-[#222222] dark:text-white mb-2">Rating *</label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -90,7 +102,7 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
                     size={32}
                     className={`transition-colors ${
                       star <= (hoveredRating || rating)
-                        ? 'fill-[#FFC107] stroke-[#FFC107]'
+                        ? 'fill-[#222222] dark:fill-white stroke-[#222222] dark:stroke-white'
                         : 'stroke-[#DDDDDD] fill-none'
                     }`}
                   />
@@ -98,7 +110,7 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
               ))}
             </div>
             {rating > 0 && (
-              <p className="text-sm text-[#717171] mt-1">
+              <p className="text-sm text-[#717171] dark:text-[#A0A0A0] mt-1">
                 {['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating]}
               </p>
             )}
@@ -106,7 +118,7 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
 
           {/* Title */}
           <div>
-            <label htmlFor="review-title" className="block text-sm font-semibold text-[#222222] mb-1">
+            <label htmlFor="review-title" className="block text-sm font-semibold text-[#222222] dark:text-white mb-1">
               Title (optional)
             </label>
             <input
@@ -116,13 +128,13 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
               onChange={e => setTitle(e.target.value)}
               placeholder="Summarize your experience"
               maxLength={100}
-              className="w-full px-4 py-3 border border-[#DDDDDD] rounded-lg text-[#222222] placeholder-[#B0B0B0] focus:outline-none focus:border-[#222222] focus:ring-1 focus:ring-[#222222]"
+              className="w-full px-4 py-3 border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-lg text-[#222222] dark:text-white placeholder-[#B0B0B0] focus:outline-none focus:border-[#222222] dark:border-[#6B6B6B] focus:ring-1 focus:ring-[#222222]"
             />
           </div>
 
           {/* Comment */}
           <div>
-            <label htmlFor="review-comment" className="block text-sm font-semibold text-[#222222] mb-1">
+            <label htmlFor="review-comment" className="block text-sm font-semibold text-[#222222] dark:text-white mb-1">
               Your Review *
             </label>
             <textarea
@@ -133,15 +145,15 @@ export default function ReviewModal({ isOpen, onClose, listingId, ownerId, onRev
               rows={4}
               minLength={10}
               maxLength={500}
-              className="w-full px-4 py-3 border border-[#DDDDDD] rounded-lg text-[#222222] placeholder-[#B0B0B0] focus:outline-none focus:border-[#222222] focus:ring-1 focus:ring-[#222222] resize-none"
+              className="w-full px-4 py-3 border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-lg text-[#222222] dark:text-white placeholder-[#B0B0B0] focus:outline-none focus:border-[#222222] dark:border-[#6B6B6B] focus:ring-1 focus:ring-[#222222] resize-none"
             />
-            <p className="text-xs text-[#B0B0B0] mt-1">{comment.length}/500</p>
+            <p className="text-xs text-[#B0B0B0] dark:text-[#6B6B6B] mt-1">{comment.length}/500</p>
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting || rating === 0}
-            className="w-full py-3 bg-[#FF385C] text-white font-semibold rounded-lg hover:bg-[#E31C5F] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full py-3 bg-[#FF385C] text-white font-semibold rounded-lg hover:bg-[#E31C5F] transition-all hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {isSubmitting ? (
               <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

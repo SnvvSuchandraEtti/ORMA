@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import type { Profile } from '@/types'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
 
 interface AuthContextType {
   user: User | null

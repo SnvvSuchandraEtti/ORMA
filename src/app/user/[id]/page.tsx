@@ -9,6 +9,7 @@ import type { Profile, ListingWithDetails } from '@/types'
 import { getInitials, formatDate } from '@/lib/utils'
 import ListingCard from '@/components/ListingCard'
 import { SkeletonGrid } from '@/components/ListingCardSkeleton'
+import { handleSupabaseError } from '@/lib/handleError'
 
 export default function UserProfilePage() {
   const params = useParams()
@@ -32,7 +33,7 @@ export default function UserProfilePage() {
       if (profileData) setOwner(profileData as Profile)
       if (listingsData) setListings(listingsData as ListingWithDetails[])
     } catch (err) {
-      console.error(err)
+      handleSupabaseError(err, 'fetchUserProfile')
     } finally {
       setIsLoading(false)
     }
@@ -70,7 +71,7 @@ export default function UserProfilePage() {
         </div>
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-semibold text-[#222222]">{owner.full_name || 'ORMA Member'}</h1>
-          {owner.is_verified && <span className="text-sm text-green-600 font-medium">✓ Verified</span>}
+          {owner.is_verified && <span className="text-sm text-[#222222] font-medium">✓ Verified</span>}
 
           <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-[#717171]">
             {owner.city && (
@@ -79,7 +80,7 @@ export default function UserProfilePage() {
             <span className="flex items-center gap-1"><Calendar size={14} />Joined {formatDate(owner.created_at)}</span>
             <span className="flex items-center gap-1"><Package size={14} />{owner.total_listings} listings</span>
             {owner.average_rating > 0 && (
-              <span className="flex items-center gap-1"><Star size={14} className="fill-[#FFC107] stroke-[#FFC107]" />{owner.average_rating.toFixed(1)} avg rating</span>
+              <span className="flex items-center gap-1"><Star size={14} className="fill-[#222222] stroke-[#222222]" />{owner.average_rating.toFixed(1)} avg rating</span>
             )}
           </div>
 

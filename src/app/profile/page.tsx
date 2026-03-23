@@ -3,11 +3,52 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { User, MapPin, Phone, Edit3, List, Heart, Star, Calendar } from 'lucide-react'
+import { User, MapPin, Phone, Edit3, List, Heart, Star, Calendar, TrendingUp } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { getInitials, formatDate } from '@/lib/utils'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
+
+function ProfileSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 animate-pulse">
+      <div className="h-8 bg-gray-200 rounded w-48 mb-6" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
+          <div className="border border-[#DDDDDD] rounded-2xl p-6 text-center">
+            <div className="w-20 h-20 rounded-full bg-gray-200 mx-auto mb-3" />
+            <div className="h-5 bg-gray-200 rounded w-32 mx-auto mb-2" />
+            <div className="h-4 bg-gray-200 rounded w-24 mx-auto mb-5" />
+            <div className="pt-5 border-t border-[#EBEBEB] space-y-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="flex justify-between">
+                  <div className="h-4 bg-gray-200 rounded w-16" />
+                  <div className="h-4 bg-gray-200 rounded w-8" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="md:col-span-2">
+          <div className="border border-[#DDDDDD] rounded-2xl p-6">
+            <div className="h-6 bg-gray-200 rounded w-32 mb-5" />
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="flex gap-4">
+                  <div className="w-5 h-5 bg-gray-200 rounded-full" />
+                  <div>
+                    <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
+                    <div className="h-4 bg-gray-200 rounded w-48" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function ProfileContent() {
   const { profile, updateProfile, isLoading } = useAuth()
@@ -19,7 +60,7 @@ function ProfileContent() {
   const [saving, setSaving] = useState(false)
 
   if (isLoading) {
-    return <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-[#FF385C] border-t-transparent rounded-full animate-spin" /></div>
+    return <ProfileSkeleton />
   }
 
   const handleSave = async () => {
@@ -50,7 +91,7 @@ function ProfileContent() {
               )}
             </div>
             <h2 className="font-semibold text-[#222222] text-lg">{profile?.full_name || 'ORMA User'}</h2>
-            {profile?.is_verified && <p className="text-sm text-green-600 mt-0.5">✓ Verified</p>}
+            {profile?.is_verified && <p className="text-sm text-[#222222] mt-0.5">✓ Verified</p>}
             <p className="text-sm text-[#717171] mt-1">
               Member since {profile?.created_at ? formatDate(profile.created_at) : 'N/A'}
             </p>
@@ -69,7 +110,7 @@ function ProfileContent() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-[#717171]">Avg Rating</span>
                   <span className="font-semibold text-[#222222] flex items-center gap-1">
-                    <Star size={12} className="fill-[#FFC107] stroke-[#FFC107]" />
+                    <Star size={12} className="fill-[#222222] stroke-[#222222]" />
                     {profile?.average_rating?.toFixed(1)}
                   </span>
                 </div>
@@ -78,8 +119,11 @@ function ProfileContent() {
 
             {/* Quick links */}
             <div className="mt-5 space-y-2">
-              <Link href="/my-listings" className="flex items-center gap-2 text-sm text-[#222222] hover:underline justify-center">
-                <List size={16} />My Listings
+              <Link href="/dashboard" className="flex items-center gap-2 text-sm text-[#222222] dark:text-white hover:underline justify-center">
+                <TrendingUp size={16} className="text-[#717171] dark:text-[#A0A0A0]" />Dashboard
+              </Link>
+              <Link href="/my-listings" className="flex items-center gap-2 text-sm text-[#222222] dark:text-white hover:underline justify-center">
+                <List size={16} className="text-[#717171] dark:text-[#A0A0A0]" />My Listings
               </Link>
               <Link href="/wishlist" className="flex items-center gap-2 text-sm text-[#222222] hover:underline justify-center">
                 <Heart size={16} />Wishlist
@@ -167,7 +211,7 @@ function ProfileContent() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex-1 py-3 bg-[#FF385C] text-white font-semibold rounded-xl hover:bg-[#E31C5F] transition-colors disabled:opacity-60"
+                    className="flex-1 py-3 bg-[#000000] text-white font-semibold rounded-xl hover:bg-[#333333] transition-colors disabled:opacity-60"
                   >
                     {saving ? 'Saving...' : 'Save Changes'}
                   </button>

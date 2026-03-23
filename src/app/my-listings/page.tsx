@@ -9,9 +9,32 @@ import type { ListingWithDetails } from '@/types'
 import { getRentalPriceDisplay, formatDate } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
+import { handleSupabaseError } from '@/lib/handleError'
 
 type TabFilter = 'all' | 'active' | 'rented' | 'inactive'
+
+function MyListingsSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="flex gap-4 border border-[#DDDDDD] rounded-2xl p-4 animate-pulse">
+          <div className="w-24 h-20 bg-gray-200 rounded-xl flex-shrink-0" />
+          <div className="flex-1">
+            <div className="h-5 bg-gray-200 rounded w-1/3 mb-2" />
+            <div className="h-4 bg-gray-200 rounded w-1/4 mb-4" />
+            <div className="h-4 bg-gray-200 rounded w-16" />
+          </div>
+          <div className="flex gap-2">
+            <div className="w-8 h-8 bg-gray-200 rounded-lg" />
+            <div className="w-8 h-8 bg-gray-200 rounded-lg" />
+            <div className="w-8 h-8 bg-gray-200 rounded-lg" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 function MyListingsContent() {
   const [listings, setListings] = useState<ListingWithDetails[]>([])
@@ -31,7 +54,7 @@ function MyListingsContent() {
         .order('created_at', { ascending: false })
       if (error) throw error
       setListings((data as ListingWithDetails[]) || [])
-    } catch (err) { console.error(err) }
+    } catch (err) { handleSupabaseError(err, 'fetchMyListings') }
     finally { setIsLoading(false) }
   }, [user, supabase])
 
@@ -72,7 +95,7 @@ function MyListingsContent() {
         <h1 className="text-2xl font-semibold text-[#222222]">My Listings</h1>
         <Link
           href="/list-your-item"
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#FF385C] text-white font-semibold rounded-xl hover:bg-[#E31C5F] transition-colors text-sm"
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#000000] text-white font-semibold rounded-xl hover:bg-[#333333] transition-colors text-sm"
         >
           <Plus size={16} />Add Listing
         </Link>
@@ -97,9 +120,7 @@ function MyListingsContent() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-8 h-8 border-4 border-[#FF385C] border-t-transparent rounded-full animate-spin" />
-        </div>
+        <MyListingsSkeleton />
       ) : filtered.length === 0 ? (
         <div className="text-center py-20">
           <Package size={48} className="text-[#B0B0B0] mx-auto mb-3" />
@@ -108,7 +129,7 @@ function MyListingsContent() {
             {tab === 'all' ? "You haven't listed anything yet." : `No ${tab} listings.`}
           </p>
           {tab === 'all' && (
-            <Link href="/list-your-item" className="px-6 py-3 bg-[#FF385C] text-white font-semibold rounded-xl hover:bg-[#E31C5F] inline-flex items-center gap-2">
+            <Link href="/list-your-item" className="px-6 py-3 bg-[#000000] text-white font-semibold rounded-xl hover:bg-[#333333] inline-flex items-center gap-2">
               <Plus size={16} />List Your First Item
             </Link>
           )}
@@ -141,7 +162,7 @@ function MyListingsContent() {
                       }`}>{listing.status}</span>
                       <span className="flex items-center gap-0.5"><MapPin size={12} />{listing.city}</span>
                       {listing.total_reviews > 0 && (
-                        <span className="flex items-center gap-0.5"><Star size={12} className="fill-[#FFC107] stroke-[#FFC107]" />{listing.average_rating.toFixed(1)}</span>
+                        <span className="flex items-center gap-0.5"><Star size={12} className="fill-[#222222] stroke-[#222222]" />{listing.average_rating.toFixed(1)}</span>
                       )}
                     </div>
                     <p className="font-semibold text-[#222222] text-sm mt-1">{getRentalPriceDisplay(listing)}</p>
@@ -156,20 +177,20 @@ function MyListingsContent() {
                       title={listing.is_available ? 'Mark as inactive' : 'Mark as active'}
                     >
                       {listing.is_available
-                        ? <ToggleRight size={20} className="text-green-500" />
+                        ? <ToggleRight size={20} className="text-[#222222]" />
                         : <ToggleLeft size={20} className="text-[#B0B0B0]" />
                       }
                     </button>
                     <Link
-                      href={`/listing/${listing.id}`}
+                      href={`/edit-listing/${listing.id}`}
                       className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                      title="View listing"
+                      title="Edit listing"
                     >
                       <Edit2 size={18} className="text-[#717171]" />
                     </Link>
                     <button
                       onClick={() => handleDelete(listing.id)}
-                      className="p-2 rounded-lg hover:bg-red-50 transition-colors"
+                      className="p-2 rounded-lg hover:bg-gray-50 transition-colors"
                       title="Delete listing"
                     >
                       <Trash2 size={18} className="text-red-400" />

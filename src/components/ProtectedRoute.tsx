@@ -3,6 +3,7 @@
 import { useAuth } from '@/hooks/useAuth'
 import { useState } from 'react'
 import AuthModal from './AuthModal'
+import FullPageLoader from './FullPageLoader'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -13,13 +14,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const [showAuth, setShowAuth] = useState(true)
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <span className="text-3xl font-bold text-[#FF385C] mb-4">ORMA</span>
-        <div className="w-8 h-8 border-4 border-[#FF385C] border-t-transparent rounded-full animate-spin" />
-        <p className="text-[#717171] mt-3 text-sm">Loading...</p>
-      </div>
-    )
+    return <FullPageLoader />
   }
 
   if (!isAuthenticated) {
@@ -31,7 +26,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
           <p className="text-[#717171] mb-6">You need to be logged in to access this page.</p>
           <button
             onClick={() => setShowAuth(true)}
-            className="px-6 py-3 bg-[#FF385C] text-white font-semibold rounded-lg hover:bg-[#E31C5F] transition-colors"
+            className="px-6 py-3 bg-[#000000] text-white font-semibold rounded-lg hover:bg-[#333333] transition-colors"
           >
             Log in to continue
           </button>

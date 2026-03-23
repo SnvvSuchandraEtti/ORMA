@@ -42,18 +42,18 @@ function ListYourItemContent() {
   const canGoNext = canProceed(currentStep, formData)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#121212]">
       {/* Progress Bar */}
-      <div className="fixed top-[64px] md:top-[80px] left-0 right-0 z-30 bg-white border-b border-[#EBEBEB]">
-        <div className="h-1 bg-[#EBEBEB]">
+      <div className="fixed top-[64px] md:top-[80px] left-0 right-0 z-30 bg-white dark:bg-[#121212] border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
+        <div className="h-1 bg-[#EBEBEB] dark:bg-[#3D3D3D]">
           <div
-            className="h-full bg-[#FF385C] transition-all duration-500"
+            className="h-full bg-[#000000] dark:bg-white transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <span className="text-sm text-[#717171]">
-            Step {currentStep} of {STEPS.length} · <span className="font-medium text-[#222222]">{STEPS[currentStep - 1].title}</span>
+          <span className="text-sm text-[#717171] dark:text-[#A0A0A0]">
+            Step {currentStep} of {STEPS.length} · <span className="font-medium text-[#222222] dark:text-white dark:text-[#121212]">{STEPS[currentStep - 1].title}</span>
           </span>
           {/* Step dots */}
           <div className="flex gap-1.5">
@@ -61,9 +61,9 @@ function ListYourItemContent() {
               <div
                 key={s.number}
                 className={`w-2 h-2 rounded-full transition-all ${
-                  s.number < currentStep ? 'bg-[#222222]'
-                    : s.number === currentStep ? 'bg-[#FF385C] scale-125'
-                    : 'bg-[#DDDDDD]'
+                  s.number < currentStep ? 'bg-[#222222] dark:bg-white'
+                    : s.number === currentStep ? 'bg-[#000000] dark:bg-white scale-125'
+                    : 'bg-[#DDDDDD] dark:bg-[#3D3D3D]'
                 }`}
               />
             ))}
@@ -79,12 +79,12 @@ function ListYourItemContent() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#DDDDDD] px-4 py-4 z-30">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#121212] border-t border-[#DDDDDD] dark:border-[#3D3D3D] px-4 py-4 z-30">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <button
             onClick={prevStep}
             disabled={currentStep === 1}
-            className="px-6 py-3 border border-[#DDDDDD] text-[#222222] font-semibold rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-6 py-3 border border-[#DDDDDD] dark:border-[#3D3D3D] text-[#222222] dark:text-white font-semibold rounded-xl hover:bg-gray-50 dark:bg-[#1A1A1A] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Back
           </button>
@@ -93,7 +93,7 @@ function ListYourItemContent() {
             <button
               onClick={nextStep}
               disabled={!canGoNext}
-              className="flex-1 sm:flex-none sm:px-8 py-3 bg-[#FF385C] text-white font-semibold rounded-xl hover:bg-[#E31C5F] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex-1 sm:flex-none sm:px-8 py-3 bg-[#000000] dark:bg-white text-white font-semibold rounded-xl hover:bg-[#333333] dark:hover:bg-[#EBEBEB] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Continue →
             </button>

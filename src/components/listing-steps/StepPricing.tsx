@@ -15,11 +15,11 @@ interface PriceInputProps {
 function PriceInput({ id, label, value, onChange, placeholder = '0', required, helper }: PriceInputProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-[#222222] mb-1">
-        {label} {required && <span className="text-[#FF385C]">*</span>}
+      <label htmlFor={id} className="block text-sm font-semibold text-[#222222] dark:text-white dark:text-[#121212] mb-1">
+        {label} {required && <span className="text-[#000000]">*</span>}
       </label>
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#222222] font-semibold">₹</span>
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#222222] dark:text-white font-semibold">₹</span>
         <input
           id={id}
           type="number"
@@ -27,10 +27,10 @@ function PriceInput({ id, label, value, onChange, placeholder = '0', required, h
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-8 pr-4 py-3 border border-[#DDDDDD] rounded-xl focus:outline-none focus:border-[#222222] text-[#222222] placeholder-[#B0B0B0]"
+          className="w-full pl-8 pr-4 py-3 border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-xl focus:outline-none focus:border-[#222222] dark:border-white text-[#222222] dark:text-white dark:text-[#121212] placeholder-[#B0B0B0]"
         />
       </div>
-      {helper && <p className="text-xs text-[#717171] mt-1">{helper}</p>}
+      {helper && <p className="text-xs text-[#717171] dark:text-[#A0A0A0] mt-1">{helper}</p>}
     </div>
   )
 }
@@ -43,8 +43,8 @@ export default function StepPricing() {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-[#222222] mb-2">Set your rental price</h2>
-      <p className="text-[#717171] mb-6">You can set different prices for different rental periods. Price per day is required.</p>
+      <h2 className="text-2xl font-semibold text-[#222222] dark:text-white dark:text-[#121212] mb-2">Set your rental price</h2>
+      <p className="text-[#717171] dark:text-[#A0A0A0] mb-6">You can set different prices for different rental periods. Price per day is required.</p>
 
       <div className="space-y-5">
         <PriceInput

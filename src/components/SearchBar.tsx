@@ -88,7 +88,7 @@ export default function SearchBar() {
         {/* Search Button */}
         <button
           type="submit"
-          className="mr-2 w-10 h-10 rounded-full bg-[#FF385C] flex items-center justify-center hover:bg-[#E31C5F] transition-colors"
+          className="mr-2 w-10 h-10 rounded-full bg-[#000000] flex items-center justify-center hover:bg-[#333333] transition-colors"
           aria-label="Search"
         >
           <Search size={16} className="text-white" />

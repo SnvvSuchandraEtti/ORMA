@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
       {/* Big 404 */}
-      <h1 className="text-8xl md:text-9xl font-bold text-[#FF385C] leading-none mb-4">404</h1>
+      <h1 className="text-8xl md:text-9xl font-bold text-[#000000] leading-none mb-4">404</h1>
       <span className="text-5xl mb-6">🏚️</span>
       <h2 className="text-2xl md:text-3xl font-semibold text-[#222222] mb-3">
         Page not found
@@ -16,7 +16,7 @@ export default function NotFound() {
       <div className="flex flex-col sm:flex-row gap-3">
         <Link
           href="/"
-          className="flex items-center gap-2 px-6 py-3 bg-[#FF385C] text-white font-semibold rounded-xl hover:bg-[#E31C5F] transition-colors"
+          className="flex items-center gap-2 px-6 py-3 bg-[#000000] text-white font-semibold rounded-xl hover:bg-[#333333] transition-colors"
         >
           <Home size={18} />
           Go Home

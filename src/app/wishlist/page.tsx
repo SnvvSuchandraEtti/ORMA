@@ -8,7 +8,8 @@ import ListingCard from '@/components/ListingCard'
 import { SkeletonGrid } from '@/components/ListingCardSkeleton'
 import { useAuth } from '@/hooks/useAuth'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
+import { handleSupabaseError } from '@/lib/handleError'
 import Link from 'next/link'
 
 function WishlistContent() {
@@ -34,8 +35,7 @@ function WishlistContent() {
       setWishlisted(listings)
       setWishlistedIds(new Set(listings.map(l => l.id)))
     } catch (err) {
-      console.error(err)
-      toast.error('Failed to load wishlist')
+      handleSupabaseError(err, 'fetchWishlist')
     } finally {
       setIsLoading(false)
     }
@@ -51,7 +51,7 @@ function WishlistContent() {
   return (
     <div className="max-w-[1760px] mx-auto px-4 md:px-6 lg:px-10 xl:px-20 py-8">
       <div className="flex items-center gap-3 mb-6">
-        <Heart size={24} className="text-[#FF385C] fill-[#FF385C]" />
+        <Heart size={24} className="text-[#000000] fill-[#000000]" />
         <h1 className="text-2xl font-semibold text-[#222222]">Your Wishlist</h1>
         {wishlisted.length > 0 && (
           <span className="text-[#717171] text-sm">({wishlisted.length} items)</span>
@@ -69,7 +69,7 @@ function WishlistContent() {
           </p>
           <Link
             href="/"
-            className="px-6 py-3 bg-[#FF385C] text-white font-semibold rounded-xl hover:bg-[#E31C5F] transition-colors"
+            className="px-6 py-3 bg-[#000000] text-white font-semibold rounded-xl hover:bg-[#333333] transition-colors"
           >
             Explore Listings
           </Link>

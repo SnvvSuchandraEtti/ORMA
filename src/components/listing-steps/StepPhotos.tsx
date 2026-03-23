@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useListingFormStore } from '@/store/listingFormStore'
 import { useAuth } from '@/hooks/useAuth'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
 
 export default function StepPhotos() {
   const { formData, updateFormData } = useListingFormStore()
@@ -52,22 +52,22 @@ export default function StepPhotos() {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-[#222222] mb-2">Add photos of your item</h2>
-      <p className="text-[#717171] mb-6">Items with clear, well-lit photos get rented 3× faster. Add up to 10 photos.</p>
+      <h2 className="text-2xl font-semibold text-[#222222] dark:text-white dark:text-[#121212] mb-2">Add photos of your item</h2>
+      <p className="text-[#717171] dark:text-[#A0A0A0] mb-6">Items with clear, well-lit photos get rented 3× faster. Add up to 10 photos.</p>
 
       {/* Drop Zone */}
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
-          isDragActive ? 'border-[#FF385C] bg-red-50' : 'border-[#DDDDDD] hover:border-[#222222]'
+          isDragActive ? 'border-[#000000] bg-gray-50 dark:bg-[#1A1A1A]' : 'border-[#DDDDDD] dark:border-[#3D3D3D] hover:border-[#222222] dark:border-white'
         } ${formData.imageUrls.length >= 10 ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <input {...getInputProps()} />
-        <UploadCloud size={36} className="mx-auto text-[#717171] mb-3" />
-        <p className="text-[#222222] font-medium">
+        <UploadCloud size={36} className="mx-auto text-[#717171] dark:text-[#A0A0A0] mb-3" />
+        <p className="text-[#222222] dark:text-white font-medium">
           {uploading ? 'Uploading...' : isDragActive ? 'Drop photos here' : 'Click to upload or drag & drop'}
         </p>
-        <p className="text-sm text-[#717171] mt-1">JPG, PNG, WebP · Max 5MB per photo</p>
+        <p className="text-sm text-[#717171] dark:text-[#A0A0A0] mt-1">JPG, PNG, WebP · Max 5MB per photo</p>
       </div>
 
       {/* Preview Grid */}
@@ -77,13 +77,13 @@ export default function StepPhotos() {
             <div key={idx} className="relative group rounded-xl overflow-hidden aspect-square">
               <Image src={url} alt={`Photo ${idx + 1}`} fill className="object-cover" unoptimized />
               {idx === 0 && (
-                <span className="absolute top-1.5 left-1.5 bg-[#222222] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <span className="absolute top-1.5 left-1.5 bg-[#222222] dark:bg-white text-white dark:text-[#121212] text-[10px] font-bold px-2 py-0.5 rounded-full">
                   Cover
                 </span>
               )}
               <button
                 onClick={() => removeImage(idx)}
-                className="absolute top-1.5 right-1.5 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1.5 right-1.5 w-7 h-7 bg-white dark:bg-[#121212] rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
                 aria-label="Remove photo"
               >
                 <X size={14} />
@@ -91,15 +91,15 @@ export default function StepPhotos() {
             </div>
           ))}
           {uploading && (
-            <div className="aspect-square rounded-xl border-2 border-dashed border-[#DDDDDD] flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-[#FF385C] border-t-transparent rounded-full animate-spin" />
+            <div className="aspect-square rounded-xl border-2 border-dashed border-[#DDDDDD] dark:border-[#3D3D3D] flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-[#000000] border-t-transparent rounded-full animate-spin" />
             </div>
           )}
         </div>
       )}
 
       {formData.imageUrls.length === 0 && !uploading && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-[#717171]">
+        <div className="mt-4 flex items-center gap-2 text-sm text-[#717171] dark:text-[#A0A0A0]">
           <ImageIcon size={16} />
           <span>No photos yet · At least 1 required</span>
         </div>

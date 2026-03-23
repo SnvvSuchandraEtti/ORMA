@@ -210,3 +210,33 @@ export interface SearchFilters {
 // SORT OPTIONS
 // ----------------------------------------------------------------
 export type SortOption = 'newest' | 'price_asc' | 'price_desc' | 'rating'
+
+// ----------------------------------------------------------------
+// MESSAGING
+// ----------------------------------------------------------------
+export interface Conversation {
+  id: string
+  listing_id: string
+  participant_1: string
+  participant_2: string
+  last_message_text: string
+  last_message_at: string
+  created_at: string
+  
+  // Relations
+  listing?: ListingWithDetails
+  participant1_profile?: Profile
+  participant2_profile?: Profile
+}
+
+export interface Message {
+  id: string
+  conversation_id: string
+  sender_id: string
+  message: string
+  is_read: boolean
+  created_at: string
+
+  // Relations
+  sender?: Profile
+}
