@@ -111,7 +111,7 @@ export default function BookingWidget({ listing, onContact }: BookingWidgetProps
         className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#FF385C] text-white font-semibold rounded-lg hover:bg-[#E31C5F] hover:shadow-md transition-all text-base"
       >
         <Phone size={18} />
-        {nights > 0 ? 'Reserve / Contact' : 'Check availability'}
+        {nights > 0 ? 'Reserve / Message' : 'Message Owner'}
       </button>
 
       <p className="text-center text-xs text-[#717171] dark:text-[#A0A0A0] mt-3">

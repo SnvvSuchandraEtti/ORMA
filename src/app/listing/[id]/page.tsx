@@ -2,9 +2,12 @@ import { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import ListingClient from './ListingClient'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
   const supabase = await createClient()
-  const id = params.id
+  const resolvedParams = await params
+  const id = resolvedParams.id
   
   const { data: listing } = await supabase
     .from('listings')
@@ -38,12 +41,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function ListingPage({ params }: { params: { id: string } }) {
+export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient()
+  const resolvedParams = await params
   const { data: listing } = await supabase
     .from('listings')
     .select('title, description, price_per_day, images, average_rating, total_reviews')
-    .eq('id', params.id)
+    .eq('id', resolvedParams.id)
     .single()
 
   let jsonLd = null

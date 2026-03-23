@@ -488,7 +488,7 @@ export default function ListingClient() {
             onClick={handleContact}
             className="px-6 py-3 bg-[#FF385C] text-white font-semibold rounded-xl hover:bg-[#E31C5F] hover:shadow-md transition-all whitespace-nowrap"
           >
-            Contact Owner
+            Message Owner
           </button>
         </div>
       </div>
