@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatDistanceToNow, format } from 'date-fns'
 import type { Message, Conversation } from '@/types'
@@ -100,9 +101,9 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#121212]">
+    <div className="flex flex-col h-full bg-[#F7F7F7] dark:bg-[#0A0A0A]">
       {/* Header */}
-      <div className="flex items-center gap-4 p-4 border-b border-[#EBEBEB] dark:border-[#3D3D3D] sticky top-0 bg-white dark:bg-[#121212] z-10">
+      <div className="flex items-center gap-4 p-4 md:p-6 border-b border-[#EBEBEB] dark:border-[#3D3D3D] sticky top-0 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-md z-10 shadow-sm">
         {onBack && (
           <button 
             onClick={onBack}
@@ -120,12 +121,12 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
              </div>
            )}
         </div>
-        <div>
-          <h3 className="font-semibold text-base">{otherProfile?.full_name || 'User'}</h3>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-base text-[#222222] dark:text-white tracking-tight">{otherProfile?.full_name || 'User'}</h3>
           {conversation.listing && (
-            <p className="text-xs text-[#717171] dark:text-[#A0A0A0]">
-              Inquiry about: <span className="text-[#FF385C]">{conversation.listing.title}</span>
-            </p>
+            <Link href={`/listing/${conversation.listing_id}`} className="text-xs font-semibold text-[#717171] dark:text-[#A0A0A0] flex items-center gap-1 hover:text-[#FF385C] transition-colors">
+              <span className="opacity-70">Renting:</span> {conversation.listing.title}
+            </Link>
           )}
         </div>
       </div>
@@ -137,8 +138,16 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
              <div className="w-8 h-8 rounded-full border-2 border-[#FF385C] border-t-white dark:border-t-[#121212] animate-spin" />
           </div>
         ) : messages.length === 0 ? (
-          <div className="text-center text-[#717171] dark:text-[#A0A0A0] py-12">
-            This is the beginning of your conversation.
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 bg-white dark:bg-[#1E1E1E] rounded-3xl flex items-center justify-center shadow-sm mb-4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-[#FF385C]">
+                <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-[#222222] dark:text-white mb-1">New Conversation</h3>
+            <p className="text-sm text-[#717171] dark:text-[#A0A0A0] max-w-xs">
+              This is the beginning of your chat about <strong>{conversation.listing?.title}</strong>.
+            </p>
           </div>
         ) : (
           messages.map((msg, idx) => {
@@ -153,15 +162,15 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
                       {format(new Date(msg.created_at), 'MMM d, h:mm a')}
                     </div>
                  )}
-                 <div 
-                   className={`max-w-[75%] px-4 py-2 rounded-2xl ${
-                     isMe 
-                      ? 'bg-[#FF385C] text-white rounded-br-none' 
-                      : 'bg-[#F7F7F7] dark:bg-[#2D2D2D] text-[#222222] dark:text-white rounded-bl-none border border-[#EBEBEB] dark:border-[#3D3D3D]'
-                   }`}
-                 >
-                   <p className="whitespace-pre-wrap break-words">{msg.message}</p>
-                 </div>
+                  <div 
+                    className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm leading-relaxed shadow-sm transition-all hover:shadow-md ${
+                      isMe 
+                       ? 'bg-gradient-to-br from-[#FF385C] to-[#E31C5F] text-white rounded-tr-none' 
+                       : 'bg-white dark:bg-[#1E1E1E] text-[#222222] dark:text-white rounded-tl-none border border-[#EBEBEB] dark:border-[#3D3D3D]'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap break-words font-medium">{msg.message}</p>
+                  </div>
                  {isMe && msg.is_read && idx === messages.length - 1 && (
                    <span className="text-[10px] text-[#717171] dark:text-[#A0A0A0] mt-1 pr-1">Read</span>
                  )}
@@ -185,19 +194,19 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
               }
             }}
             placeholder="Type a message..."
-            className="w-full max-h-32 min-h-[44px] bg-[#F7F7F7] dark:bg-[#1A1A1A] border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-2xl py-3 pl-4 pr-12 focus:outline-none focus:border-[#222222] dark:focus:border-white resize-none"
+            className="w-full max-h-32 min-h-[52px] bg-white dark:bg-[#1A1A1A] border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-2xl py-4 pl-5 pr-14 focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] dark:focus:border-[#FF385C] transition-all resize-none shadow-sm"
             rows={1}
             disabled={isSending || isLoading}
           />
           <button
             type="submit"
             disabled={!inputText.trim() || isSending || isLoading}
-            className="absolute right-2 bottom-2 p-2 rounded-full text-white bg-[#FF385C] hover:bg-[#D90B38] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center shrink-0 w-8 h-8"
+            className="absolute right-3 bottom-2.5 p-2 rounded-xl text-white bg-gradient-to-br from-[#FF385C] to-[#E31C5F] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shrink-0 w-10 h-10 group"
           >
             {isSending ? (
-               <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+               <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
             ) : (
-               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 relative -right-[1px]">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
                  <line x1="22" y1="2" x2="11" y2="13"></line>
                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                </svg>

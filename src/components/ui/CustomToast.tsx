@@ -25,9 +25,9 @@ export default function CustomToast({ t, title, message, type }: CustomToastProp
   }, [])
 
   const icons = {
-    success: <CheckCircle2 className="text-[#008A05] flex-shrink-0" size={24} />,
-    error: <XCircle className="text-[#C13515] flex-shrink-0" size={24} />,
-    info: <Info className="text-[#222222] flex-shrink-0" size={24} />,
+    success: <div className="p-1.5 bg-[#008A05]/10 rounded-full"><CheckCircle2 className="text-[#008A05] flex-shrink-0" size={20} /></div>,
+    error: <div className="p-1.5 bg-[#C13515]/10 rounded-full"><XCircle className="text-[#C13515] flex-shrink-0" size={20} /></div>,
+    info: <div className="p-1.5 bg-[#222222]/10 rounded-full"><Info className="text-[#222222] dark:text-white flex-shrink-0" size={20} /></div>,
   }
 
   // Airbnb style slide in from top-right on desktop, bottom-center on mobile
@@ -43,7 +43,7 @@ export default function CustomToast({ t, title, message, type }: CustomToastProp
       exit={animations.exit}
       className={`${
         t.visible ? 'animate-enter' : 'animate-leave'
-      } max-w-sm w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 overflow-hidden border border-[#EBEBEB]`}
+      } max-w-sm w-full backdrop-blur-xl bg-white/90 dark:bg-[#1E1E1E]/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)] rounded-2xl pointer-events-auto flex ring-1 ring-black/5 dark:ring-white/10 overflow-hidden border border-white/20 dark:border-white/5`}
       role="status"
       aria-live="polite"
       style={{

@@ -46,6 +46,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supabase])
 
+  const completePendingAction = useCallback(async (currentUserId: string) => {
+    if (typeof window === 'undefined') return
+    const pendingRaw = localStorage.getItem('orma_pending_action')
+    if (!pendingRaw) return
+
+    try {
+      const pending = JSON.parse(pendingRaw) as { type?: string; listingId?: string }
+      if (pending.type === 'wishlist' && pending.listingId) {
+        const { error } = await supabase
+          .from('wishlists')
+          .upsert(
+            { listing_id: pending.listingId, user_id: currentUserId },
+            { onConflict: 'user_id,listing_id', ignoreDuplicates: true }
+          )
+        if (error) throw error
+      }
+    } catch (err) {
+      console.error('Failed to complete pending action:', err)
+    } finally {
+      localStorage.removeItem('orma_pending_action')
+    }
+  }, [supabase])
+
   useEffect(() => {
     // Get initial session
     const initAuth = async () => {
@@ -72,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (currentUser) {
           await fetchProfile(currentUser.id)
+          await completePendingAction(currentUser.id)
         } else {
           setProfile(null)
         }
@@ -86,12 +110,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
 
     return () => subscription.unsubscribe()
-  }, [fetchProfile, supabase.auth])
+  }, [completePendingAction, fetchProfile, supabase.auth])
 
   const signInWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
-    toast.success('Welcome back!')
+    const fallbackName = email.split('@')[0]
+    const name = profile?.full_name?.split(' ')[0] || fallbackName
+    toast.success(`Welcome back, ${name}! 👋`)
   }
 
   const signUpWithEmail = async (email: string, password: string, fullName: string) => {
@@ -103,14 +129,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     })
     if (error) throw error
-    toast.success('Welcome to ORMA!')
+    toast.success('Welcome to ORMA! 🎉 Start by browsing items or listing your own.')
   }
 
   const signInWithGoogle = async () => {
+    const redirectPath =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('orma_post_login_redirect') || window.location.pathname
+        : '/'
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectPath)}`,
       },
     })
     if (error) throw error

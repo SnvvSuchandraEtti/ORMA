@@ -12,6 +12,7 @@ import TopLoadingBar from './TopLoadingBar'
 import SkipToContent from './SkipToContent'
 import ErrorBoundary from './ErrorBoundary'
 import OfflineBanner from './OfflineBanner'
+import WelcomeModal from './WelcomeModal'
 
 interface ClientLayoutProps {
   children: React.ReactNode
@@ -19,6 +20,13 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [isAuthOpen, setIsAuthOpen] = useState(false)
+  const openAuth = () => {
+    if (typeof window !== 'undefined') {
+      const currentPath = `${window.location.pathname}${window.location.search}`
+      localStorage.setItem('orma_post_login_redirect', currentPath)
+    }
+    setIsAuthOpen(true)
+  }
 
   return (
     <>
@@ -27,7 +35,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       <Suspense fallback={null}>
         <TopLoadingBar />
       </Suspense>
-      <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
+      <Navbar onOpenAuth={openAuth} />
       <Suspense fallback={null}>
         <CategoryBar />
       </Suspense>
@@ -45,7 +53,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
 
       {/* Mobile Bottom Layout */}
-      <MobileBottomNav openAuthModal={() => setIsAuthOpen(true)} />
+      <MobileBottomNav openAuthModal={openAuth} />
+
+      {/* First-time Welcome Modal */}
+      <WelcomeModal />
     </>
   )
 }

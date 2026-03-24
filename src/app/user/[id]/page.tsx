@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Profile, ListingWithDetails } from '@/types'
 import { getInitials, formatDate } from '@/lib/utils'
 import ListingCard from '@/components/ListingCard'
+import TrustScore from '@/components/TrustScore'
 import { SkeletonGrid } from '@/components/ListingCardSkeleton'
 import { handleSupabaseError } from '@/lib/handleError'
 
@@ -61,31 +62,71 @@ export default function UserProfilePage() {
   return (
     <div className="max-w-5xl mx-auto px-4 md:px-6 py-8">
       {/* Owner Header */}
-      <div className="flex items-start gap-5 mb-8 pb-8 border-b border-[#EBEBEB]">
-        <div className="w-20 h-20 rounded-full bg-[#717171] text-white flex items-center justify-center text-2xl font-semibold flex-shrink-0 overflow-hidden">
-          {owner.avatar_url ? (
-            <Image src={owner.avatar_url} alt={owner.full_name || 'User'} width={80} height={80} className="object-cover w-full h-full" unoptimized />
-          ) : (
-            <span>{getInitials(owner.full_name)}</span>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-semibold text-[#222222]">{owner.full_name || 'ORMA Member'}</h1>
-          {owner.is_verified && <span className="text-sm text-[#222222] font-medium">✓ Verified</span>}
-
-          <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-[#717171]">
-            {owner.city && (
-              <span className="flex items-center gap-1"><MapPin size={14} />{owner.city}</span>
-            )}
-            <span className="flex items-center gap-1"><Calendar size={14} />Joined {formatDate(owner.created_at)}</span>
-            <span className="flex items-center gap-1"><Package size={14} />{owner.total_listings} listings</span>
-            {owner.average_rating > 0 && (
-              <span className="flex items-center gap-1"><Star size={14} className="fill-[#222222] stroke-[#222222]" />{owner.average_rating.toFixed(1)} avg rating</span>
+      <div className="relative mb-12">
+        {/* Banner Gradient */}
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-[#FF385C]/10 via-[#E31C5F]/5 to-transparent rounded-3xl -z-10 dark:from-[#FF385C]/20 dark:via-[#E31C5F]/10 dark:to-transparent" />
+        
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 pt-8 px-4 md:px-8">
+          <div className="relative group">
+            <div className="w-24 h-24 rounded-full bg-white dark:bg-[#1E1E1E] p-1 shadow-xl shadow-black/5 ring-1 ring-black/5 dark:ring-white/10 transition-transform group-hover:scale-105 duration-300">
+              <div className="w-full h-full rounded-full bg-[#717171] text-white flex items-center justify-center text-3xl font-bold overflow-hidden">
+                {owner.avatar_url ? (
+                  <Image src={owner.avatar_url} alt={owner.full_name || 'User'} width={96} height={96} className="object-cover w-full h-full" unoptimized />
+                ) : (
+                  <span>{getInitials(owner.full_name)}</span>
+                )}
+              </div>
+            </div>
+            {owner.is_verified && (
+              <div className="absolute -bottom-1 -right-1 bg-white dark:bg-[#1E1E1E] p-1 rounded-full shadow-md">
+                <div className="bg-[#008A05] text-white rounded-full p-1">
+                  <span className="text-[10px] font-bold px-1">✓</span>
+                </div>
+              </div>
             )}
           </div>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-[#222222] dark:text-white tracking-tight">
+                {owner.full_name || 'ORMA Member'}
+              </h1>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-2 mt-4 text-sm">
+              {owner.city && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#1E1E1E] rounded-full border border-black/[0.05] dark:border-white/[0.05] shadow-sm text-[#222222] dark:text-white">
+                  <MapPin size={14} className="text-[#FF385C]" />
+                  <span className="font-medium">{owner.city}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#1E1E1E] rounded-full border border-black/[0.05] dark:border-white/[0.05] shadow-sm text-[#717171] dark:text-[#A0A0A0]">
+                <Calendar size={14} />
+                <span>Joined {formatDate(owner.created_at)}</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#1E1E1E] rounded-full border border-black/[0.05] dark:border-white/[0.05] shadow-sm text-[#222222] dark:text-white font-semibold">
+                <Package size={14} className="text-[#FF385C]" />
+                <span>{owner.total_listings} Listings</span>
+              </div>
+              {owner.average_rating > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#1E1E1E] rounded-full border border-black/[0.05] dark:border-white/[0.05] shadow-sm text-[#222222] dark:text-white">
+                  <Star size={14} className="fill-[#FFB400] text-[#FFB400]" />
+                  <span className="font-bold">{owner.average_rating.toFixed(1)}</span>
+                </div>
+              )}
+            </div>
 
-          {owner.bio && <p className="mt-3 text-sm text-[#717171] line-clamp-3">{owner.bio}</p>}
+            {owner.bio && (
+              <p className="mt-6 text-[#717171] dark:text-[#A0A0A0] max-w-2xl leading-relaxed">
+                {owner.bio}
+              </p>
+            )}
+          </div>
         </div>
+      </div>
+
+      <div className="mb-10">
+        <TrustScore profile={owner} listingsCount={owner.total_listings} reviewsCount={owner.total_reviews_received} />
       </div>
 
       {/* Listings Grid */}

@@ -29,9 +29,9 @@ export default function ConversationList({
   }
 
   return (
-    <div className="flex flex-col h-full border-r border-[#EBEBEB] dark:border-[#3D3D3D] bg-white dark:bg-[#121212] overflow-y-auto">
-      <div className="p-4 border-b border-[#EBEBEB] dark:border-[#3D3D3D] sticky top-0 bg-white dark:bg-[#121212] z-10">
-        <h2 className="text-2xl font-semibold">Messages</h2>
+    <div className="flex flex-col h-full border-r border-[#EBEBEB] dark:border-[#3D3D3D] bg-white/70 dark:bg-[#121212]/70 backdrop-blur-xl overflow-y-auto custom-scrollbar">
+      <div className="p-6 border-b border-[#EBEBEB] dark:border-[#3D3D3D] sticky top-0 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-md z-10">
+        <h2 className="text-2xl font-bold text-[#222222] dark:text-white tracking-tight">Messages</h2>
       </div>
       <div className="flex-1">
         {conversations.map(conv => {
@@ -43,12 +43,15 @@ export default function ConversationList({
             <div 
               key={conv.id}
               onClick={() => onSelect(conv.id)}
-              className={`p-4 border-b border-[#EBEBEB] dark:border-[#3D3D3D] flex items-start gap-4 cursor-pointer transition-colors ${
+              className={`p-4 border-b border-[#EBEBEB]/50 dark:border-[#3D3D3D]/50 flex items-start gap-4 cursor-pointer transition-all duration-200 relative ${
                 isActive 
-                  ? 'bg-gray-100 dark:bg-[#2D2D2D]' 
-                  : 'hover:bg-gray-50 dark:hover:bg-[#1E1E1E]'
+                  ? 'bg-white dark:bg-[#2D2D2D] shadow-sm z-10' 
+                  : 'hover:bg-white/50 dark:hover:bg-[#1E1E1E]/50'
               }`}
             >
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#FF385C] rounded-r-full" />
+              )}
               <div className="relative w-12 h-12 flex-shrink-0 rounded-full overflow-hidden bg-gray-200 dark:bg-[#3D3D3D]">
                 {otherProfile?.avatar_url ? (
                   <Image 
@@ -65,11 +68,11 @@ export default function ConversationList({
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-baseline mb-1">
-                  <h4 className="font-semibold text-base truncate pr-2">
+                  <h4 className={`font-bold text-sm truncate pr-2 ${isActive ? 'text-[#FF385C]' : 'text-[#222222] dark:text-white'}`}>
                     {otherProfile?.full_name || 'Anonymous User'}
                   </h4>
                   {conv.last_message_at && (
-                    <span className="text-xs text-[#717171] dark:text-[#A0A0A0] flex-shrink-0">
+                    <span className="text-[10px] font-medium text-[#717171] dark:text-[#A0A0A0] flex-shrink-0 uppercase">
                       {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: true })}
                     </span>
                   )}
@@ -79,7 +82,7 @@ export default function ConversationList({
                     Re: {conv.listing.title}
                   </p>
                 )}
-                <p className="text-sm text-[#717171] dark:text-[#A0A0A0] truncate">
+                <p className="text-xs font-medium text-[#717171] dark:text-[#A0A0A0] line-clamp-1 leading-relaxed">
                   {conv.last_message_text || 'No messages yet...'}
                 </p>
               </div>

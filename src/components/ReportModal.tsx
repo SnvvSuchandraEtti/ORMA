@@ -40,8 +40,6 @@ export default function ReportModal({ isOpen, onClose, listingId, reporterId }: 
     return () => window.removeEventListener('keydown', handleKey)
   }, [isOpen, onClose])
 
-  if (!isOpen) return null
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedReason) {
@@ -69,10 +67,10 @@ export default function ReportModal({ isOpen, onClose, listingId, reporterId }: 
         }
       } else {
         toast.success("Report submitted. We'll review it shortly.")
+        onClose()
+        setSelectedReason('')
+        setDetails('')
       }
-      onClose()
-      setSelectedReason('')
-      setDetails('')
     } catch (err) {
       console.error(err)
       toast.error('Something went wrong. Please try again.')
@@ -83,40 +81,55 @@ export default function ReportModal({ isOpen, onClose, listingId, reporterId }: 
 
   return (
     <AnimatePresence>
-      <div ref={modalRef} className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]"
+      {isOpen && (
+        <div 
+          ref={modalRef} 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" 
+          role="dialog" 
+          aria-modal="true" 
+          aria-labelledby="report-modal-title"
         >
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
-            <div className="flex items-center gap-2">
-              <AlertTriangle size={20} className="text-[#E31C5F]" />
-              <h2 id="report-modal-title" className="text-lg font-semibold text-[#222222] dark:text-white">Report Listing</h2>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-[#2D2D2D] rounded-full transition-colors"
-            >
-              <X size={20} className="text-[#222222] dark:text-white" />
-            </button>
-          </div>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/40 backdrop-blur-md"
+          />
 
-          {/* Form Content */}
-          <div className="p-6 overflow-y-auto overflow-x-hidden">
-            <h3 className="font-semibold text-[#222222] dark:text-white mb-4">Why are you reporting this listing?</h3>
-            <form id="report-form" onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="relative bg-white/90 dark:bg-black/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50 dark:border-white/10">
+              <div className="flex items-center gap-2">
+                <AlertTriangle size={20} className="text-[#E31C5F]" />
+                <h2 id="report-modal-title" className="text-xl font-bold text-gray-900 dark:text-white">Report Listing</h2>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors text-gray-500 dark:text-gray-400"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Form Content */}
+            <div className="p-6 overflow-y-auto overflow-x-hidden custom-scrollbar">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">Why are you reporting this?</h3>
+              <form id="report-form" onSubmit={handleSubmit} className="space-y-3">
                 {REPORT_REASONS.map((reason) => (
                   <label
                     key={reason}
-                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                    className={`flex items-start gap-4 p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
                       selectedReason === reason
-                        ? 'border-[#222222] dark:border-[#6B6B6B] bg-gray-50 dark:bg-[#1A1A1A]'
-                        : 'border-[#DDDDDD] dark:border-[#3D3D3D] hover:border-[#222222] dark:border-[#6B6B6B]'
+                        ? 'border-[#222222] dark:border-white bg-[#222222]/5 dark:bg-white/10 shadow-sm'
+                        : 'border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-50/50 dark:hover:bg-white/5'
                     }`}
                   >
                     <input
@@ -128,46 +141,55 @@ export default function ReportModal({ isOpen, onClose, listingId, reporterId }: 
                       className="sr-only"
                     />
                     <div className="pt-0.5">
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                        selectedReason === reason ? 'border-[#222222] dark:border-[#6B6B6B]' : 'border-gray-300 dark:border-[#3D3D3D]'
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        selectedReason === reason ? 'border-[#222222] dark:border-white' : 'border-gray-300 dark:border-white/20'
                       }`}>
                         {selectedReason === reason && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
+                          <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="w-2.5 h-2.5 rounded-full bg-[#222222] dark:bg-white" 
+                          />
                         )}
                       </div>
                     </div>
-                    <span className="text-[#222222] dark:text-white text-sm font-medium">{reason}</span>
+                    <span className="text-gray-800 dark:text-white text-sm font-medium">{reason}</span>
                   </label>
                 ))}
-              </div>
 
-              <div className="pt-4 border-t border-[#EBEBEB] dark:border-[#3D3D3D] mt-6">
-                <label className="block text-sm font-semibold text-[#222222] dark:text-white mb-2">
-                  Additional details (optional)
-                </label>
-                <textarea
-                  value={details}
-                  onChange={(e) => setDetails(e.target.value)}
-                  placeholder="Provide any additional context to help our investigation..."
-                  className="w-full h-24 p-3 rounded-xl border border-[#DDDDDD] dark:border-[#3D3D3D] focus:border-[#222222] dark:border-[#6B6B6B] focus:outline-none resize-none text-[#222222] dark:text-white text-sm"
-                />
-              </div>
-            </form>
-          </div>
+                <div className="pt-4 mt-2">
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2 ml-1">
+                    Additional details (optional)
+                  </label>
+                  <textarea
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
+                    placeholder="Provide any additional context to help our investigation..."
+                    className="w-full h-28 p-4 rounded-xl border border-gray-200 dark:border-white/10 bg-white/50 dark:bg-black/20 focus:outline-none focus:ring-2 focus:ring-[#222222] dark:focus:ring-white transition-all resize-none text-gray-900 dark:text-white text-sm placeholder-gray-400"
+                  />
+                </div>
+              </form>
+            </div>
 
-          {/* Footer */}
-          <div className="p-4 sm:p-6 border-t border-[#EBEBEB] dark:border-[#3D3D3D] bg-white dark:bg-[#1E1E1E] mt-auto">
-            <button
-              type="submit"
-              form="report-form"
-              disabled={isSubmitting || !selectedReason}
-              className="w-full py-3.5 bg-[#222222] text-white font-semibold rounded-xl hover:bg-[#000000] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit Report'}
-            </button>
-          </div>
-        </motion.div>
-      </div>
+            {/* Footer */}
+            <div className="p-6 border-t border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-black/40 backdrop-blur-xl mt-auto">
+              <button
+                type="submit"
+                form="report-form"
+                disabled={isSubmitting || !selectedReason}
+                className="w-full py-4 bg-[#222222] dark:bg-white text-white dark:text-black font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-xl shadow-black/5 dark:shadow-white/5"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    <span>Submitting...</span>
+                  </div>
+                ) : 'Submit Report'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </AnimatePresence>
   )
 }

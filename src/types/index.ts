@@ -240,3 +240,19 @@ export interface Message {
   // Relations
   sender?: Profile
 }
+
+// ----------------------------------------------------------------
+// NOTIFICATIONS
+// ----------------------------------------------------------------
+export type NotificationType = 'inquiry' | 'review' | 'system' | 'milestone' | 'welcome'
+
+export interface Notification {
+  id: string
+  user_id: string
+  type: NotificationType
+  title: string
+  message: string
+  link: string
+  is_read: boolean
+  created_at: string
+}

@@ -11,6 +11,8 @@ import { Eye, MessageSquare, Star, TrendingUp, AlertCircle, Clock, CheckCircle, 
 import { formatDistanceToNow, subDays, format } from 'date-fns'
 import type { Listing, Inquiry } from '@/types'
 import { handleSupabaseError } from '@/lib/handleError'
+import { cn } from '@/lib/utils'
+import toast from '@/lib/toast'
 
 // Animation variants
 const containerVariants: Variants = {
@@ -85,7 +87,7 @@ export default function OwnerDashboard() {
       let totalRatingSum = 0
       let ratedListingsCount = 0
       let estRev = 0
-      let counts = { active: 0, rented: 0, inactive: 0, other: 0 }
+      const counts = { active: 0, rented: 0, inactive: 0, other: 0 }
 
       listings.forEach(listing => {
         views += listing.views_count || 0
@@ -176,7 +178,7 @@ export default function OwnerDashboard() {
              <p className="text-[#717171] dark:text-[#A0A0A0] mt-1">Overview of your listing performance</p>
            </div>
            
-           <div className="flex items-center gap-2 bg-white dark:bg-[#1E1E1E] border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-lg px-4 py-2 shadow-sm">
+           <div className="flex items-center gap-2 bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-xl px-4 py-2 shadow-sm transition-all hover:shadow-md cursor-pointer">
              <span className="text-sm font-semibold text-[#222222] dark:text-white">Last 7 days</span>
              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-[#717171] dark:text-[#A0A0A0]">
                <path d="M6 9l6 6 6-6" />
@@ -191,47 +193,55 @@ export default function OwnerDashboard() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           {/* Stat Cards */}
-          <motion.div variants={itemVariants} className="bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm">
+          <motion.div variants={itemVariants} className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
              <div className="flex items-center gap-3 text-[#717171] dark:text-[#A0A0A0] mb-4">
-               <Eye size={20} />
+               <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                 <Eye size={20} />
+               </div>
                <h3 className="font-medium text-sm">Total Views</h3>
              </div>
-             <p className="text-3xl font-bold text-[#222222] dark:text-white">{totalViews.toLocaleString()}</p>
+             <p className="text-3xl font-bold text-[#222222] dark:text-white tracking-tight">{totalViews.toLocaleString()}</p>
              <div className="mt-2 flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-400">
                <TrendingUp size={14} />
                <span>↑ {Math.floor(Math.random() * 20) + 1}%</span>
              </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm">
+          <motion.div variants={itemVariants} className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
              <div className="flex items-center gap-3 text-[#717171] dark:text-[#A0A0A0] mb-4">
-               <MessageSquare size={20} />
+               <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                 <MessageSquare size={20} />
+               </div>
                <h3 className="font-medium text-sm">Inquiries</h3>
              </div>
-             <p className="text-3xl font-bold text-[#222222] dark:text-white">{totalInquiries.toLocaleString()}</p>
+             <p className="text-3xl font-bold text-[#222222] dark:text-white tracking-tight">{totalInquiries.toLocaleString()}</p>
              <div className="mt-2 flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-400">
                <TrendingUp size={14} />
                <span>↑ {Math.floor(Math.random() * 15) + 1}%</span>
              </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm">
+          <motion.div variants={itemVariants} className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
              <div className="flex items-center gap-3 text-[#717171] dark:text-[#A0A0A0] mb-4">
-               <Star size={20} />
+               <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-600 dark:text-amber-400">
+                 <Star size={20} />
+               </div>
                <h3 className="font-medium text-sm">Avg. Rating</h3>
              </div>
-             <p className="text-3xl font-bold text-[#222222] dark:text-white">{averageRating > 0 ? averageRating.toFixed(1) : '-'}</p>
+             <p className="text-3xl font-bold text-[#222222] dark:text-white tracking-tight">{averageRating > 0 ? averageRating.toFixed(1) : '-'}</p>
              <div className="mt-2 flex items-center gap-1 text-sm font-medium text-[#717171] dark:text-[#A0A0A0]">
                <span>No change</span>
              </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm">
+          <motion.div variants={itemVariants} className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
              <div className="flex items-center gap-3 text-[#717171] dark:text-[#A0A0A0] mb-4">
-               <span className="font-serif italic font-bold text-lg leading-none">₹</span>
+               <div className="p-2 bg-rose-50 dark:bg-rose-900/20 rounded-lg text-rose-600 dark:text-rose-400">
+                 <span className="font-serif italic font-bold text-lg leading-none">₹</span>
+               </div>
                <h3 className="font-medium text-sm">Est. Revenue</h3>
              </div>
-             <p className="text-3xl font-bold text-[#222222] dark:text-white">{formatCurrency(estimatedRevenue)}</p>
+             <p className="text-3xl font-bold text-[#222222] dark:text-white tracking-tight">{formatCurrency(estimatedRevenue)}</p>
              <div className="mt-2 flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-400">
                <TrendingUp size={14} />
                <span>↑ 12%</span>
@@ -247,9 +257,17 @@ export default function OwnerDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, type: 'spring', stiffness: 300, damping: 24 }}
-            className="lg:col-span-2 bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm"
+            className="lg:col-span-2 bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-3xl p-8 shadow-sm"
           >
-            <h2 className="text-lg font-semibold text-[#222222] dark:text-white mb-6">Views Over Time</h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-bold text-[#222222] dark:text-white tracking-tight">Performance Trend</h2>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-black dark:bg-[#FF385C]" />
+                  <span className="text-xs font-medium text-[#717171] dark:text-[#A0A0A0]">Page Views</span>
+                </div>
+              </div>
+            </div>
             
             {/* CSS Only Bar Chart */}
             <div className="h-64 flex items-end gap-2 sm:gap-4 w-full relative pt-6">
@@ -260,27 +278,28 @@ export default function OwnerDashboard() {
                  ))}
                </div>
                
-               {/* Bars */}
-               {chartData.map((data, i) => {
-                 const heightPercent = Math.max((data.count / maxChartValue) * 100, 2) // min 2% height so it's visible
-                 return (
-                   <div key={i} className="flex-1 flex flex-col items-center justify-end h-full z-10 group relative">
-                     {/* Tooltip */}
-                     <div className="opacity-0 group-hover:opacity-100 absolute -top-10 bg-[#222222] text-white text-xs py-1 px-2 rounded-md pointer-events-none transition-opacity whitespace-nowrap">
-                       {data.count} views
-                     </div>
-                     <motion.div 
-                       initial={{ height: 0 }}
-                       animate={{ height: `${heightPercent}%` }}
-                       transition={{ duration: 0.8, delay: 0.4 + (i * 0.1), ease: "easeOut" }}
-                       className="w-full max-w-[48px] bg-black dark:bg-[#FF385C] rounded-t-md opacity-80 group-hover:opacity-100 transition-opacity"
-                     />
-                     <span className="text-xs text-[#717171] dark:text-[#A0A0A0] mt-3 rotate-45 sm:rotate-0 origin-left truncate w-full text-center">
-                       {data.date}
-                     </span>
-                   </div>
-                 )
-               })}
+               {/* Bars */}                {chartData.map((data, i) => {
+                  const heightPercent = Math.max((data.count / maxChartValue) * 100, 2)
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-end h-full z-10 group relative">
+                      {/* Tooltip */}
+                      <div className="opacity-0 group-hover:opacity-100 absolute -top-12 bg-[#222222] dark:bg-[#333333] text-white text-xs py-1.5 px-3 rounded-xl pointer-events-none transition-all duration-200 whitespace-nowrap shadow-xl scale-95 group-hover:scale-100 mb-1">
+                        <div className="font-bold">{data.count} views</div>
+                        <div className="text-[10px] opacity-70">{data.date}</div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#222222] dark:bg-[#333333] rotate-45" />
+                      </div>
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: `${heightPercent}%` }}
+                        transition={{ duration: 1, delay: 0.4 + (i * 0.1), ease: [0.23, 1, 0.32, 1] }}
+                        className="w-full max-w-[32px] bg-gradient-to-t from-gray-900 to-gray-700 dark:from-[#FF385C] dark:to-[#FF5A5F] rounded-t-lg shadow-lg opacity-85 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-x-110"
+                      />
+                      <span className="text-[10px] font-medium text-[#717171] dark:text-[#A0A0A0] mt-4 mb-1">
+                        {data.date.split(' ')[1]}
+                      </span>
+                    </div>
+                  )
+                })}
             </div>
           </motion.div>
 
@@ -292,29 +311,31 @@ export default function OwnerDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, type: 'spring', stiffness: 300, damping: 24 }}
-              className="bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm"
+              className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm h-fit"
             >
-              <h2 className="text-lg font-semibold text-[#222222] dark:text-white mb-4">Status Overview</h2>
-              <div className="flex justify-between items-center mb-4 pb-4 border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
-                  <span className="text-sm font-medium text-[#222222] dark:text-white">Active</span>
+              <h2 className="text-lg font-bold text-[#222222] dark:text-white mb-6">Inventory Status</h2>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 rounded-xl bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-800/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
+                    <span className="text-sm font-semibold text-[#222222] dark:text-white">Active</span>
+                  </div>
+                  <span className="font-bold text-lg">{statusCounts.active}</span>
                 </div>
-                <span className="font-bold">{statusCounts.active}</span>
-              </div>
-              <div className="flex justify-between items-center mb-4 pb-4 border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500" />
-                  <span className="text-sm font-medium text-[#222222] dark:text-white">Rented out</span>
+                <div className="flex justify-between items-center p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.4)]" />
+                    <span className="text-sm font-semibold text-[#222222] dark:text-white">Rented out</span>
+                  </div>
+                  <span className="font-bold text-lg">{statusCounts.rented}</span>
                 </div>
-                <span className="font-bold">{statusCounts.rented}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[#DDDDDD] dark:bg-[#6B6B6B]" />
-                  <span className="text-sm font-medium text-[#222222] dark:text-white">Inactive</span>
+                <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50/50 dark:bg-gray-800/10 border border-gray-100 dark:border-gray-700/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#717171] shadow-[0_0_8px_rgba(113,113,113,0.3)]" />
+                    <span className="text-sm font-semibold text-[#222222] dark:text-white">Inactive</span>
+                  </div>
+                  <span className="font-bold text-lg">{statusCounts.inactive + statusCounts.other}</span>
                 </div>
-                <span className="font-bold">{statusCounts.inactive + statusCounts.other}</span>
               </div>
             </motion.div>
 
@@ -362,20 +383,23 @@ export default function OwnerDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, type: 'spring', stiffness: 300, damping: 24 }}
-          className="bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl shadow-sm overflow-hidden"
+          className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-3xl shadow-sm overflow-hidden"
         >
-          <div className="p-6 border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
-            <h2 className="text-lg font-semibold text-[#222222] dark:text-white">Top Performing Listings</h2>
+          <div className="p-8 border-b border-[#EBEBEB] dark:border-[#3D3D3D] flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-[#222222] dark:text-white tracking-tight">Manage Listings</h2>
+              <p className="text-xs text-[#717171] dark:text-[#A0A0A0] mt-1">Direct actions for your published rentals</p>
+            </div>
           </div>
           
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 dark:bg-[#1A1A1A] border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
-                  <th className="px-6 py-3 text-xs font-semibold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-wider">Listing</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-wider">Views</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-wider">Inquiries</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-wider">Rating</th>
+                <tr className="bg-gray-50/50 dark:bg-[#1A1A1A]/50 border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
+                  <th className="px-8 py-5 text-[10px] font-bold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-[0.1em]">Listing</th>
+                  <th className="px-8 py-5 text-[10px] font-bold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-[0.1em]">Performance</th>
+                  <th className="px-8 py-5 text-[10px] font-bold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-[0.1em]">Status</th>
+                  <th className="px-8 py-5 text-[10px] font-bold text-[#717171] dark:text-[#A0A0A0] uppercase tracking-[0.1em] text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBEBEB] dark:divide-[#3D3D3D]">
@@ -387,31 +411,109 @@ export default function OwnerDashboard() {
                   </tr>
                 ) : (
                   topListings.map((listing, idx) => (
-                    <tr key={listing.id} className="hover:bg-gray-50 dark:hover:bg-[#2D2D2D] transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3 w-max sm:w-auto">
-                          <div className="relative w-12 h-12 rounded-lg bg-gray-200 dark:bg-[#3D3D3D] overflow-hidden flex-shrink-0">
+                    <tr key={listing.id} className="group hover:bg-white dark:hover:bg-[#2D2D2D] transition-all">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-4 w-max sm:w-auto">
+                          <div className="relative w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#3D3D3D] overflow-hidden flex-shrink-0 shadow-sm transition-transform group-hover:scale-105">
                             {listing.images && listing.images[0] ? (
                               <Image src={listing.images[0]} alt={listing.title} fill className="object-cover" />
                             ) : (
-                              <Package size={20} className="absolute inset-0 m-auto text-gray-400" />
+                              <Package size={24} className="absolute inset-0 m-auto text-gray-400" />
                             )}
                           </div>
-                          <Link href={`/listing/${listing.id}`} className="font-semibold text-sm text-[#222222] dark:text-white hover:underline line-clamp-2">
-                            {idx + 1}. {listing.title}
-                          </Link>
+                          <div>
+                            <Link href={`/listing/${listing.id}`} className="font-bold text-[#222222] dark:text-white hover:text-[#FF385C] dark:hover:text-[#FF385C] transition-colors line-clamp-1">
+                              {listing.title}
+                            </Link>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[10px] font-bold text-[#717171] dark:text-[#A0A0A0] uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-[#3D3D3D] rounded">
+                                {listing.category?.name || 'Item'}
+                              </span>
+                              <span className="text-xs font-semibold text-[#222222] dark:text-white">
+                                ₹{listing.price_per_day}/day
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#717171] dark:text-[#A0A0A0]">
-                        {listing.views_count || 0}
+                      <td className="px-8 py-6 whitespace-nowrap">
+                        <div className="flex flex-col gap-1.5">
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1.5">
+                              <Eye size={14} className="text-[#717171] dark:text-[#A0A0A0]" />
+                              <span className="text-sm font-bold text-[#222222] dark:text-white">{listing.views_count || 0}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <MessageSquare size={14} className="text-[#717171] dark:text-[#A0A0A0]" />
+                              <span className="text-sm font-bold text-[#222222] dark:text-white">{listing.inquiries_count || 0}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star size={12} className="fill-[#222222] dark:fill-white text-[#222222] dark:text-white" />
+                            <span className="text-xs font-bold text-[#222222] dark:text-white">
+                              {listing.average_rating > 0 ? listing.average_rating.toFixed(1) : 'New'}
+                            </span>
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#717171] dark:text-[#A0A0A0]">
-                        {listing.inquiries_count || 0}
+                      <td className="px-8 py-6 whitespace-nowrap">
+                        <span className={cn(
+                          "px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border",
+                          listing.status === 'active' ? "bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30" : 
+                          listing.status === 'rented' ? "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30" :
+                          "bg-gray-50 text-gray-600 border-gray-100 dark:bg-gray-800/20 dark:text-gray-400 dark:border-gray-700/30"
+                        )}>
+                          {listing.status}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#222222] dark:text-white font-medium">
-                        <div className="flex items-center gap-1">
-                          <Star size={14} className="fill-[#222222] dark:fill-white" />
-                          {listing.average_rating > 0 ? listing.average_rating.toFixed(1) : 'New'}
+                      <td className="px-8 py-6 whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link 
+                            href={`/edit-listing/${listing.id}`}
+                            className="p-2.5 rounded-xl border border-[#DDDDDD] dark:border-[#3D3D3D] text-[#222222] dark:text-white hover:bg-gray-50 dark:hover:bg-[#3D3D3D] transition-all"
+                            title="Edit Listing"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>
+                          </Link>
+                          <button 
+                            onClick={async () => {
+                              const newStatus = listing.status === 'active' ? 'inactive' : 'active'
+                              const supabase = createClient()
+                              const { error } = await supabase
+                                .from('listings')
+                                .update({ status: newStatus })
+                                .eq('id', listing.id)
+                              
+                              if (error) {
+                                toast.error('Failed to update status')
+                              } else {
+                                toast.success(`Status updated to ${newStatus}`)
+                                fetchDashboardData() // Refresh
+                              }
+                            }}
+                            className={cn(
+                              "p-2.5 rounded-xl border transition-all",
+                              listing.status === 'active' 
+                                ? "border-amber-200 text-amber-600 hover:bg-amber-50 dark:border-amber-900/30 dark:text-amber-500" 
+                                : "border-green-200 text-green-600 hover:bg-green-50 dark:border-green-900/30 dark:text-green-500"
+                            )}
+                            title={listing.status === 'active' ? "Deactivate" : "Activate"}
+                          >
+                            {listing.status === 'active' ? (
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <path d="M9 9h6v6H9z" />
+                              </svg>
+                            ) : (
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M10 8l6 4-6 4V8z" />
+                              </svg>
+                            )}
+                          </button>
                         </div>
                       </td>
                     </tr>

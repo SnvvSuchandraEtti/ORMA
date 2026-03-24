@@ -33,19 +33,19 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-[#F7F7F7] dark:bg-[#121212] border-t border-[#DDDDDD] dark:border-[#3D3D3D] mt-auto transition-colors duration-300">
-      <div className="max-w-[1760px] mx-auto px-6 md:px-10 lg:px-20 py-12">
+    <footer className="bg-[#F8F9FA] dark:bg-[#0F0F0F] border-t border-black/5 dark:border-white/5 mt-auto transition-colors duration-500">
+      <div className="max-w-[1760px] mx-auto px-6 md:px-10 lg:px-20 py-16">
         {/* Links Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
           {Object.entries(footerLinks).map(([section, links]) => (
             <nav key={section} aria-label={section}>
-              <h3 className="font-semibold text-[14px] text-[#222222] dark:text-white mb-3">{section}</h3>
-              <ul className="space-y-2">
+              <h3 className="font-bold text-sm text-[#222222] dark:text-white mb-5 uppercase tracking-widest opacity-90">{section}</h3>
+              <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-[14px] text-[#222222] dark:text-[#A0A0A0] hover:underline dark:hover:text-white transition-colors"
+                      className="text-[14px] text-[#717171] dark:text-[#A0A0A0] hover:text-[#FF385C] dark:hover:text-[#FF385C] transition-all duration-300"
                     >
                       {link.label}
                     </Link>
@@ -57,19 +57,17 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-[#DDDDDD] dark:border-[#3D3D3D] pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 text-[13px] text-[#717171] dark:text-[#A0A0A0]">
-            <span>© 2025 ORMA, Inc.</span>
-            <span>·</span>
-            <Link href="/privacy" className="hover:underline">Privacy</Link>
-            <span>·</span>
-            <Link href="/terms" className="hover:underline">Terms</Link>
-            <span>·</span>
-            <Link href="#" className="hover:underline">Sitemap</Link>
+        <div className="border-t border-black/5 dark:border-white/5 pt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-[13px] font-medium text-[#717171] dark:text-[#A0A0A0]">
+            <span className="text-[#222222] dark:text-white font-bold opacity-80">© 2025 ORMA, Inc.</span>
+            <span className="hidden sm:inline opacity-20">|</span>
+            <Link href="/privacy" className="hover:text-[#FF385C] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#FF385C] transition-colors">Terms</Link>
+            <Link href="#" className="hover:text-[#FF385C] transition-colors">Sitemap</Link>
           </div>
-          <button className="flex items-center gap-2 text-[13px] font-semibold text-[#222222] dark:text-white hover:underline transition-colors" aria-label="Select language: English (IN)">
-            <Globe size={16} />
-            English (IN)
+          <button className="group flex items-center gap-2.5 text-[13px] font-bold text-[#222222] dark:text-white hover:text-[#FF385C] transition-all" aria-label="Select language: English (IN)">
+            <Globe size={18} className="group-hover:rotate-12 transition-transform" />
+            <span>English (IN)</span>
           </button>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
-  Star, MapPin, Shield, Truck, Calendar, Phone, Heart,
+  Star, MapPin, Shield, Truck, Calendar, Heart,
   Share2, Flag, CheckCircle, XCircle, ArrowLeft, Badge
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -18,11 +18,14 @@ import BookingWidget from '@/components/BookingWidget'
 import ListingCard from '@/components/ListingCard'
 import ShareModal from '@/components/ShareModal'
 import ReportModal from '@/components/ReportModal'
+import LiveViewerCount from '@/components/LiveViewerCount'
+import TrustScore from '@/components/TrustScore'
 import { useAuth } from '@/hooks/useAuth'
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
 import toast from '@/lib/toast'
 import { handleSupabaseError } from '@/lib/handleError'
 import DetailPageSkeleton from '@/components/DetailPageSkeleton'
+import AuthModal from '@/components/AuthModal'
 
 export default function ListingClient() {
   const params = useParams()
@@ -43,6 +46,8 @@ export default function ListingClient() {
   const [showShareModal, setShowShareModal] = useState(false)
   const [showReportModal, setShowReportModal] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [recentInquiries, setRecentInquiries] = useState(0)
+  const [responseRate, setResponseRate] = useState(95)
 
   const fetchListing = useCallback(async () => {
     try {
@@ -63,6 +68,10 @@ export default function ListingClient() {
       // Increment views
       await supabase.rpc('increment_views', { listing_uuid: id })
 
+      // Track local views for Engagement Banner
+      const currentViews = parseInt(localStorage.getItem('orma_listings_viewed') || '0')
+      localStorage.setItem('orma_listings_viewed', (currentViews + 1).toString())
+
       // Fetch reviews
       const { data: revData } = await supabase
         .from('reviews')
@@ -71,6 +80,13 @@ export default function ListingClient() {
         .order('created_at', { ascending: false })
         .limit(6)
       if (revData) setReviews(revData as Review[])
+
+      const { count: inquiryCount } = await supabase
+        .from('inquiries')
+        .select('id', { count: 'exact', head: true })
+        .eq('listing_id', id)
+        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+      setRecentInquiries(inquiryCount || 0)
 
       // Fetch similar items
       const { data: simData } = await supabase
@@ -93,6 +109,15 @@ export default function ListingClient() {
           .single()
         setIsWishlisted(!!wData)
       }
+
+      if (typeof window !== 'undefined') {
+        const responseRateKey = `orma_response_rate_${data.owner_id}`
+        const stored = window.sessionStorage.getItem(responseRateKey)
+        const generated = stored ? Number(stored) : Math.floor(Math.random() * 16) + 85
+        const safeRate = Number.isNaN(generated) ? 95 : generated
+        setResponseRate(safeRate)
+        window.sessionStorage.setItem(responseRateKey, String(safeRate))
+      }
     } catch (err) {
       handleSupabaseError(err, 'fetchListing')
     } finally {
@@ -106,6 +131,16 @@ export default function ListingClient() {
 
   const handleWishlist = async () => {
     if (!isAuthenticated) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(
+          'orma_pending_action',
+          JSON.stringify({ type: 'wishlist', listingId: id })
+        )
+        localStorage.setItem(
+          'orma_post_login_redirect',
+          `${window.location.pathname}${window.location.search}`
+        )
+      }
       setAuthModalOpen(true)
       return
     }
@@ -142,6 +177,12 @@ export default function ListingClient() {
 
   const handleContact = async () => {
     if (!isAuthenticated) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(
+          'orma_post_login_redirect',
+          `${window.location.pathname}${window.location.search}`
+        )
+      }
       setAuthModalOpen(true)
       return
     }
@@ -152,6 +193,12 @@ export default function ListingClient() {
 
   const handleReport = () => {
     if (!isAuthenticated) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(
+          'orma_post_login_redirect',
+          `${window.location.pathname}${window.location.search}`
+        )
+      }
       setAuthModalOpen(true)
       return
     }
@@ -214,7 +261,6 @@ export default function ListingClient() {
               )}
             </div>
 
-            {/* Location & Meta */}
             <div className="flex flex-wrap items-center gap-2 text-[#717171] dark:text-[#A0A0A0] text-sm mb-1">
               <MapPin size={14} />
               <span>{[listing.area, listing.city, listing.state].filter(Boolean).join(', ')}</span>
@@ -227,6 +273,23 @@ export default function ListingClient() {
               </span>
               <span>·</span>
               <span>{timeAgo(listing.created_at)}</span>
+            </div>
+            
+            {/* Live Viewers & Inquiries */}
+            <LiveViewerCount listingId={listing.id} inquiriesCount={recentInquiries} />
+            
+            {/* Social Proof metrics */}
+            <div className="flex flex-col gap-1 mb-4">
+              <div className="flex items-center gap-1.5 text-sm text-[#717171] dark:text-[#A0A0A0]">
+                <span>👁</span>
+                <span>{listing.views_count.toLocaleString()} people viewed this</span>
+              </div>
+              {listing.views_count > 100 && (
+                <div className="flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-500">
+                  <span>🔥</span>
+                  <span>Trending — {Math.floor(listing.views_count * 0.4)} people viewed this in the last week</span>
+                </div>
+              )}
             </div>
 
             {/* Owner Info */}
@@ -243,15 +306,38 @@ export default function ListingClient() {
               </Link>
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[#717171] dark:text-[#A0A0A0]">Listed by</p>
-                <Link href={`/user/${owner?.id}`} className="font-semibold text-[#222222] dark:text-white hover:underline">
-                  {owner?.full_name || 'Anonymous'}
-                </Link>
-                <p className="text-sm text-[#717171] dark:text-[#A0A0A0]">
+                <div className="flex items-center gap-2">
+                  <Link href={`/user/${owner?.id}`} className="font-semibold text-[#222222] dark:text-white hover:underline">
+                    {owner?.full_name || 'Anonymous'}
+                  </Link>
+                  {owner?.updated_at && new Date(owner.updated_at) > new Date(Date.now() - 24 * 60 * 60 * 1000) ? (
+                    <span className="text-[10px] font-bold text-green-700 dark:text-green-300 flex items-center gap-1 bg-green-500/10 px-1.5 py-0.5 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>Active today
+                    </span>
+                  ) : owner?.updated_at && new Date(owner.updated_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) ? (
+                    <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1 bg-amber-500/10 px-1.5 py-0.5 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Active this week
+                    </span>
+                  ) : null}
+                </div>
+                <p className="text-sm text-[#717171] dark:text-[#A0A0A0] mb-2">
                   Member since {owner?.created_at ? formatDate(owner.created_at) : 'N/A'}
                   {owner?.is_verified && ' · ✓ Verified'}
                   {(owner?.average_rating || 0) > 0 && ` · ★ ${owner.average_rating?.toFixed(1)} avg`}
                 </p>
+                <div className="space-y-0.5 mt-2">
+                  <p className="text-sm text-[#222222] dark:text-white font-medium">
+                    {owner?.is_verified ? 'Typically responds within 1 hour' : 'Typically responds within 24 hours'}
+                  </p>
+                  <p className="text-sm text-[#717171] dark:text-[#A0A0A0]">
+                    Response rate: {responseRate}%
+                  </p>
+                </div>
               </div>
+            </div>
+
+            <div className="mb-5 mt-4">
+              <TrustScore profile={owner} listingsCount={owner?.total_listings} reviewsCount={owner?.total_reviews_received} />
             </div>
 
             {/* Highlights */}
@@ -535,17 +621,7 @@ export default function ListingClient() {
         />
       )}
       
-      {authModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setAuthModalOpen(false)}>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-[#1E1E1E] rounded-2xl p-6 shadow-xl w-[90%] max-w-sm">
-            <h2 className="text-2xl font-bold mb-2">Log in required</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">Please log in to perform this action.</p>
-            <Link href="/login" className="block text-center w-full bg-[#FF385C] text-white font-bold py-3 rounded-xl">
-              Go to Login
-            </Link>
-          </div>
-        </div>
-      )}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   )
 }

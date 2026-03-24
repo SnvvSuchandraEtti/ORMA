@@ -11,6 +11,9 @@ export interface UseInfiniteListingsOptions {
   minPrice?: string | null
   maxPrice?: string | null
   sort?: string | null
+  verified?: boolean
+  delivery?: boolean
+  availableNow?: boolean
   pageSize?: number
 }
 
@@ -23,6 +26,9 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
     minPrice,
     maxPrice,
     sort,
+    verified,
+    delivery,
+    availableNow,
     pageSize = 20
   } = options
 
@@ -62,14 +68,17 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
         query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
       }
 
-      // City Filter
-      if (city) {
-        query = query.ilike('city', `%${city}%`)
-      }
+      // City is used for local-first ranking, not hard filtering
 
       // Condition Filter
       if (condition) {
         query = query.eq('condition', condition)
+      }
+      if (delivery) {
+        query = query.eq('delivery_available', true)
+      }
+      if (availableNow) {
+        query = query.eq('is_available', true)
       }
 
       // Price Filters
@@ -99,6 +108,8 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
         query = query.order('price_per_day', { ascending: false })
       } else if (sort === 'rating') {
         query = query.order('average_rating', { ascending: false })
+      } else if (sort === 'recommended') {
+        query = query.order('views_count', { ascending: false }).order('average_rating', { ascending: false })
       } else {
         query = query.order('created_at', { ascending: false })
       }
@@ -110,7 +121,17 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
 
       if (fetchErr) throw fetchErr
 
-      const fetchedListings = (data as ListingWithDetails[]) || []
+      let fetchedListings = (data as ListingWithDetails[]) || []
+
+      if (city) {
+        const cityLower = city.toLowerCase()
+        fetchedListings = fetchedListings.sort((a, b) => {
+          const aLocal = (a.city || '').toLowerCase().includes(cityLower)
+          const bLocal = (b.city || '').toLowerCase().includes(cityLower)
+          if (aLocal === bLocal) return 0
+          return aLocal ? -1 : 1
+        })
+      }
 
       setListings(prev => {
         if (isInitial) return fetchedListings
@@ -122,9 +143,10 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
       setHasMore(fetchedListings.length === pageSize)
       setPage(pageIndex)
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleSupabaseError(err, 'fetchListings')
-      setError(err.message || 'Failed to fetch listings')
+      const message = err instanceof Error ? err.message : 'Failed to fetch listings'
+      setError(message)
     } finally {
       if (isInitial) {
         setIsLoading(false)
@@ -132,7 +154,7 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
         setIsLoadingMore(false)
       }
     }
-  }, [category, city, condition, maxPrice, minPrice, pageSize, q, sort, supabase])
+  }, [availableNow, category, city, condition, delivery, maxPrice, minPrice, pageSize, q, sort, supabase, verified])
 
   // Reset & load Initial
   useEffect(() => {

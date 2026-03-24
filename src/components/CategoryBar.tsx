@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Car, Bike, Camera, Laptop, Smartphone, Armchair, Gamepad2, Wrench, Dumbbell, Music, BookOpen, Plane, Shirt, Package, WashingMachine, PartyPopper, type LucideIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Category } from '@/types'
@@ -81,13 +82,13 @@ export default function CategoryBar() {
   }
 
   return (
-    <div className="fixed left-0 right-0 z-30 bg-white dark:bg-[#121212] transition-colors duration-300" style={{ top: '64px' }}>
+    <div className="fixed left-0 right-0 z-30 backdrop-blur-xl bg-white/85 dark:bg-[#0a0a0a]/85 border-b border-black/5 dark:border-white/5 transition-all duration-300" style={{ top: '64px' }}>
       <nav aria-label="Categories" className="max-w-[1760px] mx-auto px-4 md:px-6 lg:px-10 relative">
         {/* Left Arrow */}
         {showLeftArrow && (
           <button
             onClick={scrollLeft}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white dark:bg-[#121212] border border-[#DDDDDD] dark:border-[#3D3D3D] text-[#222222] dark:text-white rounded-full shadow-[0_1px_4px_rgba(0,0,0,0.18)] flex items-center justify-center hover:shadow-md transition-shadow"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 dark:bg-[#1E1E1E]/90 border border-black/10 dark:border-white/10 text-[#222222] dark:text-white rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] flex items-center justify-center hover:shadow-[0_6px_16px_rgba(0,0,0,0.16)] transition-all transform hover:scale-105 backdrop-blur-md"
             aria-label="Scroll categories left"
           >
             <ChevronLeft size={16} />
@@ -120,20 +121,23 @@ export default function CategoryBar() {
               <button
                 key={cat.id}
                 onClick={() => handleCategoryClick(cat.slug)}
-                className={`flex flex-col items-center gap-1.5 min-w-[56px] pb-1 border-b-2 transition-all flex-shrink-0 ${
+                className={`flex flex-col items-center gap-1.5 min-w-[64px] pb-3 pt-2 transition-all flex-shrink-0 relative group ${
                   isActive
-                    ? 'border-[#222222] dark:border-white opacity-100'
-                    : 'border-transparent opacity-60 hover:opacity-100 hover:border-[#DDDDDD] dark:hover:border-[#3D3D3D]'
+                    ? 'opacity-100'
+                    : 'opacity-60 hover:opacity-100'
                 }`}
                 role="tab"
                 aria-selected={isActive}
                 aria-label={cat.name}
                 tabIndex={isActive ? 0 : -1}
               >
-                <IconComponent size={22} className={isActive ? 'text-[#222222] dark:text-white' : 'text-[#717171] dark:text-[#A0A0A0]'} />
-                <span className={`text-[11px] font-medium whitespace-nowrap ${isActive ? 'text-[#222222] dark:text-white' : 'text-[#717171] dark:text-[#A0A0A0]'}`}>
+                <IconComponent size={22} className={`transition-colors ${isActive ? 'text-[#222222] dark:text-white' : 'text-[#717171] dark:text-[#A0A0A0] group-hover:text-[#222222] dark:group-hover:text-white'}`} />
+                <span className={`text-[11px] font-medium whitespace-nowrap transition-colors ${isActive ? 'text-[#222222] dark:text-white' : 'text-[#717171] dark:text-[#A0A0A0] group-hover:text-[#222222] dark:group-hover:text-white'}`}>
                   {cat.name}
                 </span>
+                {isActive && (
+                  <motion.div layoutId="category-indicator" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#222222] dark:bg-white rounded-t-full" />
+                )}
               </button>
             )
           })}
@@ -143,7 +147,7 @@ export default function CategoryBar() {
         {showRightArrow && (
           <button
             onClick={scrollRight}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white dark:bg-[#121212] border border-[#DDDDDD] dark:border-[#3D3D3D] text-[#222222] dark:text-white rounded-full shadow-[0_1px_4px_rgba(0,0,0,0.18)] flex items-center justify-center hover:shadow-md transition-shadow"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 dark:bg-[#1E1E1E]/90 border border-black/10 dark:border-white/10 text-[#222222] dark:text-white rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] flex items-center justify-center hover:shadow-[0_6px_16px_rgba(0,0,0,0.16)] transition-all transform hover:scale-105 backdrop-blur-md"
             aria-label="Scroll categories right"
           >
             <ChevronRight size={16} />

@@ -42,7 +42,7 @@ export default function MessagesPage() {
   const activeConversation = conversations.find(c => c.id === activeId)
 
   return (
-    <div className="flex h-[calc(100vh-80px)] md:h-[calc(100vh-80px)] bg-white dark:bg-[#121212] overflow-hidden">
+    <div className="flex h-[calc(100vh-80px)] md:h-[calc(100vh-80px)] bg-[#F7F7F7] dark:bg-[#0A0A0A] overflow-hidden">
       
       {/* LEFT PANEL: Conversation List */}
       <div className={`w-full md:w-[350px] lg:w-[400px] h-full flex-shrink-0 ${activeId ? 'hidden md:flex' : 'flex'}`}>

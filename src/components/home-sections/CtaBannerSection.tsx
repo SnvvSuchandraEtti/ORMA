@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 
 export default function CtaBannerSection() {
   return (
@@ -7,34 +8,38 @@ export default function CtaBannerSection() {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      className="max-w-[2520px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 mb-20"
+      className="mb-32"
     >
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#FF385C] to-[#FF5A7E] px-8 py-16 md:py-20 lg:p-24 flex flex-col md:flex-row items-center justify-between gap-10">
+      <div className="relative rounded-[3rem] overflow-hidden bg-[#222222] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/[0.05] px-8 py-20 md:py-24 lg:p-28 flex flex-col md:flex-row items-center justify-between gap-12 shadow-2xl">
         
         {/* Aesthetic background patterns */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-black opacity-10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-[#FF385C]/20 to-[#E31C5F]/20 rounded-full blur-[100px] transform translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#FF385C]/10 rounded-full blur-[80px] transform -translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
-        <div className="relative z-10 max-w-lg">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-            Have items sitting idle? Start earning today!
+        <div className="relative z-10 max-w-xl text-center md:text-left">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white dark:text-white mb-6 leading-[1.1] tracking-tight">
+            Have items sitting idle? <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF385C] to-[#FF5A7E]">Start earning</span> today!
           </h2>
-          <p className="text-white/90 text-lg mb-8 max-w-md">
-            List your items for free and connect with renters in your city. Turn your unused gear into extra income.
+          <p className="text-gray-400 dark:text-gray-400 text-lg md:text-xl mb-10 max-w-md mx-auto md:mx-0 leading-relaxed">
+            List your items for free and connect with locals. Turn your unused gear into consistent extra income.
           </p>
           <Link 
             href="/list-your-item"
-            className="inline-block bg-white text-[#FF385C] px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-white text-black font-extrabold text-lg rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/5"
           >
-            List Your Item
+            Start Renting
+            <ArrowRight size={20} className="text-[#FF385C]" />
           </Link>
         </div>
 
         {/* Abstract visual on the right */}
-        <div className="hidden md:flex relative z-10 w-48 h-48 lg:w-64 lg:h-64 items-center justify-center">
-          <div className="w-full h-full border-4 border-white/20 rounded-3xl animate-[spin_10s_linear_infinite]" />
-          <div className="absolute w-[80%] h-[80%] bg-white/20 rounded-full backdrop-blur-sm shadow-xl" />
-          <div className="absolute text-white font-bold text-6xl shadow-sm">💰</div>
+        <div className="relative z-10 w-64 h-64 lg:w-80 lg:h-80 flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-tr from-[#FF385C]/20 to-transparent rounded-full blur-2xl animate-pulse" />
+          <div className="w-full h-full border border-white/10 rounded-[3rem] rotate-12 animate-[spin_20s_linear_infinite]" />
+          <div className="absolute w-[85%] h-[85%] border border-white/20 rounded-[2.5rem] -rotate-12 animate-[spin_15s_linear_reverse_infinite]" />
+          <div className="absolute w-24 h-24 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform">
+            <span className="text-5xl">💰</span>
+          </div>
         </div>
 
       </div>

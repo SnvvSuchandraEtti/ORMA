@@ -10,7 +10,8 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      const isNextIncluded = next.includes('?') ? '&' : '?'
+      return NextResponse.redirect(`${origin}${next}${isNextIncluded}logged_in=true`)
     }
   }
 

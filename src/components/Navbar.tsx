@@ -9,6 +9,7 @@ import { getInitials } from '@/lib/utils'
 import Image from 'next/image'
 import ExpandedSearchBar from '@/components/ExpandedSearchBar'
 import ThemeToggle from '@/components/ThemeToggle'
+import NotificationBell from '@/components/NotificationBell'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMessageStore } from '@/store/messageStore'
 
@@ -23,7 +24,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
   const searchRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const pathname = usePathname()
-  const { user, profile, isAuthenticated, signOut } = useAuth()
+  const { profile, isAuthenticated, signOut } = useAuth()
   const unreadCount = useMessageStore(state => state.unreadCount)
 
   // Close menu when clicking outside
@@ -38,6 +39,15 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  useEffect(() => {
+    const handler = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      setIsSearchExpanded(true)
+    }
+    window.addEventListener('orma:focus-search', handler)
+    return () => window.removeEventListener('orma:focus-search', handler)
   }, [])
 
   // Close menu on navigation
@@ -65,7 +75,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
         )}
       </AnimatePresence>
 
-      <nav aria-label="Main navigation" className={`fixed top-0 left-0 right-0 z-40 bg-white dark:bg-[#121212] border-b ${isSearchExpanded ? 'border-transparent pb-16 transition-all duration-300' : 'border-[#EBEBEB] dark:border-[#3D3D3D] transition-all duration-300'}`}>
+      <nav aria-label="Main navigation" className={`fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-white/85 dark:bg-[#0a0a0a]/85 border-b ${isSearchExpanded ? 'border-transparent pb-16 transition-all duration-300' : 'border-black/5 dark:border-white/5 transition-all duration-300'}`}>
         <div className="max-w-[1760px] mx-auto px-4 md:px-6 lg:px-10" ref={searchRef}>
           <div className="flex items-center justify-between h-16 md:h-20 gap-4 relative">
 
@@ -83,15 +93,15 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
             ) : (
               <button
                 onClick={() => setIsSearchExpanded(true)}
-                className="flex items-center border border-[#DDDDDD] dark:border-[#3D3D3D] dark:bg-[#1E1E1E] rounded-full shadow-sm hover:shadow-md transition-shadow py-1.5 pl-6 pr-2 gap-4 w-full max-w-[400px]"
+                className="flex items-center border border-black/10 dark:border-white/10 bg-white/60 dark:bg-[#1E1E1E]/60 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-all py-1.5 pl-6 pr-2 gap-4 w-full max-w-[400px]"
                 aria-label="Search rentals"
               >
                 <span className="text-sm font-semibold text-[#222222] dark:text-white">Anywhere</span>
-                <div className="h-6 border-l border-[#DDDDDD] dark:border-[#3D3D3D]" />
+                <div className="h-6 border-l border-black/10 dark:border-white/10" />
                 <span className="text-sm font-semibold text-[#222222] dark:text-white">Any week</span>
-                <div className="h-6 border-l border-[#DDDDDD] dark:border-[#3D3D3D]" />
+                <div className="h-6 border-l border-black/10 dark:border-white/10" />
                 <span className="text-sm text-[#717171] dark:text-[#A0A0A0] font-normal truncate">Add guests</span>
-                <div className="w-8 h-8 rounded-full bg-[#FF385C] flex items-center justify-center flex-shrink-0 ml-auto">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF385C] to-[#E31C5F] flex items-center justify-center flex-shrink-0 ml-auto shadow-md">
                   <Search size={14} className="text-white stroke-[3]" />
                 </div>
               </button>
@@ -101,6 +111,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
           <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
             {/* Theme Toggle */}
             <ThemeToggle />
+            <NotificationBell />
 
             {/* List Your Item — desktop only */}
             <Link
@@ -115,7 +126,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="flex relative items-center gap-3 border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-full pl-3 pr-1.5 py-1.5 shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-[#1E1E1E]"
+                className="flex relative items-center gap-3 border border-black/10 dark:border-white/10 rounded-full pl-3 pr-1.5 py-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-sm"
                 aria-label="User menu"
                 aria-expanded={isMenuOpen}
               >
@@ -150,7 +161,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
               {/* Dropdown */}
               {isMenuOpen && (
                 <div
-                  className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-[0_8px_28px_rgba(0,0,0,0.28)] border border-[#EBEBEB] dark:border-[#3D3D3D] py-2 z-50 animate-[slideDown_0.2s_ease-out]"
+                  className="absolute right-0 top-full mt-2 w-56 backdrop-blur-2xl bg-white/95 dark:bg-[#1E1E1E]/95 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/10 py-2 z-50 animate-[slideDown_0.2s_ease-out]"
                   role="menu"
                   aria-label="User menu"
                   onKeyDown={(e) => {
@@ -168,6 +179,18 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
                 >
                   {isAuthenticated ? (
                     <>
+                      <div className="px-4 py-3 border-b border-[#EBEBEB] dark:border-[#3D3D3D] mb-1">
+                        <p className="text-[13px] font-bold text-[#222222] dark:text-white">
+                          {(() => {
+                            const hour = new Date().getHours()
+                            const prefix = profile?.full_name?.split(' ')[0] || 'there'
+                            if (hour >= 5 && hour < 12) return `Good morning, ${prefix} ☀️`
+                            if (hour >= 12 && hour < 17) return `Good afternoon, ${prefix} 🌤️`
+                            if (hour >= 17 && hour < 21) return `Good evening, ${prefix} 🌅`
+                            return `Hi, ${prefix} 🌙`
+                          })()}
+                        </p>
+                      </div>
                       <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#2D2D2D] text-sm text-[#222222] dark:text-white" role="menuitem">
                         <TrendingUp size={16} className="text-[#717171] dark:text-[#A0A0A0]" />
                         Dashboard
@@ -252,7 +275,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
         <div className="md:hidden pb-4 pt-1">
           <button
             onClick={() => router.push('/search')}
-            className="w-full flex items-center border border-[#DDDDDD] dark:border-[#3D3D3D] dark:bg-[#1E1E1E] rounded-full shadow-md px-5 py-3 gap-4 bg-white"
+            className="w-full flex items-center border border-black/5 dark:border-white/5 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-md rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.08)] px-5 py-3 gap-4"
             aria-label="Search rentals"
           >
             <Search size={20} className="text-[#222222] dark:text-white" />
