@@ -20,7 +20,7 @@ function getTrustBarColor(score: number) {
   if (score <= 30) return 'bg-red-500'
   if (score <= 60) return 'bg-yellow-500'
   if (score <= 80) return 'bg-green-500'
-  return 'bg-[#FF385C]'
+  return 'bg-[#0071E3]'
 }
 
 export default function TrustScore({ profile, listingsCount, reviewsCount }: TrustScoreProps) {

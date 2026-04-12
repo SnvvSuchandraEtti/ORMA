@@ -512,7 +512,7 @@ export default function EditListingPage() {
           <button
             onClick={handleSave}
             disabled={isSaving || isDeleting || imageUrls.length === 0}
-            className="px-6 py-2.5 bg-[#FF385C] text-white font-semibold rounded-lg hover:bg-[#E31C5F] hover:shadow-md transition-all disabled:opacity-50 flex items-center gap-2"
+            className="px-6 py-2.5 bg-[#0071E3] text-white font-semibold rounded-lg hover:bg-[#0055B3] hover:shadow-md transition-all disabled:opacity-50 flex items-center gap-2"
           >
             {isSaving && <RefreshCw size={16} className="animate-spin" />}
             Save Changes

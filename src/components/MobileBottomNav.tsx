@@ -106,15 +106,15 @@ export default function MobileBottomNav({ openAuthModal }: { openAuthModal: () =
   return (
     <>
       <nav 
-        className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#121212] border-t border-[#EBEBEB] dark:border-[#3D3D3D] z-50 px-4 pt-2 shadow-[0_-4px_24px_rgba(0,0,0,0.04)]"
+        className="md:hidden fixed bottom-0 left-0 right-0 glass dark:glass-dark border-t border-black/[0.08] dark:border-[#38383A] z-50 px-4 pt-2"
         style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-between max-w-md mx-auto relative">
           {navItems.map((item) => {
             const Icon = item.icon
-            const activeColor = '#FF385C'
-            const inactiveColor = '#717171'
+            const activeColor = '#0071E3'
+            const inactiveColor = '#86868B'
 
             if (item.isCenter) {
               return (
@@ -124,10 +124,10 @@ export default function MobileBottomNav({ openAuthModal }: { openAuthModal: () =
                   className="flex flex-col items-center justify-center -mt-6 z-10"
                   aria-label={item.label}
                 >
-                  <div className="w-12 h-12 bg-[#FF385C] text-white rounded-full flex items-center justify-center shadow-lg transform transition-transform active:scale-95 border-2 border-white">
+                  <div className="w-12 h-12 bg-[#0071E3] text-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,113,227,0.3)] transform transition-transform active:scale-95 border-2 border-white">
                     <Icon size={24} className="stroke-[2.5]" />
                   </div>
-                  <span className="text-[10px] tracking-wide font-medium mt-1 text-[#717171] dark:text-[#A0A0A0]">
+                  <span className="text-[10px] tracking-wide font-medium mt-1 text-[#86868B] dark:text-[#98989D]">
                     {item.label}
                   </span>
                 </button>
@@ -151,16 +151,16 @@ export default function MobileBottomNav({ openAuthModal }: { openAuthModal: () =
                       fill: item.isActive && item.id !== 'menu' && !item.isProfile ? activeColor : 'none'
                     }}
                   />
-                  {/* Red Dot Badge */}
+                  {/* Blue Dot Badge */}
                   {item.badge && (
-                    <span className="absolute -top-1 -right-1 block w-2 h-2 bg-[#FF385C] border border-white rounded-full" />
+                    <span className="absolute -top-1 -right-1 block w-2 h-2 bg-[#0071E3] border border-white rounded-full" />
                   )}
                   {/* User Initial */}
                   {item.isProfile && isAuthenticated && user?.email && (
                     <div 
                       className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white uppercase rounded-full"
                       style={{ 
-                        backgroundColor: item.isActive ? activeColor : '#717171',
+                        backgroundColor: item.isActive ? activeColor : '#86868B',
                         border: '2px solid white' 
                       }}
                     >

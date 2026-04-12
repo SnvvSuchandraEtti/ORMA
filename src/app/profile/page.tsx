@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { User, MapPin, Phone, Edit3, List, Heart, Star, Calendar, TrendingUp } from 'lucide-react'
+import { User, MapPin, Phone, Edit3, List, Heart, Star, Calendar, TrendingUp, Shield } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { getInitials, formatDate } from '@/lib/utils'
 import ProtectedRoute from '@/components/ProtectedRoute'
@@ -127,6 +127,10 @@ function ProfileContent() {
               </Link>
               <Link href="/wishlist" className="flex items-center gap-2 text-sm text-[#222222] hover:underline justify-center">
                 <Heart size={16} />Wishlist
+              </Link>
+              <Link href="/verification" className="flex items-center gap-2 text-sm text-[#222222] dark:text-white hover:underline justify-center">
+                <Shield size={16} className="text-[#717171] dark:text-[#A0A0A0]" />
+                Verification
               </Link>
             </div>
           </div>

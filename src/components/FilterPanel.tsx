@@ -31,7 +31,7 @@ export default function FilterPanel({
   const currentMinPrice = searchParams.get('minPrice') || ''
   const currentMaxPrice = searchParams.get('maxPrice') || ''
   const currentCondition = searchParams.get('condition') || ''
-  const currentSort = searchParams.get('sort') || 'newest'
+  const currentSort = searchParams.get('sort') || 'recommended'
   const verifiedOnly = searchParams.get('verified') === 'true'
   const freeDeliveryOnly = searchParams.get('delivery') === 'true'
   const availableNowOnly = searchParams.get('availableNow') === 'true'
@@ -62,7 +62,7 @@ export default function FilterPanel({
         <h3 className="font-bold text-xl text-[#222222] dark:text-white tracking-tight">Filters</h3>
         <span className="text-xs font-semibold text-[#717171] dark:text-[#A0A0A0]">({activeFilterCount})</span>
         {hasFilters && (
-          <button onClick={clearAll} className="text-sm font-bold underline text-[#717171] hover:text-[#FF385C] transition-colors">
+          <button onClick={clearAll} className="text-sm font-bold underline text-[#717171] hover:text-[#0071E3] transition-colors">
             Clear all
           </button>
         )}
@@ -74,8 +74,10 @@ export default function FilterPanel({
         <select
           value={currentSort}
           onChange={e => updateFilter('sort', e.target.value)}
-          className="w-full px-4 py-3 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-2xl text-sm font-medium text-[#222222] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition-all shadow-sm"
+          className="w-full px-4 py-3 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-2xl text-sm font-medium text-[#222222] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3] transition-all shadow-sm"
         >
+          <option value="recommended">Recommended</option>
+          <option value="popular">Trending</option>
           <option value="newest">Newest first</option>
           <option value="price_asc">Price: Low to High</option>
           <option value="price_desc">Price: High to Low</option>
@@ -93,8 +95,8 @@ export default function FilterPanel({
               onClick={() => updateFilter('city', currentCity === city ? '' : city)}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold border transition-all duration-300 shadow-sm ${
                 currentCity === city
-                  ? 'bg-[#FF385C] text-white border-[#FF385C] shadow-[#FF385C]/20'
-                  : 'border-black/10 dark:border-white/10 text-[#717171] dark:text-[#A0A0A0] hover:border-[#FF385C] hover:text-[#FF385C]'
+                  ? 'bg-[#0071E3] text-white border-[#0071E3] shadow-[#0071E3]/20'
+                  : 'border-black/10 dark:border-white/10 text-[#717171] dark:text-[#A0A0A0] hover:border-[#0071E3] hover:text-[#0071E3]'
               }`}
             >
               <span>{city}</span>
@@ -119,7 +121,7 @@ export default function FilterPanel({
             {buckets.map((count, idx) => (
               <div
                 key={idx}
-                className="flex-1 rounded-sm bg-[#222222] dark:bg-[#FF385C]"
+                className="flex-1 rounded-sm bg-[#222222] dark:bg-[#0071E3]"
                 style={{ height: `${Math.max((count / maxBucket) * 100, 8)}%` }}
               />
             ))}
@@ -136,7 +138,7 @@ export default function FilterPanel({
             onChange={e => updateFilter('minPrice', e.target.value)}
             placeholder="Min"
             min={0}
-            className="flex-1 px-4 py-3 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-2xl text-sm font-medium text-[#222222] dark:text-white placeholder-[#B0B0B0] dark:placeholder-[#6B6B6B] focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition-all shadow-sm"
+            className="flex-1 px-4 py-3 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-2xl text-sm font-medium text-[#222222] dark:text-white placeholder-[#B0B0B0] dark:placeholder-[#6B6B6B] focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3] transition-all shadow-sm"
           />
           <span className="text-[#B0B0B0]">—</span>
           <input
@@ -145,7 +147,7 @@ export default function FilterPanel({
             onChange={e => updateFilter('maxPrice', e.target.value)}
             placeholder="Max"
             min={0}
-            className="flex-1 px-4 py-3 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-2xl text-sm font-medium text-[#222222] dark:text-white placeholder-[#B0B0B0] dark:placeholder-[#6B6B6B] focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] transition-all shadow-sm"
+            className="flex-1 px-4 py-3 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-2xl text-sm font-medium text-[#222222] dark:text-white placeholder-[#B0B0B0] dark:placeholder-[#6B6B6B] focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3] transition-all shadow-sm"
           />
         </div>
       </div>

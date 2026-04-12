@@ -14,6 +14,9 @@ export interface UseInfiniteListingsOptions {
   verified?: boolean
   delivery?: boolean
   availableNow?: boolean
+  startDate?: string | null
+  endDate?: string | null
+  guests?: string | null
   pageSize?: number
 }
 
@@ -29,6 +32,9 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
     verified,
     delivery,
     availableNow,
+    startDate,
+    endDate,
+    guests,
     pageSize = 20
   } = options
 
@@ -110,6 +116,10 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
         query = query.order('average_rating', { ascending: false })
       } else if (sort === 'recommended') {
         query = query.order('views_count', { ascending: false }).order('average_rating', { ascending: false })
+      } else if (sort === 'popular') {
+        query = query.order('views_count', { ascending: false }).order('created_at', { ascending: false })
+      } else if (sort === 'newest') {
+        query = query.order('created_at', { ascending: false })
       } else {
         query = query.order('created_at', { ascending: false })
       }
@@ -154,7 +164,7 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
         setIsLoadingMore(false)
       }
     }
-  }, [availableNow, category, city, condition, delivery, maxPrice, minPrice, pageSize, q, sort, supabase, verified])
+  }, [availableNow, category, city, condition, delivery, endDate, guests, maxPrice, minPrice, pageSize, q, sort, startDate, supabase])
 
   // Reset & load Initial
   useEffect(() => {

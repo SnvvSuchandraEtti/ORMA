@@ -95,12 +95,12 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="relative rounded-full p-2 text-[#222222] transition-colors hover:bg-gray-100 dark:text-white dark:hover:bg-[#2D2D2D]"
+        className="relative rounded-full p-2 text-[#1D1D1F] transition-colors hover:bg-[#F5F5F7] dark:text-white dark:hover:bg-[#2C2C2E]"
         aria-label="Notifications"
       >
         <Bell size={19} />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#FF385C] px-1 text-[10px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#0071E3] px-1 text-[10px] font-bold text-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -113,14 +113,14 @@ export default function NotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.18 }}
-            className="absolute right-0 top-[110%] z-50 w-[360px] rounded-2xl border border-black/10 bg-white p-3 shadow-2xl dark:border-white/10 dark:bg-[#1E1E1E]"
+            className="absolute right-0 top-[110%] z-50 w-[360px] rounded-2xl border border-[#E8E8ED] bg-white p-3 shadow-[0_16px_40px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.08)] dark:border-[#38383A] dark:bg-[#1C1C1E]"
           >
             <div className="mb-2 flex items-center justify-between px-1">
-              <h3 className="text-sm font-semibold text-[#222222] dark:text-white">Notifications</h3>
+              <h3 className="text-sm font-semibold text-[#1D1D1F] dark:text-white">Notifications</h3>
               <button
                 type="button"
                 onClick={markAllRead}
-                className="text-xs font-semibold text-[#717171] hover:text-[#222222] dark:text-[#A0A0A0] dark:hover:text-white"
+                className="text-xs font-medium text-[#0071E3] hover:underline"
               >
                 Mark all read
               </button>
@@ -128,7 +128,7 @@ export default function NotificationBell() {
 
             <div className="max-h-[360px] space-y-1 overflow-y-auto pr-1">
               {notifications.length === 0 ? (
-                <p className="px-2 py-6 text-center text-sm text-[#717171] dark:text-[#A0A0A0]">No notifications yet</p>
+                <p className="px-2 py-6 text-center text-sm text-[#86868B]">No notifications yet</p>
               ) : (
                 notifications.map((notification) => (
                   <Link
@@ -138,27 +138,26 @@ export default function NotificationBell() {
                       markSingleRead(notification.id)
                       setOpen(false)
                     }}
-                    className="block rounded-xl px-2 py-2.5 hover:bg-[#F7F7F7] dark:hover:bg-[#2D2D2D]"
+                    className={`block rounded-xl px-2 py-2.5 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] ${!notification.is_read ? 'border-l-[3px] border-[#0071E3]' : ''}`}
                   >
                     <div className="flex items-start gap-2">
                       <span className="text-base">{iconMap[notification.type] || '⚪'}</span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-[#222222] dark:text-white">{notification.title}</p>
-                        <p className="mt-0.5 text-xs text-[#717171] dark:text-[#A0A0A0]">{notification.message}</p>
-                        <p className="mt-1 text-[11px] text-[#9A9A9A]">{formatRelativeTime(notification.created_at)}</p>
+                        <p className="text-sm font-semibold text-[#1D1D1F] dark:text-white">{notification.title}</p>
+                        <p className="mt-0.5 text-xs text-[#6E6E73] dark:text-[#98989D]">{notification.message}</p>
+                        <p className="mt-1 text-[12px] text-[#86868B]">{formatRelativeTime(notification.created_at)}</p>
                       </div>
-                      {!notification.is_read && <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#3B82F6]" />}
                     </div>
                   </Link>
                 ))
               )}
             </div>
 
-            <div className="mt-2 border-t border-[#EBEBEB] pt-2 dark:border-[#3D3D3D]">
+            <div className="mt-2 border-t border-[#E8E8ED] pt-2 dark:border-[#38383A]">
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="block px-2 py-1.5 text-sm font-medium text-[#222222] hover:underline dark:text-white"
+                className="block px-2 py-1.5 text-sm font-medium text-[#0071E3] hover:underline"
               >
                 See all notifications →
               </Link>

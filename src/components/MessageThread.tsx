@@ -124,7 +124,7 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-base text-[#222222] dark:text-white tracking-tight">{otherProfile?.full_name || 'User'}</h3>
           {conversation.listing && (
-            <Link href={`/listing/${conversation.listing_id}`} className="text-xs font-semibold text-[#717171] dark:text-[#A0A0A0] flex items-center gap-1 hover:text-[#FF385C] transition-colors">
+            <Link href={`/listing/${conversation.listing_id}`} className="text-xs font-semibold text-[#717171] dark:text-[#A0A0A0] flex items-center gap-1 hover:text-[#0071E3] transition-colors">
               <span className="opacity-70">Renting:</span> {conversation.listing.title}
             </Link>
           )}
@@ -135,12 +135,12 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {isLoading ? (
           <div className="flex justify-center py-8">
-             <div className="w-8 h-8 rounded-full border-2 border-[#FF385C] border-t-white dark:border-t-[#121212] animate-spin" />
+             <div className="w-8 h-8 rounded-full border-2 border-[#0071E3] border-t-white dark:border-t-[#121212] animate-spin" />
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 bg-white dark:bg-[#1E1E1E] rounded-3xl flex items-center justify-center shadow-sm mb-4">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-[#FF385C]">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-[#0071E3]">
                 <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
@@ -165,7 +165,7 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
                   <div 
                     className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm leading-relaxed shadow-sm transition-all hover:shadow-md ${
                       isMe 
-                       ? 'bg-gradient-to-br from-[#FF385C] to-[#E31C5F] text-white rounded-tr-none' 
+                       ? 'bg-gradient-to-br from-[#0071E3] to-[#0055B3] text-white rounded-tr-none' 
                        : 'bg-white dark:bg-[#1E1E1E] text-[#222222] dark:text-white rounded-tl-none border border-[#EBEBEB] dark:border-[#3D3D3D]'
                     }`}
                   >
@@ -194,14 +194,14 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
               }
             }}
             placeholder="Type a message..."
-            className="w-full max-h-32 min-h-[52px] bg-white dark:bg-[#1A1A1A] border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-2xl py-4 pl-5 pr-14 focus:outline-none focus:ring-2 focus:ring-[#FF385C]/20 focus:border-[#FF385C] dark:focus:border-[#FF385C] transition-all resize-none shadow-sm"
+            className="w-full max-h-32 min-h-[52px] bg-white dark:bg-[#1A1A1A] border border-[#DDDDDD] dark:border-[#3D3D3D] rounded-2xl py-4 pl-5 pr-14 focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 focus:border-[#0071E3] dark:focus:border-[#0071E3] transition-all resize-none shadow-sm"
             rows={1}
             disabled={isSending || isLoading}
           />
           <button
             type="submit"
             disabled={!inputText.trim() || isSending || isLoading}
-            className="absolute right-3 bottom-2.5 p-2 rounded-xl text-white bg-gradient-to-br from-[#FF385C] to-[#E31C5F] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shrink-0 w-10 h-10 group"
+            className="absolute right-3 bottom-2.5 p-2 rounded-xl text-white bg-gradient-to-br from-[#0071E3] to-[#0055B3] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shrink-0 w-10 h-10 group"
           >
             {isSending ? (
                <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />

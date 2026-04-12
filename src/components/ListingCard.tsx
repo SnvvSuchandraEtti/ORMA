@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo, memo } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Heart, ChevronLeft, ChevronRight, Star } from 'lucide-react'
@@ -42,6 +43,11 @@ const ListingCard = memo(function ListingCard({
   const isDragging = useRef(false)
   const { isAuthenticated } = useAuth()
   const supabase = createClient()
+  const router = useRouter()
+
+  const goToListing = useCallback(() => {
+    router.push(`/listing/${listing.id}`)
+  }, [router, listing.id])
 
   const images = useMemo(
     () => (listing.images?.length ? listing.images : ['/placeholder.jpg']),
@@ -143,7 +149,7 @@ const ListingCard = memo(function ListingCard({
             .from('wishlists')
             .insert({ listing_id: listing.id, user_id: user.id })
           if (error) throw error
-          toast.success('Saved to wishlist ❤️')
+          toast.success('Saved to wishlist 💙')
         }
         onWishlistToggle?.(listing.id)
       } catch {
@@ -165,10 +171,21 @@ const ListingCard = memo(function ListingCard({
       aria-label={`${listing.title} - rental listing`}
       className="h-full"
     >
-      <Link href={`/listing/${listing.id}`} className="group block h-full cursor-pointer">
+      <div
+        role="link"
+        tabIndex={0}
+        onClick={goToListing}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            goToListing()
+          }
+        }}
+        className="group block h-full cursor-pointer"
+      >
         {/* Image Container */}
         <div
-          className="relative overflow-hidden rounded-[1.75rem] aspect-[20/19] bg-[#EBEBEB] dark:bg-[#1A1A1A] shadow-sm group-hover:shadow-xl transition-all duration-500"
+          className="relative overflow-hidden rounded-2xl aspect-[20/19] bg-[#F5F5F7] dark:bg-[#1C1C1E] transition-all duration-300 group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_0_1px_rgba(0,0,0,0.04)]"
           onMouseEnter={() => setShowArrows(true)}
           onMouseLeave={() => setShowArrows(false)}
           onTouchStart={handleTouchStart}
@@ -193,26 +210,24 @@ const ListingCard = memo(function ListingCard({
                   loading={idx === 0 ? undefined : 'lazy'}
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                   sizes="(max-width: 640px) 95vw, (max-width: 1024px) 50vw, (max-width: 1440px) 33vw, 25vw"
                 />
               </div>
             ))}
           </div>
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
           {/* Image counter badge */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-[10px] font-black text-white tabular-nums backdrop-blur-xl border border-white/20 shadow-lg tracking-widest">
+            <div className="absolute bottom-4 left-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-[10px] font-semibold text-white tabular-nums backdrop-blur-xl border border-white/20 shadow-lg tracking-wider">
               {currentImageIdx + 1} / {images.length}
             </div>
           )}
 
-          {/* Wishlist Heart */}
+          {/* Wishlist Heart — Coral when saved */}
           <button
             onClick={handleWishlist}
+            onPointerDown={(e) => e.stopPropagation()}
             disabled={wishlistLoading}
             className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 hover:scale-110 active:scale-95 transition-all shadow-lg"
             aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -231,22 +246,22 @@ const ListingCard = memo(function ListingCard({
           <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-none">
             {/* NEW Badge: Created within last 7 days */}
             {new Date(listing.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
-              <div className="rounded-full bg-[#FF385C] px-3 py-1.5 text-[10px] font-black text-white tracking-widest shadow-lg self-start">
+              <div className="rounded-full bg-[#0071E3] px-2.5 py-1 text-[10px] font-semibold text-white uppercase tracking-wider shadow-lg self-start">
                 NEW
               </div>
             )}
             {/* POPULAR Badge: Views > 500 */}
             {listing.views_count > 500 && (
-              <div className="rounded-full bg-amber-500 px-3 py-1.5 text-[10px] font-black text-white tracking-widest shadow-lg self-start">
+              <div className="rounded-full bg-[#FFD60A] px-2.5 py-1 text-[10px] font-semibold text-[#1D1D1F] uppercase tracking-wider shadow-lg self-start">
                 POPULAR 🔥
               </div>
             )}
           </div>
 
-          {/* Quick Response Badge (Replacing VERIFIED text) */}
+          {/* Quick Response Badge */}
           {listing.owner?.is_verified && (
-            <div className="absolute bottom-4 left-4 z-10 rounded-full bg-green-500/90 backdrop-blur-xl border border-white/20 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg pointer-events-none">
-              Quick Response
+            <div className="absolute bottom-4 left-4 z-10 rounded-full bg-white/90 backdrop-blur-xl border border-white/20 px-2.5 py-1 text-[10px] font-semibold text-[#1D1D1F] shadow-lg pointer-events-none">
+              ✓ Verified
             </div>
           )}
 
@@ -255,17 +270,17 @@ const ListingCard = memo(function ListingCard({
             <>
               <button
                 onClick={goPrev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/95 dark:bg-black/95 text-black dark:text-white rounded-full shadow-2xl border border-black/5 dark:border-white/10 flex items-center justify-center hover:scale-110 active:scale-90 transition-all opacity-0 group-hover:opacity-100"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white/95 dark:bg-black/95 text-[#1D1D1F] dark:text-white rounded-full shadow-lg border border-black/5 dark:border-white/10 flex items-center justify-center hover:scale-110 active:scale-90 transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
                 aria-label="Previous image"
               >
-                <ChevronLeft size={18} strokeWidth={3} />
+                <ChevronLeft size={16} strokeWidth={2.5} />
               </button>
               <button
                 onClick={goNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/95 dark:bg-black/95 text-black dark:text-white rounded-full shadow-2xl border border-black/5 dark:border-white/10 flex items-center justify-center hover:scale-110 active:scale-90 transition-all opacity-0 group-hover:opacity-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white/95 dark:bg-black/95 text-[#1D1D1F] dark:text-white rounded-full shadow-lg border border-black/5 dark:border-white/10 flex items-center justify-center hover:scale-110 active:scale-90 transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
                 aria-label="Next image"
               >
-                <ChevronRight size={18} strokeWidth={3} />
+                <ChevronRight size={16} strokeWidth={2.5} />
               </button>
             </>
           )}
@@ -278,10 +293,11 @@ const ListingCard = memo(function ListingCard({
                   key={idx}
                   onClick={(e) => {
                     e.preventDefault()
+                    e.stopPropagation()
                     setCurrentImageIdx(idx)
                   }}
                   className={`w-1.5 h-1.5 rounded-full transition-all duration-500 shadow-sm ${
-                    idx === currentImageIdx ? 'bg-white w-4' : 'bg-white/40 group-hover:bg-white/60'
+                    idx === currentImageIdx ? 'bg-white w-4' : 'bg-white/50 group-hover:bg-white/70'
                   }`}
                   aria-label={`Go to image ${idx + 1}`}
                 />
@@ -293,45 +309,55 @@ const ListingCard = memo(function ListingCard({
         {/* Card Text */}
         <div className="flex flex-col mt-4 px-1">
           <div className="flex justify-between items-start mb-1">
-            <h3 className="text-base font-black text-black dark:text-white tracking-tight leading-none truncate pr-4">
+            <h3 className="text-[15px] font-semibold text-[#1D1D1F] dark:text-white tracking-tight leading-none truncate pr-4">
               {listing.city || 'Anywhere'}
             </h3>
             {listing.average_rating > 0 && (
               <div className="flex items-center gap-1 flex-shrink-0">
-                <Star size={12} className="fill-black dark:fill-white text-black dark:text-white" />
-                <span className="text-sm font-black text-black dark:text-white tabular-nums">
+                <Star size={12} className="fill-[#FFD60A] text-[#FFD60A]" />
+                <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white tabular-nums">
                   {listing.average_rating.toFixed(1)}
                 </span>
               </div>
             )}
           </div>
-          <p className="text-sm font-bold text-[#717171] dark:text-gray-400 truncate leading-relaxed">
+          <p className="text-[15px] font-normal text-[#6E6E73] dark:text-gray-400 truncate leading-relaxed">
             {listing.title}
           </p>
-          <p className="mt-0.5 text-xs text-[#717171] dark:text-[#A0A0A0]">
-            by {listing.owner?.full_name || 'Owner'}
+          <p className="mt-0.5 text-[13px] text-[#86868B] dark:text-[#98989D]">
+            <span className="text-[#86868B] dark:text-[#98989D]">by </span>
+            {listing.owner?.id ? (
+              <Link
+                href={`/user/${listing.owner.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-semibold text-[#1D1D1F] dark:text-white hover:underline"
+              >
+                {listing.owner?.full_name || 'Owner'}
+              </Link>
+            ) : (
+              <span>{listing.owner?.full_name || 'Owner'}</span>
+            )}
           </p>
-          <p className="text-xs text-[#717171] dark:text-[#A0A0A0] mt-0.5">
+          <p className="text-[13px] text-[#86868B] dark:text-[#98989D] mt-0.5">
             Listed {formatDistanceToNow(new Date(listing.created_at), { addSuffix: true })}
           </p>
           {listing.owner?.updated_at && (
             <div className="mt-1">
               {new Date(listing.owner.updated_at) > new Date(Date.now() - 24 * 60 * 60 * 1000) ? (
-                <span className="text-[10px] font-bold text-green-600 dark:text-green-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>Active today
+                <span className="text-[10px] font-semibold text-[#28CD41] dark:text-[#28CD41] flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#28CD41] animate-pulse"></span>Active today
                 </span>
               ) : new Date(listing.owner.updated_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) ? (
-                <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Active this week
+                <span className="text-[10px] font-semibold text-[#FF9F0A] dark:text-[#FF9F0A] flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF9F0A]"></span>Active this week
                 </span>
               ) : null}
             </div>
           )}
           <div className="mt-2.5 flex items-baseline gap-1">
-            <span className="text-base font-black text-black dark:text-white tracking-tight">
+            <span className="text-[15px] font-semibold text-[#1D1D1F] dark:text-white tracking-tight">
               {getRentalPriceDisplay(listing)}
             </span>
-            <span className="text-xs font-bold text-[#717171] dark:text-gray-500 uppercase tracking-widest">/ day</span>
           </div>
         </div>
 
@@ -339,7 +365,7 @@ const ListingCard = memo(function ListingCard({
         <span className="sr-only">
           Listed by {listing.owner?.full_name || getInitials(listing.owner?.full_name)}
         </span>
-      </Link>
+      </div>
     </motion.article>
   )
 })

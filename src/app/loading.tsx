@@ -5,8 +5,8 @@ export default function Loading() {
         {/* ORMA logo spinner */}
         <div className="relative w-16 h-16">
           <div className="absolute inset-0 rounded-full border-[3px] border-[#EBEBEB] dark:border-[#3D3D3D]" />
-          <div className="absolute inset-0 rounded-full border-[3px] border-t-[#FF385C] animate-spin" />
-          <span className="absolute inset-0 flex items-center justify-center text-[#FF385C] font-bold text-xs tracking-wider">
+          <div className="absolute inset-0 rounded-full border-[3px] border-t-[#0071E3] animate-spin" />
+          <span className="absolute inset-0 flex items-center justify-center text-[#0071E3] font-bold text-xs tracking-wider">
             O
           </span>
         </div>

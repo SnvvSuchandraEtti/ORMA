@@ -50,7 +50,7 @@ export default function ConversationList({
               }`}
             >
               {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#FF385C] rounded-r-full" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#0071E3] rounded-r-full" />
               )}
               <div className="relative w-12 h-12 flex-shrink-0 rounded-full overflow-hidden bg-gray-200 dark:bg-[#3D3D3D]">
                 {otherProfile?.avatar_url ? (
@@ -68,7 +68,7 @@ export default function ConversationList({
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-baseline mb-1">
-                  <h4 className={`font-bold text-sm truncate pr-2 ${isActive ? 'text-[#FF385C]' : 'text-[#222222] dark:text-white'}`}>
+                  <h4 className={`font-bold text-sm truncate pr-2 ${isActive ? 'text-[#0071E3]' : 'text-[#222222] dark:text-white'}`}>
                     {otherProfile?.full_name || 'Anonymous User'}
                   </h4>
                   {conv.last_message_at && (
@@ -78,7 +78,7 @@ export default function ConversationList({
                   )}
                 </div>
                 {conv.listing && (
-                  <p className="text-xs font-medium text-[#FF385C] mb-1 truncate">
+                  <p className="text-xs font-medium text-[#0071E3] mb-1 truncate">
                     Re: {conv.listing.title}
                   </p>
                 )}

@@ -27,6 +27,9 @@ function SearchContent() {
   const verified = searchParams.get('verified') === 'true'
   const delivery = searchParams.get('delivery') === 'true'
   const availableNow = searchParams.get('availableNow') === 'true'
+  const startDate = searchParams.get('startDate') || ''
+  const endDate = searchParams.get('endDate') || ''
+  const guests = searchParams.get('guests') || ''
 
   const [showFilters, setShowFilters] = useState(false)
 
@@ -41,6 +44,9 @@ function SearchContent() {
     verified,
     delivery,
     availableNow,
+    startDate,
+    endDate,
+    guests,
   })
 
   const results = useMemo(
@@ -95,8 +101,11 @@ function SearchContent() {
     if (verified) chips.push({ key: 'verified', label: 'Verified owners' })
     if (delivery) chips.push({ key: 'delivery', label: 'Free delivery' })
     if (availableNow) chips.push({ key: 'availableNow', label: 'Available now' })
+    if (startDate) chips.push({ key: 'startDate', label: `From ${new Date(startDate).toLocaleDateString()}` })
+    if (endDate) chips.push({ key: 'endDate', label: `Until ${new Date(endDate).toLocaleDateString()}` })
+    if (guests) chips.push({ key: 'guests', label: `${guests} guests` })
     return chips
-  }, [availableNow, category, city, condition, delivery, maxPrice, minPrice, verified])
+  }, [availableNow, category, city, condition, delivery, endDate, guests, maxPrice, minPrice, startDate, verified])
 
   const didYouMean = useMemo(() => {
     if (!q || results.length > 0) return ''
@@ -114,7 +123,7 @@ function SearchContent() {
 
   const clearAllFilters = () => {
     const next = new URLSearchParams(searchParams.toString())
-    ;['category', 'city', 'minPrice', 'maxPrice', 'condition', 'verified', 'delivery', 'availableNow'].forEach((k) =>
+    ;['category', 'city', 'minPrice', 'maxPrice', 'condition', 'verified', 'delivery', 'availableNow', 'startDate', 'endDate', 'guests'].forEach((k) =>
       next.delete(k)
     )
     router.push(`/search?${next.toString()}`)

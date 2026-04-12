@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { X, Phone, MessageCircle, Mail, AlertCircle } from 'lucide-react'
+import { X, Phone, MessageCircle, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 import type { Profile } from '@/types'
 import { getInitials, getWhatsAppLink } from '@/lib/utils'
@@ -28,7 +28,6 @@ interface ContactModalProps {
 }
 
 export default function ContactModal({ isOpen, onClose, owner, listing }: ContactModalProps) {
-  const [copied, setCopied] = useState<string | null>(null)
   const [isStartingChat, setIsStartingChat] = useState(false)
   const router = useRouter()
   const { user } = useAuth()
@@ -42,13 +41,6 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [isOpen, onClose])
-
-  const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(type)
-      setTimeout(() => setCopied(null), 2000)
-    })
-  }
 
   return (
     <AnimatePresence>
@@ -65,7 +57,7 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+            className="absolute inset-0 bg-black/48 backdrop-blur-sm" 
             onClick={onClose} 
           />
 
@@ -75,47 +67,43 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 40 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative bg-white/80 dark:bg-black/40 backdrop-blur-2xl w-full sm:max-w-lg sm:rounded-[3rem] shadow-[0_32px_80px_rgba(0,0,0,0.3)] z-10 overflow-hidden border border-white/20 dark:border-white/5"
+            className="relative bg-white dark:bg-[#1C1C1E] w-full sm:max-w-lg rounded-[20px] shadow-[0_16px_40px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.08)] z-10 overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-8 py-6 border-b border-black/[0.05] dark:border-white/[0.05]">
-              <div className="w-10 h-10 flex items-center justify-center rounded-2xl bg-black/5 dark:bg-white/5 text-[#222222] dark:text-white/20">
-                <X size={18} className="opacity-0" />
-              </div>
-              <h2 id="contact-modal-title" className="text-xl font-black text-[#222222] dark:text-white tracking-tight">Contact Owner</h2>
+            <div className="flex items-center justify-between px-8 py-6 border-b border-[#E8E8ED] dark:border-[#38383A]">
+              <div className="w-7" />
+              <h2 id="contact-modal-title" className="text-xl font-bold text-[#1D1D1F] dark:text-white tracking-tight">Contact Owner</h2>
               <button 
                 onClick={onClose} 
-                className="w-10 h-10 flex items-center justify-center rounded-2xl bg-black/5 dark:bg-white/5 text-[#222222] dark:text-white hover:bg-[#FF385C] hover:text-white transition-all active:scale-90" 
+                className="w-7 h-7 flex items-center justify-center rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-white hover:bg-[#E8E8ED] dark:hover:bg-[#38383A] transition-all" 
                 aria-label="Close"
               >
-                <X size={18} strokeWidth={3} />
+                <X size={16} strokeWidth={2.5} />
               </button>
             </div>
 
-            <div className="px-8 py-10 space-y-8 max-h-[70vh] overflow-y-auto hide-scrollbar">
+            <div className="px-8 py-8 space-y-6 max-h-[70vh] overflow-y-auto hide-scrollbar">
               {/* Owner info */}
-              <div className="group relative flex items-center gap-5 bg-white/40 dark:bg-white/[0.03] p-6 rounded-[2.5rem] border border-black/[0.03] dark:border-white/[0.03] overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF385C]/5 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                
-                <div className="relative w-20 h-20 rounded-[2rem] bg-[#717171] flex items-center justify-center text-white text-2xl font-black overflow-hidden flex-shrink-0 border-4 border-white dark:border-white/10 shadow-xl">
+              <div className="flex items-center gap-5 bg-[#F5F5F7] dark:bg-[#2C2C2E] p-6 rounded-2xl">
+                <div className="relative w-16 h-16 rounded-2xl bg-[#86868B] flex items-center justify-center text-white text-xl font-bold overflow-hidden flex-shrink-0">
                   {owner.avatar_url ? (
-                    <Image src={owner.avatar_url} alt={`${owner.full_name || 'Owner'}'s profile`} width={80} height={80} className="object-cover w-full h-full" unoptimized />
+                    <Image src={owner.avatar_url} alt={`${owner.full_name || 'Owner'}'s profile`} width={64} height={64} className="object-cover w-full h-full" unoptimized />
                   ) : (
                     <span>{getInitials(owner.full_name)}</span>
                   )}
                 </div>
                 
-                <div className="relative">
-                  <p className="text-2xl font-black text-[#222222] dark:text-white tracking-tight leading-tight">
+                <div>
+                  <p className="text-xl font-bold text-[#1D1D1F] dark:text-white tracking-tight leading-tight">
                     {owner.full_name || 'Owner'}
                   </p>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <p className="text-xs text-emerald-600 dark:text-emerald-500 font-black uppercase tracking-widest">Available Now</p>
+                    <div className="w-2 h-2 bg-[#28CD41] rounded-full animate-pulse" />
+                    <p className="text-xs text-[#28CD41] font-semibold">Available Now</p>
                   </div>
                   {owner.is_verified && (
-                    <div className="flex items-center gap-1.5 mt-2 px-3 py-1 bg-blue-500/10 dark:bg-blue-500/20 rounded-full w-fit border border-blue-500/20">
-                      <span className="text-[10px] text-blue-600 dark:text-blue-400 font-black uppercase tracking-widest">Verified Pro</span>
+                    <div className="flex items-center gap-1.5 mt-2 px-3 py-1 bg-[#28CD41]/10 rounded-full w-fit">
+                      <span className="text-[10px] text-[#28CD41] font-semibold uppercase tracking-wider">Verified Pro</span>
                     </div>
                   )}
                 </div>
@@ -128,7 +116,7 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
                 <motion.div 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center justify-between p-5 rounded-[2rem] bg-gradient-to-r from-[#FF385C] to-[#E31C5F] text-white shadow-xl shadow-[#FF385C]/20 border border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                  className="flex items-center justify-between p-5 rounded-2xl bg-[#0071E3] text-white shadow-[0_4px_12px_rgba(0,113,227,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                   onClick={async () => {
                     if (!user) {
                       toast.error('Please login to send messages')
@@ -150,8 +138,8 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
                       .limit(1)
 
                     if (existing && existing.length > 0) {
-                      router.push('/messages')
                       onClose()
+                      setTimeout(() => router.push('/messages'), 100)
                     } else {
                       const { data: newConv, error: createErr } = await supabase
                         .from('conversations')
@@ -169,8 +157,8 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
                           sender_id: user.id,
                           message: `Hi, I'm interested in renting ${listing.title}.`
                         })
-                        router.push('/messages')
                         onClose()
+                        setTimeout(() => router.push('/messages'), 100)
                       } else {
                         toast.error('Failed to start conversation')
                         setIsStartingChat(false)
@@ -179,15 +167,15 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
                   }}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                      <MessageCircle size={24} strokeWidth={3} />
+                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md">
+                      <MessageCircle size={22} strokeWidth={2.5} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Secure Chat</p>
-                      <p className="text-lg font-black tracking-tight">Message on ORMA</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider opacity-80">Secure Chat</p>
+                      <p className="text-lg font-bold tracking-tight">Message on ORMA</p>
                     </div>
                   </div>
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">
                     {isStartingChat ? '...' : 'GO'}
                   </div>
                 </motion.div>
@@ -197,20 +185,20 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="flex items-center justify-between p-5 rounded-[2rem] bg-white/50 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] hover:bg-white dark:hover:bg-white/[0.06] transition-all"
+                    className="flex items-center justify-between p-5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E8E8ED] dark:border-[#38383A] hover:bg-white dark:hover:bg-[#38383A] transition-all"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-black/5 dark:bg-white/5 rounded-2xl flex items-center justify-center text-[#222222] dark:text-white">
-                        <Phone size={24} />
+                      <div className="w-12 h-12 bg-[#E8E8ED] dark:bg-[#38383A] rounded-xl flex items-center justify-center text-[#1D1D1F] dark:text-white">
+                        <Phone size={22} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-[#717171] uppercase tracking-widest">Phone Support</p>
-                        <p className="text-lg font-black text-[#222222] dark:text-white tracking-tight">+91 {listing.contact_phone}</p>
+                        <p className="text-[10px] font-semibold text-[#86868B] uppercase tracking-wider">Phone Support</p>
+                        <p className="text-lg font-bold text-[#1D1D1F] dark:text-white tracking-tight">+91 {listing.contact_phone}</p>
                       </div>
                     </div>
                     <a
                       href={`tel:+91${listing.contact_phone}`}
-                      className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black text-sm font-black rounded-xl hover:scale-105 transition-all shadow-lg"
+                      className="px-5 py-2.5 bg-[#1D1D1F] dark:bg-white text-white dark:text-[#1D1D1F] text-sm font-semibold rounded-full hover:scale-105 transition-all shadow-sm"
                     >
                       CALL
                     </a>
@@ -222,22 +210,22 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="flex items-center justify-between p-5 rounded-[2rem] bg-[#25D366]/5 border border-[#25D366]/20 hover:bg-[#25D366]/10 transition-all"
+                    className="flex items-center justify-between p-5 rounded-2xl bg-[#25D366]/5 border border-[#25D366]/20 hover:bg-[#25D366]/10 transition-all"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-[#25D366] text-white rounded-2xl flex items-center justify-center shadow-lg shadow-[#25D366]/20">
-                        <MessageCircle size={24} strokeWidth={3} />
+                      <div className="w-12 h-12 bg-[#25D366] text-white rounded-xl flex items-center justify-center shadow-sm">
+                        <MessageCircle size={22} strokeWidth={2.5} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-[#25D366] underline uppercase tracking-widest">WhatsApp Business</p>
-                        <p className="text-lg font-black text-[#222222] dark:text-white tracking-tight">+91 {listing.contact_whatsapp}</p>
+                        <p className="text-[10px] font-semibold text-[#25D366] uppercase tracking-wider">WhatsApp</p>
+                        <p className="text-lg font-bold text-[#1D1D1F] dark:text-white tracking-tight">+91 {listing.contact_whatsapp}</p>
                       </div>
                     </div>
                     <a
                       href={getWhatsAppLink(listing.contact_whatsapp, listing.title)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-6 py-3 bg-[#25D366] text-white text-sm font-black rounded-xl hover:scale-105 transition-all shadow-lg shadow-[#25D366]/20"
+                      className="px-5 py-2.5 bg-[#25D366] text-white text-sm font-semibold rounded-full hover:scale-105 transition-all shadow-sm"
                     >
                       OPEN
                     </a>
@@ -246,15 +234,14 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
               </div>
 
               {/* Safety Shield */}
-              <div className="relative group overflow-hidden bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-[2.5rem] p-6 text-center">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="flex flex-col items-center relative gap-3">
-                  <div className="w-12 h-12 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center border border-emerald-500/20">
-                    <AlertCircle size={20} />
+              <div className="bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-2xl p-6 text-center">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 bg-[#28CD41]/10 text-[#28CD41] rounded-full flex items-center justify-center">
+                    <AlertCircle size={18} />
                   </div>
                   <div>
-                    <p className="text-xs font-black text-[#222222] dark:text-white uppercase tracking-widest mb-1.5">ORMA Security Shield</p>
-                    <p className="text-xs text-[#717171] font-medium leading-relaxed max-w-[240px] mx-auto">
+                    <p className="text-xs font-semibold text-[#1D1D1F] dark:text-white uppercase tracking-wider mb-1.5">ORMA Security Shield</p>
+                    <p className="text-xs text-[#6E6E73] font-medium leading-relaxed max-w-[240px] mx-auto">
                       All interactions are monitored for your safety. Meet in public and verify gear before rental.
                     </p>
                   </div>

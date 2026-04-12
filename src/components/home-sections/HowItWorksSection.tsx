@@ -5,17 +5,17 @@ import { Search, MessageSquare, Heart, ArrowRight } from 'lucide-react'
 export default function HowItWorksSection() {
   const steps = [
     {
-      icon: <Search className="w-8 h-8 text-[#FF385C]" />,
+      icon: <Search className="w-8 h-8 text-[#0071E3]" />,
       title: 'Find',
       desc: 'Search for anything you need from locals nearby.'
     },
     {
-      icon: <MessageSquare className="w-8 h-8 text-[#E31C5F]" />,
+      icon: <MessageSquare className="w-8 h-8 text-[#0055B3]" />,
       title: 'Connect',
       desc: 'Contact the owner directly to agree on dates.'
     },
     {
-      icon: <Heart className="w-8 h-8 text-[#FF385C]" />,
+      icon: <Heart className="w-8 h-8 text-[#0071E3]" />,
       title: 'Rent',
       desc: 'Pick up the item safely and enjoy your rental!'
     }
@@ -24,8 +24,8 @@ export default function HowItWorksSection() {
   return (
     <section className="relative py-24 my-20 overflow-hidden">
       {/* Decorative gradients */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-[#FF385C]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 bg-[#E31C5F]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-[#0071E3]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 bg-[#0055B3]/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-[1200px] mx-auto px-6 lg:px-10 text-center relative z-10">
         <motion.div
@@ -67,7 +67,7 @@ export default function HowItWorksSection() {
             className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl font-bold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 transition-all shadow-sm hover:shadow-md active:scale-95"
           >
             Learn more about renting
-            <ArrowRight size={18} className="text-[#FF385C]" />
+            <ArrowRight size={18} className="text-[#0071E3]" />
           </Link>
         </motion.div>
       </div>

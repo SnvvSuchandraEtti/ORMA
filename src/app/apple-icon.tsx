@@ -14,7 +14,7 @@ export default function Image() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#FF385C',
+          backgroundColor: '#0071E3',
           color: 'white',
           fontSize: 120,
           fontWeight: 'bold',

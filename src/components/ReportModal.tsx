@@ -108,7 +108,7 @@ export default function ReportModal({ isOpen, onClose, listingId, reporterId }: 
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50 dark:border-white/10">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={20} className="text-[#E31C5F]" />
+                <AlertTriangle size={20} className="text-[#0055B3]" />
                 <h2 id="report-modal-title" className="text-xl font-bold text-gray-900 dark:text-white">Report Listing</h2>
               </div>
               <button

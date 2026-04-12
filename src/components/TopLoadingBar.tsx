@@ -32,7 +32,7 @@ export default function TopLoadingBar() {
           animate={{ x: '0%', opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.3 } }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="fixed top-0 left-0 right-0 h-[3px] bg-[#FF385C] z-[100] origin-left"
+          className="fixed top-0 left-0 right-0 h-[3px] bg-[#0071E3] z-[100] origin-left"
         >
           {/* Subtle glow effect at the leading edge */}
           <div className="absolute right-0 top-0 h-full w-[100px] bg-white opacity-40 blur-[2px]" />

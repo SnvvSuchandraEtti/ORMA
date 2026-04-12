@@ -1,15 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { motion, Variants } from 'framer-motion'
-import { Eye, MessageSquare, Star, TrendingUp, AlertCircle, Clock, CheckCircle, Package } from 'lucide-react'
+import { Eye, MessageSquare, Star, TrendingUp, Package } from 'lucide-react'
 import { formatDistanceToNow, subDays, format } from 'date-fns'
-import type { Listing, Inquiry } from '@/types'
+import type { Listing, MessageWithConversation } from '@/types'
 import { handleSupabaseError } from '@/lib/handleError'
 import { cn } from '@/lib/utils'
 import toast from '@/lib/toast'
@@ -34,7 +34,7 @@ export default function OwnerDashboard() {
   
   const [loading, setLoading] = useState(true)
   const [listings, setListings] = useState<Listing[]>([])
-  const [inquiries, setInquiries] = useState<any[]>([]) // using any for joined messages/inquiries
+  const [inquiries, setInquiries] = useState<MessageWithConversation[]>([])
   
   // Aggregate Metrics
   const [totalViews, setTotalViews] = useState(0)
@@ -44,18 +44,7 @@ export default function OwnerDashboard() {
   const [statusCounts, setStatusCounts] = useState({ active: 0, rented: 0, inactive: 0, other: 0 })
   const [chartData, setChartData] = useState<{ date: string, count: number }[]>([])
 
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/')
-      return
-    }
-
-    if (user) {
-      fetchDashboardData()
-    }
-  }, [user, isAuthenticated, authLoading])
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!user) return
     const supabase = createClient()
     setLoading(true)
@@ -142,12 +131,23 @@ export default function OwnerDashboard() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user, router])
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/')
+      return
+    }
+
+    if (user) {
+      fetchDashboardData()
+    }
+  }, [user, isAuthenticated, authLoading, fetchDashboardData])
 
   if (authLoading || loading) {
     return (
       <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-[#F7F7F7] dark:bg-[#121212]">
-        <div className="w-10 h-10 border-4 border-[#EBEBEB] dark:border-[#3D3D3D] border-t-[#FF385C] rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-[#EBEBEB] dark:border-[#3D3D3D] border-t-[#0071E3] rounded-full animate-spin"></div>
       </div>
     )
   }
@@ -263,7 +263,7 @@ export default function OwnerDashboard() {
               <h2 className="text-xl font-bold text-[#222222] dark:text-white tracking-tight">Performance Trend</h2>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-black dark:bg-[#FF385C]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-black dark:bg-[#0071E3]" />
                   <span className="text-xs font-medium text-[#717171] dark:text-[#A0A0A0]">Page Views</span>
                 </div>
               </div>
@@ -292,7 +292,7 @@ export default function OwnerDashboard() {
                         initial={{ height: 0 }}
                         animate={{ height: `${heightPercent}%` }}
                         transition={{ duration: 1, delay: 0.4 + (i * 0.1), ease: [0.23, 1, 0.32, 1] }}
-                        className="w-full max-w-[32px] bg-gradient-to-t from-gray-900 to-gray-700 dark:from-[#FF385C] dark:to-[#FF5A5F] rounded-t-lg shadow-lg opacity-85 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-x-110"
+                        className="w-full max-w-[32px] bg-gradient-to-t from-gray-900 to-gray-700 dark:from-[#0071E3] dark:to-[#FF5A5F] rounded-t-lg shadow-lg opacity-85 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-x-110"
                       />
                       <span className="text-[10px] font-medium text-[#717171] dark:text-[#A0A0A0] mt-4 mb-1">
                         {data.date.split(' ')[1]}
@@ -353,7 +353,7 @@ export default function OwnerDashboard() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {inquiries.map((inq: any) => (
+                  {inquiries.map((inq: MessageWithConversation) => (
                     <div key={inq.id} className="flex gap-3 items-start">
                       <div className="mt-0.5 bg-gray-100 dark:bg-[#2D2D2D] p-1.5 rounded-full flex-shrink-0">
                         <MessageSquare size={14} className="text-[#222222] dark:text-[#DDDDDD]" />
@@ -368,7 +368,7 @@ export default function OwnerDashboard() {
                       </div>
                     </div>
                   ))}
-                  <Link href="/messages" className="block text-center text-sm font-semibold text-[#FF385C] hover:underline pt-2">
+                  <Link href="/messages" className="block text-center text-sm font-semibold text-[#0071E3] hover:underline pt-2">
                     View all messages
                   </Link>
                 </div>
@@ -410,7 +410,7 @@ export default function OwnerDashboard() {
                     </td>
                   </tr>
                 ) : (
-                  topListings.map((listing, idx) => (
+                  topListings.map((listing) => (
                     <tr key={listing.id} className="group hover:bg-white dark:hover:bg-[#2D2D2D] transition-all">
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4 w-max sm:w-auto">
@@ -422,7 +422,7 @@ export default function OwnerDashboard() {
                             )}
                           </div>
                           <div>
-                            <Link href={`/listing/${listing.id}`} className="font-bold text-[#222222] dark:text-white hover:text-[#FF385C] dark:hover:text-[#FF385C] transition-colors line-clamp-1">
+                            <Link href={`/listing/${listing.id}`} className="font-bold text-[#222222] dark:text-white hover:text-[#0071E3] dark:hover:text-[#0071E3] transition-colors line-clamp-1">
                               {listing.title}
                             </Link>
                             <div className="flex items-center gap-2 mt-1">

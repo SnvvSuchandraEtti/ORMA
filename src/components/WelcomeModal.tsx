@@ -46,7 +46,7 @@ export default function WelcomeModal() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/48 backdrop-blur-sm"
             onClick={handleClose}
           />
           <motion.div
@@ -54,70 +54,67 @@ export default function WelcomeModal() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative bg-white dark:bg-[#1E1E1E] w-full sm:max-w-md rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl p-6 sm:p-8 z-10 overflow-hidden"
+            className="relative bg-white dark:bg-[#1C1C1E] w-full sm:max-w-md rounded-[20px] shadow-[0_16px_40px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.08)] p-6 sm:p-8 z-10 overflow-hidden"
           >
-            {/* Aesthetic highlight */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#FF385C]/10 to-transparent rounded-full blur-[60px] pointer-events-none" />
-
             <div className="text-center mb-8 relative z-10">
-              <div className="w-16 h-16 bg-[#FF385C]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">🏠</span>
               </div>
-              <h2 className="text-2xl font-black tracking-tight text-[#222222] dark:text-white mb-2">
+              <h2 className="text-2xl font-bold tracking-tight text-[#1D1D1F] dark:text-white mb-2">
                 Welcome to ORMA
               </h2>
-              <p className="text-[#717171] dark:text-[#A0A0A0] font-medium">
+              <p className="text-[#6E6E73] dark:text-[#98989D] font-normal text-[17px]">
                 Rent Anything. From Anyone. Anywhere.
               </p>
             </div>
 
             <div className="space-y-4 relative z-10 mb-8">
-              <p className="text-sm font-bold text-[#222222] dark:text-white text-center mb-4 uppercase tracking-wider">
+              <p className="text-sm font-semibold text-[#1D1D1F] dark:text-white text-center mb-4 uppercase tracking-wider">
                 What brings you here?
               </p>
               
               <button
                 onClick={handleRent}
-                className="w-full group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] hover:bg-white dark:hover:bg-[#2A2A2A] hover:border-[#FF385C]/30 hover:shadow-[0_8px_24px_rgba(255,56,92,0.12)] transition-all"
+                className="w-full group flex items-center gap-4 p-4 rounded-2xl border border-[#D2D2D7] dark:border-[#38383A] bg-white dark:bg-[#2C2C2E] hover:border-[#0071E3] hover:bg-[#F5F9FF] dark:hover:bg-[#38383A] transition-all"
               >
-                <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Search size={20} className="text-blue-500" />
+                <div className="w-12 h-12 rounded-full bg-[#0071E3]/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Search size={20} className="text-[#0071E3]" />
                 </div>
                 <div className="text-left">
-                  <span className="block font-bold text-[#222222] dark:text-white">I want to RENT something</span>
-                  <span className="text-xs text-[#717171] dark:text-gray-400">Browse categories and find items</span>
+                  <span className="block font-semibold text-[#1D1D1F] dark:text-white">I want to RENT something</span>
+                  <span className="text-xs text-[#6E6E73] dark:text-[#98989D]">Browse categories and find items</span>
                 </div>
               </button>
 
               <button
                 onClick={handleList}
-                className="w-full group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] hover:bg-white dark:hover:bg-[#2A2A2A] hover:border-[#E31C5F]/30 hover:shadow-[0_8px_24px_rgba(227,28,95,0.12)] transition-all"
+                className="w-full group flex items-center gap-4 p-4 rounded-2xl border border-[#D2D2D7] dark:border-[#38383A] bg-white dark:bg-[#2C2C2E] hover:border-[#0071E3] hover:bg-[#F5F9FF] dark:hover:bg-[#38383A] transition-all"
               >
-                <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-[#28CD41]/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <span className="text-xl">💰</span>
                 </div>
                 <div className="text-left">
-                  <span className="block font-bold text-[#222222] dark:text-white">I want to LIST items</span>
-                  <span className="text-xs text-[#717171] dark:text-gray-400">Earn money from idle items</span>
+                  <span className="block font-semibold text-[#1D1D1F] dark:text-white">I want to LIST items</span>
+                  <span className="text-xs text-[#6E6E73] dark:text-[#98989D]">Earn money from idle items</span>
                 </div>
               </button>
 
               <button
                 onClick={handleClose}
-                className="w-full group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] hover:bg-white dark:hover:bg-[#2A2A2A] hover:border-black/20 dark:hover:border-white/20 hover:shadow-lg transition-all"
+                className="w-full group flex items-center gap-4 p-4 rounded-2xl border border-[#D2D2D7] dark:border-[#38383A] bg-white dark:bg-[#2C2C2E] hover:border-[#6E6E73] hover:bg-[#F5F5F7] dark:hover:bg-[#38383A] transition-all"
               >
-                <div className="w-12 h-12 rounded-full bg-gray-500/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Eye size={20} className="text-gray-500" />
+                <div className="w-12 h-12 rounded-full bg-[#86868B]/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Eye size={20} className="text-[#86868B]" />
                 </div>
                 <div className="text-left">
-                  <span className="block font-bold text-[#222222] dark:text-white">Just browsing</span>
-                  <span className="text-xs text-[#717171] dark:text-gray-400">Explore without a specific goal</span>
+                  <span className="block font-semibold text-[#1D1D1F] dark:text-white">Just browsing</span>
+                  <span className="text-xs text-[#6E6E73] dark:text-[#98989D]">Explore without a specific goal</span>
                 </div>
               </button>
             </div>
 
-            <div className="border-t border-black/5 dark:border-white/5 pt-4 text-center">
-              <p className="text-[10px] text-[#717171] dark:text-gray-500 font-bold uppercase tracking-widest">
+            <div className="border-t border-[#E8E8ED] dark:border-[#38383A] pt-4 text-center">
+              <p className="text-[12px] text-[#86868B]">
                 By continuing, you agree to our Terms & Privacy Policy
               </p>
             </div>

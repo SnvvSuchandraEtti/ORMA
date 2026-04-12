@@ -81,6 +81,39 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* TEAM / CAREERS (footer anchor) */}
+      <section id="team" className="py-16 px-4 scroll-mt-28">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold text-[#222222] mb-4">Our team</h2>
+          <p className="text-lg text-[#717171] leading-relaxed mb-6">
+            We&apos;re a small, passionate group building ORMA for renters and owners across India. Interested in
+            joining us? We&apos;d love to hear from you at{' '}
+            <a href="mailto:careers@orma.in" className="text-[#222222] font-semibold underline hover:no-underline">
+              careers@orma.in
+            </a>
+            .
+          </p>
+        </div>
+      </section>
+
+      {/* BLOG PLACEHOLDER (footer anchor) */}
+      <section id="blog" className="py-12 px-4 bg-[#F7F7F7] scroll-mt-28">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl font-semibold text-[#222222] mb-3">Blog</h2>
+          <p className="text-[#717171]">
+            Tips, stories, and product updates are coming soon. For now, visit our{' '}
+            <Link href="/faq" className="text-[#222222] font-semibold underline hover:no-underline">
+              FAQ
+            </Link>{' '}
+            or{' '}
+            <Link href="/how-it-works" className="text-[#222222] font-semibold underline hover:no-underline">
+              How it works
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
       {/* STATS SECTION */}
       <section className="py-16 px-4 bg-[#000000] text-white">
         <div className="max-w-7xl mx-auto">

@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { PackageOpen, Plus, Heart } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
-import type { ListingWithDetails } from '@/types'
+import type { Listing } from '@/types'
 import ListingCard from '@/components/ListingCard'
 import EngagementBanner from '@/components/EngagementBanner'
 import FloatingMapButton from '@/components/FloatingMapButton'
@@ -124,7 +124,7 @@ function HomeContent() {
               {city && (
                 <button
                   onClick={() => setManualCity('')} // Temp clear to show dropdown
-                  className="text-sm font-bold text-[#FF385C] hover:underline"
+                  className="text-sm font-bold text-[#0071E3] hover:underline"
                 >
                   Change Location
                 </button>
@@ -132,7 +132,7 @@ function HomeContent() {
               {!city && !locationLoading && !permissionDenied && (
                 <button
                   onClick={requestLocation}
-                  className="text-sm font-bold text-[#FF385C] hover:underline"
+                  className="text-sm font-bold text-[#0071E3] hover:underline"
                 >
                   Use my location
                 </button>
@@ -143,7 +143,7 @@ function HomeContent() {
           {(permissionDenied || (!city && !locationLoading && !permissionDenied)) && (
             <div className="relative">
               <select
-                className="appearance-none bg-white dark:bg-[#1E1E1E] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2.5 pr-10 text-sm font-bold text-[#222222] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF385C]"
+                className="appearance-none bg-white dark:bg-[#1E1E1E] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2.5 pr-10 text-sm font-bold text-[#222222] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0071E3]"
                 onChange={(e) => {
                   if (e.target.value) setManualCity(e.target.value)
                 }}
@@ -171,7 +171,7 @@ function HomeContent() {
         /* Empty State */
         <div className="flex flex-col items-center justify-center py-32 text-center bg-gray-50/50 dark:bg-white/[0.02] rounded-3xl border border-black/[0.03] dark:border-white/[0.03] px-6">
           <div className="w-20 h-20 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl shadow-black/5 flex items-center justify-center mb-6 border border-black/[0.05] dark:border-white/[0.05]">
-            <PackageOpen size={40} className="text-[#FF385C]" />
+            <PackageOpen size={40} className="text-[#0071E3]" />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#222222] dark:text-white mb-3">
             {categorySlug ? 'Taking a short break' : 'No items found yet'}
@@ -183,7 +183,7 @@ function HomeContent() {
           </p>
           <Link
             href="/list-your-item"
-            className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#FF385C] to-[#E31C5F] text-white font-bold rounded-xl hover:shadow-[0_8px_24px_rgba(227,28,95,0.35)] transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[#FF385C]/20"
+            className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#0071E3] to-[#0055B3] text-white font-bold rounded-xl hover:shadow-[0_8px_24px_rgba(227,28,95,0.35)] transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[#0071E3]/20"
           >
             <Plus size={20} />
             List Your Item

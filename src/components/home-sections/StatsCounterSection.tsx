@@ -71,7 +71,7 @@ export default function StatsCounterSection() {
             transition={{ duration: 0.35 }}
             className="text-center"
           >
-            <p className="text-2xl font-bold text-[#FF385C] md:text-3xl">
+            <p className="text-2xl font-bold text-[#0071E3] md:text-3xl">
               {stat.display}
               {stat.suffix}
             </p>

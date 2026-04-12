@@ -2,41 +2,52 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================
-   ORMA — Tailwind v4 Theme (CSS-based config)
+   ORMA — Apple-Inspired Theme (CSS-based config)
    ============================================ */
 @theme {
-  /* ORMA Brand Colors */
-  --color-orma-primary: #FF385C;
-  --color-orma-primary-dark: #E31C5F;
-  --color-orma-primary-light: #FFF0F2;
-  --color-orma-secondary: #00A699;
-  --color-orma-dark: #222222;
-  --color-orma-gray: #717171;
-  --color-orma-light-gray: #B0B0B0;
-  --color-orma-super-light: #F7F7F7;
-  --color-orma-border: #DDDDDD;
-  --color-orma-border-light: #EBEBEB;
-  --color-orma-star: #222222;
-  --color-orma-success: #008A05;
-  --color-orma-warning: #C13515;
+  /* ORMA Brand Colors — Apple-inspired palette */
+  --color-orma-primary: #0071E3;
+  --color-orma-primary-dark: #0055B3;
+  --color-orma-primary-light: #E8F4FD;
+  --color-orma-primary-hover: #0077ED;
+  --color-orma-primary-pale: #F5F9FF;
+  --color-orma-secondary: #0071E3;
+  --color-orma-dark: #1D1D1F;
+  --color-orma-gray: #6E6E73;
+  --color-orma-light-gray: #86868B;
+  --color-orma-super-light: #F5F5F7;
+  --color-orma-border: #D2D2D7;
+  --color-orma-border-light: #E8E8ED;
+  --color-orma-star: #FFD60A;
+  --color-orma-success: #28CD41;
+  --color-orma-warning: #FF3B30;
+
+  /* Accent Colors */
+  --color-orma-purple: #BF5AF2;
+  --color-orma-orange: #FF9F0A;
 
   /* Font */
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Custom Shadows (Ambient) */
-  --shadow-card: 0 12px 32px -4px rgba(26,28,28,0.06);
-  --shadow-card-hover: 0 16px 40px -4px rgba(26,28,28,0.1);
-  --shadow-navbar: none;
-  --shadow-search: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-search-hover: 0 2px 4px rgba(0,0,0,0.18);
-  --shadow-modal: 0 8px 28px rgba(0,0,0,0.28);
-  --shadow-sticky: 0px 4px 12px rgba(0,0,0,0.05);
+  /* Custom Shadows — Apple-style subtle and soft */
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.04), 0 0 1px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 8px 24px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
+  --shadow-navbar: 0 0.5px 0 rgba(0,0,0,0.08);
+  --shadow-search: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-search-hover: 0 4px 20px rgba(0,0,0,0.12);
+  --shadow-modal: 0 16px 40px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.08);
+  --shadow-sticky: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-button: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-glass: 0 4px 30px rgba(0,0,0,0.06);
 
-  /* Border Radius */
-  --radius-card: 12px;
-  --radius-search: 32px;
-  --radius-button: 8px;
-  --radius-modal: 16px;
+  /* Border Radius — Apple-style rounded */
+  --radius-card: 16px;
+  --radius-search: 980px;
+  --radius-button: 980px;
+  --radius-modal: 20px;
+  --radius-image: 12px;
+  --radius-input: 12px;
+  --radius-badge: 980px;
 
   /* Animations */
   --animate-shimmer: shimmer 2s infinite linear;
@@ -73,18 +84,21 @@
 }
 
 /* ============================================
-   Base Styles
+   Base Styles — Apple-inspired
    ============================================ */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 160px;
 }
 
 body {
-  color: #222222;
+  color: #1D1D1F;
   background-color: #ffffff;
+  font-feature-settings: 'kern', 'liga', 'calt';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply dark:text-white dark:bg-[#121212] transition-colors duration-300;
+  text-rendering: optimizeLegibility;
+  @apply dark:text-white dark:bg-[#000000] transition-colors duration-300;
 }
 
 /* Remove default input styling */
@@ -99,9 +113,10 @@ button, a, input, textarea, select {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Apple-style selection color */
 ::selection {
-  background-color: rgba(255, 56, 92, 0.15);
-  color: #FF385C;
+  background: rgba(0, 113, 227, 0.2);
+  color: #1D1D1F;
 }
 
 /* Premium Scrollbar */
@@ -130,6 +145,39 @@ button, a, input, textarea, select {
 }
 
 /* ============================================
+   Apple-style Glassmorphism Utilities
+   ============================================ */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.glass-dark {
+  background: rgba(29, 29, 31, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Apple-style link */
+.apple-link {
+  color: #0071E3;
+  text-decoration: none;
+  cursor: pointer;
+}
+.apple-link:hover {
+  text-decoration: underline;
+}
+
+/* Apple-style divider */
+.apple-divider {
+  height: 1px;
+  background: #D2D2D7;
+  border: none;
+  margin: 0;
+}
+
+/* ============================================
    Custom Utility Classes
    ============================================ */
 
@@ -144,15 +192,15 @@ button, a, input, textarea, select {
 
 /* Shimmer loading effect */
 .shimmer {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #F5F5F7 25%, #E8E8ED 50%, #F5F5F7 75%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
 }
 
 /* Modal backdrop */
 .modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(8px);
 }
 
 /* Image aspect ratio for listing cards */
@@ -206,7 +254,7 @@ button, a, input, textarea, select {
   left: 16px;
   z-index: 9999;
   padding: 12px 24px;
-  background-color: #FF385C;
+  background-color: #0071E3;
   color: #ffffff;
   font-size: 14px;
   font-weight: 600;
@@ -229,4 +277,3 @@ button, a, input, textarea, select {
     scroll-behavior: auto !important;
   }
 }
-

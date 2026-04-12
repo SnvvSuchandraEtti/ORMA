@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Search, X, MapPin, Sparkles, History, Flame, Folder, List, Trash2 } from 'lucide-react'
+import { Search, X, MapPin, History, Flame, Folder, List, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const TRENDING = [

@@ -12,9 +12,10 @@ import { formatPrice } from '@/lib/utils'
 interface BookingWidgetProps {
   listing: ListingWithDetails
   onContact: () => void
+  onMessageOwner?: () => void
 }
 
-export default function BookingWidget({ listing, onContact }: BookingWidgetProps) {
+export default function BookingWidget({ listing, onContact, onMessageOwner }: BookingWidgetProps) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
   const [showCalendar, setShowCalendar] = useState(false)
 
@@ -47,42 +48,39 @@ export default function BookingWidget({ listing, onContact }: BookingWidgetProps
   }, [dateRange, listing.price_per_day, listing.security_deposit])
 
   return (
-    <div className="sticky top-[175px] rounded-[2.5rem] p-8 bg-white/80 dark:bg-black/40 backdrop-blur-2xl border border-black/[0.05] dark:border-white/[0.05] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden">
-      {/* Aesthetic Highlight */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF385C]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
-
+    <div className="sticky top-[175px] rounded-2xl p-8 bg-white dark:bg-[#1C1C1E] border border-[#E8E8ED] dark:border-[#38383A] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_0_1px_rgba(0,0,0,0.04)] overflow-hidden">
       {/* Price Header */}
       <div className="mb-8">
         <div className="flex items-baseline gap-1.5">
-          <span className="text-3xl font-black text-[#222222] dark:text-white-pure tracking-tight">
+          <span className="text-[28px] font-bold text-[#1D1D1F] dark:text-white tracking-tight">
             {formatPrice(listing.price_per_day)}
           </span>
-          <span className="text-sm font-bold text-[#717171] dark:text-gray-400 uppercase tracking-widest">/ day</span>
+          <span className="text-[17px] font-normal text-[#6E6E73] dark:text-[#98989D]">/ day</span>
         </div>
       </div>
 
       {/* Booking Date Selector Wrapper */}
-      <div className="border border-black/[0.1] dark:border-white/[0.1] rounded-[2rem] overflow-hidden mb-6 relative z-10 bg-white/40 dark:bg-black/20">
+      <div className="border border-[#D2D2D7] dark:border-[#38383A] rounded-xl overflow-hidden mb-6 relative z-10 bg-[#F5F5F7] dark:bg-[#2C2C2E]">
         <button
           onClick={() => setShowCalendar(!showCalendar)}
-          className="w-full flex items-center justify-between p-5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors text-left"
+          className="w-full flex items-center justify-between p-5 hover:bg-white/60 dark:hover:bg-[#38383A] transition-colors text-left"
         >
-          <div className="grid grid-cols-2 w-full divide-x divide-black/[0.05] dark:divide-white/[0.05]">
+          <div className="grid grid-cols-2 w-full divide-x divide-[#D2D2D7] dark:divide-[#38383A]">
             <div className="px-2">
-              <span className="block text-[10px] font-black text-[#222222] dark:text-gray-400 uppercase tracking-widest mb-1">RENT FROM</span>
-              <span className="text-sm font-bold text-black dark:text-white truncate">
+              <span className="block text-[10px] font-semibold text-[#86868B] uppercase tracking-wider mb-1">RENT FROM</span>
+              <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white truncate">
                 {dateRange?.from ? format(dateRange.from, 'MMM d, yyyy') : 'Select date'}
               </span>
             </div>
             <div className="px-5">
-              <span className="block text-[10px] font-black text-[#222222] dark:text-gray-400 uppercase tracking-widest mb-1">UNTIL</span>
-              <span className="text-sm font-bold text-black dark:text-white truncate">
+              <span className="block text-[10px] font-semibold text-[#86868B] uppercase tracking-wider mb-1">UNTIL</span>
+              <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white truncate">
                 {dateRange?.to ? format(dateRange.to, 'MMM d, yyyy') : 'Select date'}
               </span>
             </div>
           </div>
-          <div className="ml-2 text-[#717171] dark:text-gray-400">
-            {showCalendar ? <ChevronUp size={18} strokeWidth={3} /> : <ChevronDown size={18} strokeWidth={3} />}
+          <div className="ml-2 text-[#86868B]">
+            {showCalendar ? <ChevronUp size={18} strokeWidth={2.5} /> : <ChevronDown size={18} strokeWidth={2.5} />}
           </div>
         </button>
 
@@ -92,12 +90,12 @@ export default function BookingWidget({ listing, onContact }: BookingWidgetProps
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="p-4 border-t border-black/[0.05] dark:border-white/[0.05] bg-white/40 dark:bg-black/20 backdrop-blur-xl max-h-[420px] overflow-auto"
+              className="p-4 border-t border-[#D2D2D7] dark:border-[#38383A] bg-white dark:bg-[#2C2C2E] max-h-[420px] overflow-auto"
             >
               <style jsx global>{`
-                .rdp { --rdp-cell-size: 44px; --rdp-accent-color: #FF385C; --rdp-background-color: #F7F7F7; margin: 0; }
-                .rdp-day_selected, .rdp-day_selected:hover { background-color: #FF385C !important; color: white !important; font-weight: bold; }
-                .rdp-day:hover:not(.rdp-day_selected) { background-color: rgba(255, 56, 92, 0.1); color: #FF385C; }
+                .rdp { --rdp-cell-size: 44px; --rdp-accent-color: #0071E3; --rdp-background-color: #F5F5F7; margin: 0; }
+                .rdp-day_selected, .rdp-day_selected:hover { background-color: #0071E3 !important; color: white !important; font-weight: 600; }
+                .rdp-day:hover:not(.rdp-day_selected) { background-color: rgba(0, 113, 227, 0.1); color: #0071E3; }
                 .rdp-button { border-radius: 12px; }
               `}</style>
               <DayPicker
@@ -112,7 +110,7 @@ export default function BookingWidget({ listing, onContact }: BookingWidgetProps
               />
               <button
                 onClick={() => { setDateRange(undefined); setShowCalendar(false) }}
-                className="w-full py-3 mt-4 text-xs font-black uppercase tracking-widest text-[#FF385C] hover:underline"
+                className="w-full py-3 mt-4 text-xs font-semibold uppercase tracking-wider text-[#0071E3] hover:underline"
               >
                 Clear selection
               </button>
@@ -124,13 +122,23 @@ export default function BookingWidget({ listing, onContact }: BookingWidgetProps
       {/* CTA */}
       <button
         onClick={onContact}
-        className="w-full flex items-center justify-center gap-3 py-5 bg-gradient-to-br from-[#FF385C] to-[#E31C5F] text-white font-black rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all text-lg shadow-xl shadow-[#FF385C]/20"
+        className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#0071E3] hover:bg-[#0077ED] active:bg-[#0055B3] text-white font-semibold rounded-full transition-all text-[17px] shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
       >
         <Phone size={20} fill="currentColor" />
         {nights > 0 ? 'Reserve Now' : 'Contact Owner'}
       </button>
 
-      <p className="text-center text-[11px] font-bold text-[#717171] uppercase tracking-widest mt-6 opacity-60">
+      {onMessageOwner && (
+        <button
+          type="button"
+          onClick={onMessageOwner}
+          className="w-full mt-3 flex items-center justify-center gap-2 h-[44px] border border-[#D2D2D7] dark:border-[#38383A] text-[#1D1D1F] dark:text-white font-semibold rounded-full hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition-all text-sm"
+        >
+          Message Owner
+        </button>
+      )}
+
+      <p className="text-center text-[12px] text-[#86868B] mt-6">
         Secure rental experience
       </p>
 
@@ -140,26 +148,26 @@ export default function BookingWidget({ listing, onContact }: BookingWidgetProps
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-8 space-y-4 pt-8 border-t border-black/[0.05] dark:border-white/[0.05]"
+            className="mt-8 space-y-4 pt-8 border-t border-[#E8E8ED] dark:border-[#38383A]"
           >
-            <div className="flex justify-between items-center text-sm font-medium text-[#717171] dark:text-gray-400">
+            <div className="flex justify-between items-center text-sm font-normal text-[#6E6E73]">
               <span>{formatPrice(pricePerNight)} × {nights} {nights === 1 ? 'day' : 'days'}</span>
-              <span className="font-bold text-black dark:text-white">{formatPrice(totalRent)}</span>
+              <span className="font-semibold text-[#1D1D1F] dark:text-white">{formatPrice(totalRent)}</span>
             </div>
-            <div className="flex justify-between items-center text-sm font-medium text-[#717171] dark:text-gray-400">
+            <div className="flex justify-between items-center text-sm font-normal text-[#6E6E73]">
               <span>Cleaning fee</span>
-              <span className="font-bold text-black dark:text-white">{formatPrice(cleaningFee)}</span>
+              <span className="font-semibold text-[#1D1D1F] dark:text-white">{formatPrice(cleaningFee)}</span>
             </div>
-            <div className="flex justify-between items-center text-sm font-medium text-[#717171] dark:text-gray-400">
+            <div className="flex justify-between items-center text-sm font-normal text-[#6E6E73]">
               <span>Security deposit</span>
-              <span className="font-bold text-black dark:text-white">{formatPrice(listing.security_deposit || 0)}</span>
+              <span className="font-semibold text-[#1D1D1F] dark:text-white">{formatPrice(listing.security_deposit || 0)}</span>
             </div>
-            <div className="flex justify-between items-center text-sm font-medium text-[#717171] dark:text-gray-400">
+            <div className="flex justify-between items-center text-sm font-normal text-[#6E6E73]">
               <span>ORMA service fee</span>
-              <span className="font-bold text-black dark:text-white">{formatPrice(serviceFee)}</span>
+              <span className="font-semibold text-[#1D1D1F] dark:text-white">{formatPrice(serviceFee)}</span>
             </div>
             
-            <div className="flex justify-between items-center font-black text-black dark:text-white pt-4 text-xl tracking-tight border-t border-black/[0.05] dark:border-white/[0.05]">
+            <div className="flex justify-between items-center font-bold text-[#1D1D1F] dark:text-white pt-4 text-[21px] tracking-tight border-t border-[#E8E8ED] dark:border-[#38383A]">
               <span>Total</span>
               <span>{formatPrice(total)}</span>
             </div>

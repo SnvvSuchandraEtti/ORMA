@@ -57,7 +57,7 @@ export default function LiveViewerCount({ listingId, inquiriesCount }: LiveViewe
         <motion.span
           animate={{ scale: [1, 1.14, 1] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-          className="text-[#FF385C]"
+          className="text-[#0071E3]"
         >
           <Eye size={16} />
         </motion.span>

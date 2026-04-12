@@ -15,7 +15,7 @@ export default function Image() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #FF385C 0%, #D90B38 100%)',
+          background: 'linear-gradient(135deg, #0071E3 0%, #D90B38 100%)',
           color: 'white',
           fontFamily: 'sans-serif',
         }}
@@ -33,7 +33,7 @@ export default function Image() {
               marginRight: 24,
             }}
           >
-            <span style={{ color: '#FF385C', fontSize: '80px', fontWeight: 'bold' }}>O</span>
+            <span style={{ color: '#0071E3', fontSize: '80px', fontWeight: 'bold' }}>O</span>
           </div>
           <h1 style={{ fontSize: '100px', fontWeight: 'bold', margin: 0, letterSpacing: '-0.05em' }}>
             ORMA

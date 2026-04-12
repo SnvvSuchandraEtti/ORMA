@@ -60,7 +60,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-[100] md:hidden"
+            className="fixed inset-0 bg-black/48 z-[100] md:hidden"
           />
 
           {/* Drawer */}
@@ -75,7 +75,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
             onDragEnd={(_, info) => {
               if (info.offset.y > 100) onClose()
             }}
-            className="fixed bottom-0 left-0 right-0 z-[101] bg-white dark:bg-[#1E1E1E] rounded-t-3xl shadow-2xl flex flex-col md:hidden max-h-[90vh]"
+            className="fixed bottom-0 left-0 right-0 z-[101] bg-white dark:bg-[#1C1C1E] rounded-t-3xl shadow-[0_-8px_24px_rgba(0,0,0,0.08)] flex flex-col md:hidden max-h-[90vh]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="mobile-menu-title"
@@ -83,15 +83,15 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
           >
             {/* Drag Handle */}
             <div className="w-full flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
-              <div className="w-12 h-1.5 bg-[#DDDDDD] dark:bg-[#3D3D3D] rounded-full" />
+              <div className="w-12 h-1.5 bg-[#D2D2D7] dark:bg-[#38383A] rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="px-6 py-2 flex items-center justify-between border-b border-[#EBEBEB] dark:border-[#3D3D3D]">
-              <h2 id="mobile-menu-title" className="text-xl font-semibold text-[#222222] dark:text-white">Menu</h2>
+            <div className="px-6 py-2 flex items-center justify-between border-b border-[#E8E8ED] dark:border-[#38383A]">
+              <h2 id="mobile-menu-title" className="text-xl font-semibold text-[#1D1D1F] dark:text-white">Menu</h2>
               <div className="flex items-center gap-4">
                 <ThemeToggle />
-                <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#2D2D2D] text-[#222222] dark:text-white transition-colors" aria-label="Close menu">
+                <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-[#1D1D1F] dark:text-white transition-colors" aria-label="Close menu">
                   <X size={20} />
                 </button>
               </div>
@@ -107,14 +107,14 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
                       key={idx}
                       href={link.href}
                       onClick={onClose}
-                      className="flex items-center justify-between px-2 py-4 hover:bg-gray-50 dark:hover:bg-[#2D2D2D] rounded-xl transition-colors"
+                      className="flex items-center justify-between px-2 py-4 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] rounded-xl transition-colors"
                     >
-                      <div className="flex items-center gap-4 text-[#222222] dark:text-white">
-                        <Icon size={24} className="text-[#717171] dark:text-[#A0A0A0]" />
+                      <div className="flex items-center gap-4 text-[#1D1D1F] dark:text-white">
+                        <Icon size={24} className="text-[#86868B] dark:text-[#98989D]" />
                         <span className="text-base font-medium">{link.label}</span>
                       </div>
                       {link.badge ? (
-                        <span className="bg-[#FF385C] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+                        <span className="bg-[#0071E3] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
                           {link.badge}
                         </span>
                       ) : null}
@@ -124,12 +124,12 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
 
                 {isAuthenticated && (
                   <>
-                    <hr className="my-2 border-[#EBEBEB] dark:border-[#3D3D3D]" />
+                    <hr className="my-2 border-[#E8E8ED] dark:border-[#38383A]" />
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center gap-4 px-2 py-4 text-[#222222] dark:text-white hover:bg-gray-50 dark:hover:bg-[#2D2D2D] rounded-xl transition-colors text-left w-full"
+                      className="flex items-center gap-4 px-2 py-4 text-[#1D1D1F] dark:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] rounded-xl transition-colors text-left w-full"
                     >
-                      <LogOut size={24} className="text-[#717171] dark:text-[#A0A0A0]" />
+                      <LogOut size={24} className="text-[#86868B] dark:text-[#98989D]" />
                       <span className="text-base font-medium">Log out</span>
                     </button>
                   </>

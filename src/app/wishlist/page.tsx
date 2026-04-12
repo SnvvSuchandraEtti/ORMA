@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Heart, PackageOpen } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { ListingWithDetails } from '@/types'
@@ -9,7 +9,6 @@ import ListingCard from '@/components/ListingCard'
 import { SkeletonGrid } from '@/components/ListingCardSkeleton'
 import { useAuth } from '@/hooks/useAuth'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import toast from '@/lib/toast'
 import { handleSupabaseError } from '@/lib/handleError'
 import Link from 'next/link'
 
@@ -83,7 +82,7 @@ function WishlistContent() {
       ) : wishlisted.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 text-center bg-gray-50/50 dark:bg-white/[0.02] rounded-3xl border border-black/[0.03] dark:border-white/[0.03] px-6">
           <div className="w-20 h-20 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl shadow-black/5 flex items-center justify-center mb-6 border border-black/[0.05] dark:border-white/[0.05]">
-            <PackageOpen size={40} className="text-[#FF385C]" />
+            <PackageOpen size={40} className="text-[#0071E3]" />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#222222] dark:text-white mb-3 tracking-tight">Your wishlist is empty</h2>
           <p className="text-[#717171] dark:text-[#A0A0A0] mb-8 max-w-sm leading-relaxed">
@@ -91,7 +90,7 @@ function WishlistContent() {
           </p>
           <Link
             href="/"
-            className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#FF385C] to-[#E31C5F] text-white font-bold rounded-xl hover:shadow-[0_8px_24px_rgba(227,28,95,0.35)] transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[#FF385C]/20"
+            className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#0071E3] to-[#0055B3] text-white font-bold rounded-xl hover:shadow-[0_8px_24px_rgba(227,28,95,0.35)] transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[#0071E3]/20"
           >
             Explore Listings
           </Link>

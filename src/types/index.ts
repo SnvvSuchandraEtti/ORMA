@@ -209,7 +209,7 @@ export interface SearchFilters {
 // ----------------------------------------------------------------
 // SORT OPTIONS
 // ----------------------------------------------------------------
-export type SortOption = 'newest' | 'price_asc' | 'price_desc' | 'rating'
+export type SortOption = 'newest' | 'recommended' | 'popular' | 'price_asc' | 'price_desc' | 'rating'
 
 // ----------------------------------------------------------------
 // MESSAGING
@@ -239,6 +239,14 @@ export interface Message {
 
   // Relations
   sender?: Profile
+}
+
+export interface MessageWithConversation extends Omit<Message, 'sender'> {
+  sender?: { full_name: string }
+  conversation: {
+    listing_id: string
+    listings: { title: string }
+  }
 }
 
 // ----------------------------------------------------------------

@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null
   profile: Profile | null
   isLoading: boolean
+  isGoogleLoading: boolean
   isAuthenticated: boolean
   signInWithEmail: (email: string, password: string) => Promise<void>
   signUpWithEmail: (email: string, password: string, fullName: string) => Promise<void>
@@ -25,6 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   const supabase = createClient()
 
@@ -133,17 +135,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
-    const redirectPath =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('orma_post_login_redirect') || window.location.pathname
-        : '/'
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectPath)}`,
-      },
-    })
-    if (error) throw error
+    try {
+      setIsGoogleLoading(true)
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      })
+
+      if (error) {
+        throw error
+      }
+
+      // The redirect happens automatically
+      // User will be redirected to Google, then back to /auth/callback
+    } catch (err: any) {
+      console.error('Google sign-in error:', err)
+      toast.error(err.message || 'Failed to sign in with Google')
+    } finally {
+      setIsGoogleLoading(false)
+    }
   }
 
   const signOut = async () => {
@@ -175,6 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         profile,
         isLoading,
+        isGoogleLoading,
         isAuthenticated: !!user,
         signInWithEmail,
         signUpWithEmail,

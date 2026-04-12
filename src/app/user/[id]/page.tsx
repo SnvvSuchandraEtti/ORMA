@@ -64,7 +64,7 @@ export default function UserProfilePage() {
       {/* Owner Header */}
       <div className="relative mb-12">
         {/* Banner Gradient */}
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-[#FF385C]/10 via-[#E31C5F]/5 to-transparent rounded-3xl -z-10 dark:from-[#FF385C]/20 dark:via-[#E31C5F]/10 dark:to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-[#0071E3]/10 via-[#0055B3]/5 to-transparent rounded-3xl -z-10 dark:from-[#0071E3]/20 dark:via-[#0055B3]/10 dark:to-transparent" />
         
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6 pt-8 px-4 md:px-8">
           <div className="relative group">
@@ -96,7 +96,7 @@ export default function UserProfilePage() {
             <div className="flex flex-wrap items-center gap-2 mt-4 text-sm">
               {owner.city && (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#1E1E1E] rounded-full border border-black/[0.05] dark:border-white/[0.05] shadow-sm text-[#222222] dark:text-white">
-                  <MapPin size={14} className="text-[#FF385C]" />
+                  <MapPin size={14} className="text-[#0071E3]" />
                   <span className="font-medium">{owner.city}</span>
                 </div>
               )}
@@ -105,7 +105,7 @@ export default function UserProfilePage() {
                 <span>Joined {formatDate(owner.created_at)}</span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-[#1E1E1E] rounded-full border border-black/[0.05] dark:border-white/[0.05] shadow-sm text-[#222222] dark:text-white font-semibold">
-                <Package size={14} className="text-[#FF385C]" />
+                <Package size={14} className="text-[#0071E3]" />
                 <span>{owner.total_listings} Listings</span>
               </div>
               {owner.average_rating > 0 && (

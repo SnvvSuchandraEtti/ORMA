@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Navbar from './Navbar'
 import CategoryBar from './CategoryBar'
 import Footer from './Footer'
@@ -19,12 +20,20 @@ interface ClientLayoutProps {
 }
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
+  const pathname = usePathname()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
-  const openAuth = () => {
+  const [authInitialTab, setAuthInitialTab] = useState<'login' | 'signup'>('login')
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
+  const openAuth = (mode?: 'login' | 'signup') => {
     if (typeof window !== 'undefined') {
       const currentPath = `${window.location.pathname}${window.location.search}`
       localStorage.setItem('orma_post_login_redirect', currentPath)
     }
+    setAuthInitialTab(mode ?? 'login')
     setIsAuthOpen(true)
   }
 
@@ -50,10 +59,14 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       <Footer />
 
       {/* Auth Modal at layout level */}
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        initialTab={authInitialTab}
+      />
 
       {/* Mobile Bottom Layout */}
-      <MobileBottomNav openAuthModal={openAuth} />
+      <MobileBottomNav openAuthModal={() => openAuth('login')} />
 
       {/* First-time Welcome Modal */}
       <WelcomeModal />

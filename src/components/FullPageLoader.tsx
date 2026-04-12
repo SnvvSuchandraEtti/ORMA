@@ -16,12 +16,12 @@ export default function FullPageLoader() {
         }}
         className="flex flex-col items-center"
       >
-        <div className="text-[#FF385C] mb-4">
+        <div className="text-[#0071E3] mb-4">
           {/* Using the ORMA logo icon concept */}
           <PackageOpen size={64} strokeWidth={1.5} />
         </div>
         
-        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF385C] to-[#E31C5F] mb-2 tracking-tight">
+        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#0071E3] to-[#0055B3] mb-2 tracking-tight">
           ORMA
         </h1>
         <p className="text-[#717171] text-sm animate-pulse">Loading...</p>
