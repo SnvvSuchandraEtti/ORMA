@@ -84,42 +84,57 @@ export default function SearchBar() {
       return
     }
 
+    let isCancelled = false
+
     const timer = window.setTimeout(async () => {
-      setIsLoadingSuggestions(true)
-      const { data: listings } = await supabase
-        .from('listings')
-        .select('title')
-        .ilike('title', `%${trimmed}%`)
-        .eq('status', 'active')
-        .limit(5)
+      try {
+        setIsLoadingSuggestions(true)
+        
+        const matchedCategories = allCategories
+          .filter((cat) => cat.name.toLowerCase().includes(trimmed.toLowerCase()))
+          .slice(0, 3)
 
-      const uniqueTitles = Array.from(new Set((listings || []).map((item) => item.title))).slice(0, 5)
-      setListingSuggestions(uniqueTitles)
-
-      const matchedCategories = allCategories
-        .filter((cat) => cat.name.toLowerCase().includes(trimmed.toLowerCase()))
-        .slice(0, 3)
-
-      if (matchedCategories.length > 0) {
-        const counts = await Promise.all(
-          matchedCategories.map(async (cat) => {
-            const { count } = await supabase
+        const [listingsRes, ...categoryCountsRes] = await Promise.all([
+          supabase
+            .from('listings')
+            .select('title')
+            .ilike('title', `%${trimmed}%`)
+            .eq('status', 'active')
+            .limit(5),
+          ...matchedCategories.map(cat => 
+            supabase
               .from('listings')
               .select('id', { count: 'exact', head: true })
               .eq('category_id', cat.id)
               .eq('status', 'active')
-            return { slug: cat.slug, name: cat.name, count: count || 0 }
-          })
-        )
-        setCategorySuggestions(counts)
-      } else {
-        setCategorySuggestions([])
-      }
+              .then(({ count }) => ({ slug: cat.slug, name: cat.name, count: count || 0 }))
+          )
+        ])
 
-      setIsLoadingSuggestions(false)
+        if (isCancelled) {
+          setIsLoadingSuggestions(false)
+          return
+        }
+
+        const uniqueTitles = Array.from(new Set((listingsRes.data || []).map((item) => item.title))).slice(0, 5)
+        setListingSuggestions(uniqueTitles)
+
+        if (categoryCountsRes.length > 0) {
+          setCategorySuggestions(categoryCountsRes)
+        } else {
+          setCategorySuggestions([])
+        }
+      } catch (error) {
+        console.error('Error fetching suggestions:', error)
+      } finally {
+        setIsLoadingSuggestions(false)
+      }
     }, 300)
 
-    return () => window.clearTimeout(timer)
+    return () => {
+      isCancelled = true
+      window.clearTimeout(timer)
+    }
   }, [allCategories, query, supabase])
 
   const persistRecentSearch = (term: string) => {
@@ -210,8 +225,8 @@ export default function SearchBar() {
 
   return (
     <form ref={wrapperRef} onSubmit={handleSearch} className="relative w-full max-w-3xl mx-auto">
-      <div className={`flex items-center border-2 rounded-full transition-all ${
-        isFocused ? 'border-[#222222] shadow-[0_2px_4px_rgba(0,0,0,0.18)]' : 'border-[#DDDDDD] shadow-[0_1px_2px_rgba(0,0,0,0.08)]'
+      <div className={`flex items-center border rounded-full transition-all bg-[#F5F5F7]/80 dark:bg-[#2C2C2E]/80 backdrop-blur-md ${
+        isFocused ? 'border-[#222222] dark:border-white/50 shadow-[0_2px_12px_rgba(0,0,0,0.12)]' : 'border-[#D2D2D7] dark:border-[#38383A] shadow-sm hover:shadow-md'
       }`}>
         {/* What */}
         <div className="flex-1 flex items-center gap-2 px-4 py-3 min-w-0">
@@ -235,7 +250,7 @@ export default function SearchBar() {
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-[#DDDDDD] flex-shrink-0" />
+        <div className="w-px h-6 bg-[#D2D2D7] dark:bg-[#505055] flex-shrink-0" />
 
         {/* Where */}
         <div className="flex items-center gap-2 px-4 py-3">

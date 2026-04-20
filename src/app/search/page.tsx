@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { SlidersHorizontal, X, Search } from 'lucide-react'
 import { motion } from 'framer-motion'
-import SearchBar from '@/components/SearchBar'
 import FilterPanel from '@/components/FilterPanel'
 import ListingCard from '@/components/ListingCard'
 import FloatingMapButton from '@/components/FloatingMapButton'
@@ -131,13 +130,6 @@ function SearchContent() {
 
   return (
     <div className="max-w-[1760px] mx-auto px-4 md:px-6 lg:px-10 py-6">
-      {/* Top Search Bar */}
-      <div className="mb-6">
-        <Suspense fallback={null}>
-          <SearchBar />
-        </Suspense>
-      </div>
-
       {/* Results Header + Filter Toggle */}
       <div className="flex items-center justify-between mb-5">
         <div>

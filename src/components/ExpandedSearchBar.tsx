@@ -11,17 +11,17 @@ import { cn } from '@/lib/utils'
 
 export default function ExpandedSearchBar({ onClose }: { onClose: () => void }) {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'location' | 'checkin' | 'checkout' | 'guests'>('location')
-  const [location, setLocation] = useState('')
+  const [activeTab, setActiveTab] = useState<'what' | 'where' | 'start' | 'end'>('what')
+  const [query, setQuery] = useState('')
+  const [city, setCity] = useState('')
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
-  const [guests, setGuests] = useState(1)
 
   const handleSearch = () => {
     const params = new URLSearchParams()
-    if (location) params.set('q', location)
+    if (query) params.set('q', query)
+    if (city) params.set('city', city)
     if (dateRange?.from) params.set('startDate', dateRange.from.toISOString())
     if (dateRange?.to) params.set('endDate', dateRange.to.toISOString())
-    if (guests > 1) params.set('guests', guests.toString())
     onClose()
     router.push(`/search?${params.toString()}`)
   }
@@ -34,34 +34,58 @@ export default function ExpandedSearchBar({ onClose }: { onClose: () => void }) 
       transition={{ duration: 0.2 }}
       className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[850px] bg-white dark:bg-[#1C1C1E] rounded-full shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] flex items-center h-16 mt-2 z-50 border border-[#D2D2D7] dark:border-[#38383A]"
     >
-      {/* Location */}
+      {/* WHAT */}
       <div 
-        onClick={() => setActiveTab('location')}
+        onClick={() => setActiveTab('what')}
         className={cn(
-          "flex-1 flex flex-col justify-center px-8 h-full rounded-full cursor-pointer hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition-all duration-200 relative",
-          activeTab === 'location' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
+          "flex-[1.2] flex flex-col justify-center px-8 h-full rounded-full cursor-pointer hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition-all duration-200 relative",
+          activeTab === 'what' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
+        )}
+      >
+        <span className="text-[10px] font-semibold text-[#86868B] tracking-wider">WHAT</span>
+        <input 
+          type="text" 
+          placeholder="Search gear, tools, vehicles..." 
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="bg-transparent border-none p-0 focus:ring-0 text-sm font-semibold text-[#1D1D1F] dark:text-white placeholder-[#86868B] truncate w-full"
+        />
+      </div>
+
+      <div className="w-[1px] h-8 bg-[#D2D2D7] dark:bg-[#38383A]" />
+
+      {/* WHERE */}
+      <div 
+        onClick={() => setActiveTab('where')}
+        className={cn(
+          "flex-1 flex flex-col justify-center px-6 h-full rounded-full cursor-pointer hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition-all duration-200 relative",
+          activeTab === 'where' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
         )}
       >
         <span className="text-[10px] font-semibold text-[#86868B] tracking-wider">WHERE</span>
         <input 
           type="text" 
-          placeholder="Search destinations" 
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Any location" 
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
           className="bg-transparent border-none p-0 focus:ring-0 text-sm font-semibold text-[#1D1D1F] dark:text-white placeholder-[#86868B] truncate w-full"
         />
-        {activeTab === 'location' && (
-          <div className="absolute top-20 left-0 w-[400px] bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] p-6 z-50 border border-[#E8E8ED] dark:border-[#38383A]">
+        {activeTab === 'where' && (
+          <div className="absolute top-20 left-0 w-[350px] bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] p-6 z-50 border border-[#E8E8ED] dark:border-[#38383A]">
             <h3 className="text-xs font-semibold mb-4 text-[#86868B] uppercase tracking-wider">Popular locations</h3>
             <div className="grid grid-cols-2 gap-4">
-              {['Goa', 'Mumbai', 'Bangalore', 'Delhi'].map(city => (
+              {['Goa', 'Mumbai', 'Bangalore', 'Delhi'].map(popularCity => (
                 <button
-                  key={city}
-                  onClick={() => { setLocation(city); setActiveTab('checkin') }}
+                  key={popularCity}
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setCity(popularCity); 
+                    setActiveTab('start'); 
+                  }}
                   className="flex items-center gap-3 p-3 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] rounded-xl text-left transition-colors"
                 >
                   <MapPin size={20} className="text-[#86868B]" />
-                  <span className="text-sm font-medium text-[#1D1D1F] dark:text-white">{city}</span>
+                  <span className="text-sm font-medium text-[#1D1D1F] dark:text-white">{popularCity}</span>
                 </button>
               ))}
             </div>
@@ -71,21 +95,21 @@ export default function ExpandedSearchBar({ onClose }: { onClose: () => void }) 
 
       <div className="w-[1px] h-8 bg-[#D2D2D7] dark:bg-[#38383A]" />
 
-      {/* Check in */}
+      {/* Check in / Start Date */}
       <div
-        onClick={() => setActiveTab('checkin')}
+        onClick={() => setActiveTab('start')}
         className={cn(
           "flex-1 flex flex-col justify-center px-6 h-full rounded-full cursor-pointer hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition-all duration-200 relative",
-          activeTab === 'checkin' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
+          activeTab === 'start' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
         )}
       >
-        <span className="text-[10px] font-semibold text-[#86868B] tracking-wider">CHECK IN</span>
+        <span className="text-[10px] font-semibold text-[#86868B] tracking-wider">START</span>
         <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white truncate">
           {dateRange?.from ? format(dateRange.from, 'MMM d') : 'Add dates'}
         </span>
         
         {/* Calendar Dropdown */}
-        {(activeTab === 'checkin' || activeTab === 'checkout') && (
+        {(activeTab === 'start' || activeTab === 'end') && (
           <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] p-6 z-50 border border-[#E8E8ED] dark:border-[#38383A]">
             <style jsx global>{`
               .rdp { --rdp-cell-size: 48px; --rdp-accent-color: #0071E3; }
@@ -98,8 +122,7 @@ export default function ExpandedSearchBar({ onClose }: { onClose: () => void }) 
               selected={dateRange}
               onSelect={(range) => {
                 setDateRange(range)
-                if (range?.from && range?.to) setActiveTab('guests')
-                else if (range?.from) setActiveTab('checkout')
+                if (range?.from && !range?.to) setActiveTab('end')
               }}
               disabled={{ before: new Date() }}
               numberOfMonths={2}
@@ -110,34 +133,18 @@ export default function ExpandedSearchBar({ onClose }: { onClose: () => void }) 
 
       <div className="w-[1px] h-8 bg-[#D2D2D7] dark:bg-[#38383A]" />
 
-      {/* Check out */}
+      {/* Check out / End Date */}
       <div
-        onClick={() => setActiveTab('checkout')}
-        className={cn(
-          "flex-1 flex flex-col justify-center px-6 h-full rounded-full cursor-pointer hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition-all duration-200 relative",
-          activeTab === 'checkout' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
-        )}
-      >
-        <span className="text-[10px] font-semibold text-[#86868B] tracking-wider">CHECK OUT</span>
-        <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white truncate">
-          {dateRange?.to ? format(dateRange.to, 'MMM d') : 'Add dates'}
-        </span>
-      </div>
-
-      <div className="w-[1px] h-8 bg-[#D2D2D7] dark:bg-[#38383A]" />
-
-      {/* Guests */}
-      <div
-        onClick={() => setActiveTab('guests')}
+        onClick={() => setActiveTab('end')}
         className={cn(
           "flex-[1.2] flex items-center justify-between pl-6 pr-2 h-full rounded-full cursor-pointer hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition-all duration-200 relative",
-          activeTab === 'guests' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
+          activeTab === 'end' && "bg-white dark:bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:bg-white dark:hover:bg-[#2C2C2E]"
         )}
       >
         <div className="flex flex-col justify-center truncate">
-          <span className="text-[10px] font-semibold text-[#86868B] tracking-wider">WHO</span>
+          <span className="text-[10px] font-semibold text-[#86868B] tracking-wider">END</span>
           <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white truncate">
-            {guests} {guests === 1 ? 'guest' : 'guests'}
+            {dateRange?.to ? format(dateRange.to, 'MMM d') : 'Add dates'}
           </span>
         </div>
         
@@ -148,33 +155,8 @@ export default function ExpandedSearchBar({ onClose }: { onClose: () => void }) 
           <Search size={16} className="stroke-[2.5]" />
           <span>Search</span>
         </button>
-
-        {activeTab === 'guests' && (
-          <div className="absolute top-20 right-0 w-[350px] bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.12),0_0_1px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] p-6 z-50 border border-[#E8E8ED] dark:border-[#38383A]">
-            <div className="flex items-center justify-between pb-4">
-              <div>
-                <h3 className="font-semibold text-[#1D1D1F] dark:text-white">Adults & Children</h3>
-                <p className="text-xs font-normal text-[#86868B]">Ages 2 or above</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setGuests(Math.max(1, guests - 1)) }}
-                  className="w-8 h-8 rounded-full border border-[#D2D2D7] dark:border-[#38383A] flex items-center justify-center text-[#86868B] hover:border-[#0071E3] hover:text-[#0071E3] transition-colors"
-                >
-                  -
-                </button>
-                <span className="w-4 text-center font-semibold text-[#1D1D1F] dark:text-white">{guests}</span>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setGuests(guests + 1) }}
-                  className="w-8 h-8 rounded-full border border-[#D2D2D7] dark:border-[#38383A] flex items-center justify-center text-[#86868B] hover:border-[#0071E3] hover:text-[#0071E3] transition-colors"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </motion.div>
   )
 }
+

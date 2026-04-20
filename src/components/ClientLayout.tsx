@@ -41,6 +41,13 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     <>
       <SkipToContent />
       <OfflineBanner />
+      
+      {/* Decorative Subtle Ambient Glow *only* behind Navbar */}
+      <div className="absolute top-0 left-0 right-0 h-[60px] overflow-hidden -z-10 pointer-events-none opacity-40 dark:opacity-20">
+        <div className="absolute top-[-20px] left-[20%] w-[30%] h-[100px] bg-purple-200/50 dark:bg-purple-900/30 rounded-full blur-[40px]" />
+        <div className="absolute top-[-20px] right-[20%] w-[30%] h-[100px] bg-blue-100/50 dark:bg-blue-900/30 rounded-full blur-[40px]" />
+      </div>
+
       <Suspense fallback={null}>
         <TopLoadingBar />
       </Suspense>

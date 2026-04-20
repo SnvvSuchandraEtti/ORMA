@@ -71,7 +71,7 @@ BEGIN
     'Maruti Swift 2021 – Petrol Manual, Clean',
     'Clean and well-serviced Swift. Perfect for local trips and outings. Available on weekends and weekdays. Fuel cost extra. Advance booking required.',
     'good', 'Maruti Suzuki', 'Swift 2021',
-    ARRAY['https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800', 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800'],
+    ARRAY['https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800', 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800'],
     1200, 7000, 25000, 10000, 'Mumbai', 'Andheri West', 'Maharashtra', '400053',
     '9123456789', '9123456789', 'phone', TRUE, FALSE, '1 day', 'active', TRUE
   );
@@ -83,7 +83,7 @@ BEGIN
     'Royal Enfield Classic 350 – Road Trips Ready',
     'Beautiful RE Classic 350 BS6. Ideal for road trips. Well serviced, all accessories included. Helmet provided. Need valid 2-wheeler DL.',
     'excellent', 'Royal Enfield', 'Classic 350',
-    ARRAY['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800', 'https://images.unsplash.com/photo-1568772585407-9f217b9cd8e4?w=800'],
+    ARRAY['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800', 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=800'],
     800, 4500, 2000, 'Delhi', 'Malviya Nagar', 'Delhi', '110017',
     '9988776655', '9988776655', 'whatsapp', TRUE, TRUE, '1 day', 'active', TRUE
   );

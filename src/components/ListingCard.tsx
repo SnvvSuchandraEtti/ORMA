@@ -41,16 +41,14 @@ const ListingCard = memo(function ListingCard({
   const touchDeltaX = useRef<number>(0)
   const [dragOffset, setDragOffset] = useState(0)
   const isDragging = useRef(false)
+  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({})
   const { isAuthenticated } = useAuth()
   const supabase = createClient()
   const router = useRouter()
 
-  const goToListing = useCallback(() => {
-    router.push(`/listing/${listing.id}`)
-  }, [router, listing.id])
 
   const images = useMemo(
-    () => (listing.images?.length ? listing.images : ['/placeholder.jpg']),
+    () => (listing.images?.length ? listing.images : ['/placeholder.svg']),
     [listing.images]
   )
 
@@ -171,17 +169,9 @@ const ListingCard = memo(function ListingCard({
       aria-label={`${listing.title} - rental listing`}
       className="h-full"
     >
-      <div
-        role="link"
-        tabIndex={0}
-        onClick={goToListing}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            goToListing()
-          }
-        }}
-        className="group block h-full cursor-pointer"
+      <Link
+        href={`/listing/${listing.id}`}
+        className="group block h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-2xl"
       >
         {/* Image Container */}
         <div
@@ -203,13 +193,14 @@ const ListingCard = memo(function ListingCard({
             {images.map((img, idx) => (
               <div key={img + idx} className="relative h-full w-full flex-shrink-0">
                 <Image
-                  src={img}
+                  src={failedImages[idx] ? '/placeholder.svg' : img}
                   alt={`${listing.title} - rental listing photo ${idx + 1}`}
                   fill
                   priority={priority && idx === 0}
                   loading={idx === 0 ? undefined : 'lazy'}
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
+                  onError={() => setFailedImages(prev => ({ ...prev, [idx]: true }))}
                   className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                   sizes="(max-width: 640px) 95vw, (max-width: 1024px) 50vw, (max-width: 1440px) 33vw, 25vw"
                 />
@@ -365,7 +356,7 @@ const ListingCard = memo(function ListingCard({
         <span className="sr-only">
           Listed by {listing.owner?.full_name || getInitials(listing.owner?.full_name)}
         </span>
-      </div>
+      </Link>
     </motion.article>
   )
 })

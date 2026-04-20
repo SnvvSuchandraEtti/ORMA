@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { ListingWithDetails } from '@/types'
 import { handleSupabaseError } from '@/lib/handleError'
@@ -45,7 +45,7 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
   const [page, setPage] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   const fetchPage = useCallback(async (pageIndex: number, isInitial = false) => {
     try {
@@ -61,20 +61,23 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
 
       let query = supabase
         .from('listings')
-        .select(`
-          *,
-          owner:profiles(*),
-          category:categories(*)
-        `)
+        .select('*, owner:profiles(*), category:categories(*)')
         .eq('status', 'active')
         .eq('is_available', true)
 
       // Search Query
       if (q) {
-        query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
+        const terms = q.trim().split(/\s+/).filter(Boolean)
+        if (terms.length > 0) {
+          const orConditions = terms.map(term => `title.ilike.%${term}%,description.ilike.%${term}%`).join(',')
+          query = query.or(orConditions)
+        }
       }
 
-      // City is used for local-first ranking, not hard filtering
+      // City Filter
+      if (city && city.trim()) {
+        query = query.ilike('city', `%${city.trim()}%`)
+      }
 
       // Condition Filter
       if (condition) {
@@ -132,16 +135,6 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
       if (fetchErr) throw fetchErr
 
       let fetchedListings = (data as ListingWithDetails[]) || []
-
-      if (city) {
-        const cityLower = city.toLowerCase()
-        fetchedListings = fetchedListings.sort((a, b) => {
-          const aLocal = (a.city || '').toLowerCase().includes(cityLower)
-          const bLocal = (b.city || '').toLowerCase().includes(cityLower)
-          if (aLocal === bLocal) return 0
-          return aLocal ? -1 : 1
-        })
-      }
 
       setListings(prev => {
         if (isInitial) return fetchedListings

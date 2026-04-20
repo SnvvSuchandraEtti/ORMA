@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ListingClient from './ListingClient'
 
@@ -50,38 +51,37 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     .eq('id', resolvedParams.id)
     .single()
 
-  let jsonLd = null
-  if (listing) {
-    jsonLd = {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: listing.title,
-      description: listing.description,
-      image: listing.images || [],
-      offers: {
-        '@type': 'Offer',
-        price: listing.price_per_day,
-        priceCurrency: 'INR',
-        availability: 'https://schema.org/InStock',
-      },
-      ...(listing.total_reviews > 0 && {
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: listing.average_rating,
-          reviewCount: listing.total_reviews,
-        }
-      })
-    }
+  if (!listing) {
+    notFound()
+  }
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: listing.title,
+    description: listing.description,
+    image: listing.images || [],
+    offers: {
+      '@type': 'Offer',
+      price: listing.price_per_day,
+      priceCurrency: 'INR',
+      availability: 'https://schema.org/InStock',
+    },
+    ...(listing.total_reviews > 0 && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: listing.average_rating,
+        reviewCount: listing.total_reviews,
+      }
+    })
   }
 
   return (
     <>
-      {jsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ListingClient />
     </>
   )

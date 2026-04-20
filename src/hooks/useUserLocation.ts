@@ -54,7 +54,13 @@ export function useUserLocation() {
         try {
           const { latitude, longitude } = position.coords
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=jsonv2`
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=jsonv2`,
+            {
+              headers: {
+                'User-Agent': 'ORMA-App/1.0',
+                'Accept-Language': 'en-US'
+              }
+            }
           )
           
           if (!response.ok) throw new Error('Network response was not ok')

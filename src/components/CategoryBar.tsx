@@ -82,7 +82,7 @@ export default function CategoryBar() {
   }
 
   return (
-    <div className="fixed left-0 right-0 z-30 bg-white dark:bg-[#000000] border-b border-black/[0.08] dark:border-white/5 transition-all duration-300" style={{ top: '52px' }}>
+    <div className="fixed left-0 right-0 z-30 bg-white/95 dark:bg-[#000000]/95 backdrop-blur-md border-b border-black/[0.08] dark:border-white/5 transition-all duration-300" style={{ top: '52px' }}>
       <nav aria-label="Categories" className="max-w-[1760px] mx-auto px-4 md:px-6 lg:px-10 relative">
         {/* Left Arrow */}
         {showLeftArrow && (

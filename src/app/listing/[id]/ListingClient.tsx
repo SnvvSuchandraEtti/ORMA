@@ -215,9 +215,8 @@ export default function ListingClient() {
       try {
         await navigator.share({ title: listing?.title || 'ORMA Rental', url })
       } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
-          setShowShareModal(true)
-        }
+        if (err instanceof Error && err.name === 'AbortError') return
+        setShowShareModal(true)
       }
     } else {
       setShowShareModal(true)

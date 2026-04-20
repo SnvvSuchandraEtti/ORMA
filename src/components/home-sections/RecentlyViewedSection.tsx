@@ -20,11 +20,18 @@ export default function RecentlyViewedSection() {
         return
       }
 
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      const validIds = viewedIds.filter(id => id && uuidRegex.test(id))
+      if (validIds.length === 0) {
+        setIsLoading(false)
+        return
+      }
+
       const supabase = createClient()
       const { data, error } = await supabase
         .from('listings')
         .select('*, owner:profiles(*), category:categories(*)')
-        .in('id', viewedIds)
+        .in('id', validIds)
         .eq('status', 'active')
 
       if (!error && data) {

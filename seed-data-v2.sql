@@ -152,7 +152,7 @@ VALUES (
   'good', 'Maruti Suzuki', 'Swift ZXi+ 2021',
   ARRAY[
     'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop',
     'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop'
   ],
   1400, 8500, 28000, 10000,
@@ -194,7 +194,7 @@ VALUES (
   ARRAY[
     'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800&h=600&fit=crop',
     'https://images.unsplash.com/photo-1609630875171-04b08864779f?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=800&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=800&h=600&fit=crop',
     'https://images.unsplash.com/photo-1622185135505-2d795003994a?w=800&h=600&fit=crop'
   ],
   1200, 6000, 5000,
@@ -724,7 +724,7 @@ VALUES (
   'good', 'KTM', 'Duke 200 2022',
   ARRAY[
     'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=800&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=800&h=600&fit=crop',
     'https://images.unsplash.com/photo-1609630875171-04b08864779f?w=800&h=600&fit=crop'
   ],
   900, 5000, 16000, 5000,

@@ -87,7 +87,6 @@
    Base Styles — Apple-inspired
    ============================================ */
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 160px;
 }
 

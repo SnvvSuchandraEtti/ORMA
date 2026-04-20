@@ -16,6 +16,7 @@ const BLUR_DATA_URL =
 export default function ImageGallery({ images, title }: ImageGalleryProps) {
   const [showModal, setShowModal] = useState(false)
   const [modalIndex, setModalIndex] = useState(0)
+  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({})
   const [isFading, setIsFading] = useState(false)
   const touchStartX = useRef<number | null>(null)
   const touchEndX = useRef<number | null>(null)
@@ -135,7 +136,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
       onKeyDown={(e) => e.key === 'Enter' && openModal(idx)}
     >
       <Image
-        src={img}
+        src={failedImages[idx] ? '/placeholder.svg' : img}
         alt={`${title} - image ${idx + 1}`}
         fill
         className="object-cover transition duration-300 hover:brightness-[0.92]"
@@ -144,6 +145,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
         loading={isPriority ? undefined : 'lazy'}
         placeholder="blur"
         blurDataURL={BLUR_DATA_URL}
+        onError={() => setFailedImages(prev => ({ ...prev, [idx]: true }))}
       />
     </div>
   )
@@ -228,7 +230,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             <div className="relative h-[68vh] w-full max-w-6xl overflow-hidden rounded-2xl">
               <Image
                 key={images[modalIndex]}
-                src={images[modalIndex]}
+                src={failedImages[modalIndex] ? '/placeholder.svg' : images[modalIndex]}
                 alt={`${title} - image ${modalIndex + 1}`}
                 fill
                 className={`object-contain transition-opacity duration-300 ease-in-out ${isFading ? 'opacity-80' : 'opacity-100'}`}
@@ -236,6 +238,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
                 priority
                 placeholder="blur"
                 blurDataURL={BLUR_DATA_URL}
+                onError={() => setFailedImages(prev => ({ ...prev, [modalIndex]: true }))}
               />
             </div>
             {images.length > 1 && (
@@ -284,7 +287,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
                 }`}
               >
                 <Image
-                  src={img}
+                  src={failedImages[idx] ? '/placeholder.svg' : img}
                   alt={`Thumbnail ${idx + 1}`}
                   fill
                   className="object-cover"
@@ -292,6 +295,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
                   sizes="80px"
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
+                  onError={() => setFailedImages(prev => ({ ...prev, [idx]: true }))}
                 />
               </button>
             ))}

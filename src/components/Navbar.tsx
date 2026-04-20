@@ -7,7 +7,8 @@ import { Search, Menu, User, Heart, Plus, LogOut, Settings, List, MessageCircle,
 import { useAuth } from '@/hooks/useAuth'
 import { getInitials } from '@/lib/utils'
 import Image from 'next/image'
-import ExpandedSearchBar from '@/components/ExpandedSearchBar'
+import { Suspense } from 'react'
+import SearchBar from '@/components/SearchBar'
 import ThemeToggle from '@/components/ThemeToggle'
 import NotificationBell from '@/components/NotificationBell'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -33,21 +34,9 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false)
       }
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearchExpanded(false)
-      }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  useEffect(() => {
-    const handler = () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      setIsSearchExpanded(true)
-    }
-    window.addEventListener('orma:focus-search', handler)
-    return () => window.removeEventListener('orma:focus-search', handler)
   }, [])
 
   // Close menu on navigation
@@ -75,8 +64,8 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
         )}
       </AnimatePresence>
 
-      <nav aria-label="Main navigation" className={`fixed top-0 left-0 right-0 z-40 glass dark:glass-dark border-b ${isSearchExpanded ? 'border-transparent pb-16 transition-all duration-300' : 'border-black/[0.08] dark:border-white/5 transition-all duration-300'}`} style={{ boxShadow: '0 0.5px 0 rgba(0,0,0,0.08)' }}>
-        <div className="max-w-[1760px] mx-auto px-4 md:px-6 lg:px-10" ref={searchRef}>
+      <nav aria-label="Main navigation" className={`fixed top-0 left-0 right-0 z-40 glass dark:glass-dark border-b border-black/[0.08] dark:border-white/5 transition-all duration-300`} style={{ boxShadow: '0 0.5px 0 rgba(0,0,0,0.08)' }}>
+        <div className="max-w-[1760px] mx-auto px-4 md:px-6 lg:px-10">
           <div className="flex items-center justify-between h-[52px] md:h-[52px] gap-4 relative">
 
           {/* Logo — clean black like Apple's wordmark */}
@@ -86,26 +75,11 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
             </span>
           </Link>
 
-          {/* Search Bar — Desktop (The Authentic Pill vs Expanded) */}
-          <div className="hidden md:flex flex-1 justify-center relative h-full items-center">
-            {isSearchExpanded ? (
-              <ExpandedSearchBar onClose={() => setIsSearchExpanded(false)} />
-            ) : (
-              <button
-                onClick={() => setIsSearchExpanded(true)}
-                className="flex items-center border border-[#D2D2D7] dark:border-white/10 bg-[#F5F5F7] dark:bg-[#1C1C1E]/60 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all py-1.5 pl-6 pr-2 gap-4 w-full max-w-[400px]"
-                aria-label="Search rentals"
-              >
-                <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white">Anywhere</span>
-                <div className="h-6 border-l border-[#D2D2D7] dark:border-white/10" />
-                <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white">Any week</span>
-                <div className="h-6 border-l border-[#D2D2D7] dark:border-white/10" />
-                <span className="text-sm text-[#86868B] dark:text-[#98989D] font-normal truncate">Add guests</span>
-                <div className="w-8 h-8 rounded-full bg-[#0071E3] flex items-center justify-center flex-shrink-0 ml-auto shadow-sm">
-                  <Search size={14} className="text-white stroke-[3]" />
-                </div>
-              </button>
-            )}
+          {/* Search Bar — Desktop */}
+          <div className="hidden md:flex flex-[2] justify-center relative h-full items-center px-4 max-w-[850px] mx-auto">
+            <Suspense fallback={null}>
+              <SearchBar />
+            </Suspense>
           </div>
 
           <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
@@ -273,17 +247,25 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
 
         {/* Mobile Search Bar */}
         <div className="md:hidden pb-4 pt-1">
-          <button
-            onClick={() => router.push('/search')}
-            className="w-full flex items-center border border-[#D2D2D7] dark:border-white/5 bg-[#F5F5F7] dark:bg-[#1C1C1E]/90 backdrop-blur-md rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] px-5 py-3 gap-4"
-            aria-label="Search rentals"
-          >
-            <Search size={20} className="text-[#1D1D1F] dark:text-white" />
-            <div className="flex flex-col items-start gap-0.5">
-              <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white">Anywhere</span>
-              <span className="text-xs text-[#86868B] dark:text-[#98989D]">Any week • Add guests</span>
+          {pathname === '/search' ? (
+            <div className="px-1">
+              <Suspense fallback={null}>
+                <SearchBar />
+              </Suspense>
             </div>
-          </button>
+          ) : (
+            <button
+              onClick={() => router.push('/search')}
+              className="w-full flex items-center border border-[#D2D2D7] dark:border-white/5 bg-[#F5F5F7] dark:bg-[#1C1C1E]/90 backdrop-blur-md rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] px-5 py-3 gap-4"
+              aria-label="Search rentals"
+            >
+              <Search size={20} className="text-[#1D1D1F] dark:text-white" />
+              <div className="flex flex-col items-start gap-0.5">
+                <span className="text-sm font-semibold text-[#1D1D1F] dark:text-white">Search items</span>
+                <span className="text-xs text-[#86868B] dark:text-[#98989D]">Any location • Any dates</span>
+              </div>
+            </button>
+          )}
         </div>
         </div>
       </nav>
