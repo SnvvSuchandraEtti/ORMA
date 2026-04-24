@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   Star, MapPin, Shield, Truck, Calendar, Heart,
-  Share2, Flag, CheckCircle, XCircle, ArrowLeft, Badge, ChevronDown
+  Share2, Flag, CheckCircle, XCircle, ArrowLeft, Badge, ChevronDown, CalendarCheck
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { ListingWithDetails, Review } from '@/types'
@@ -22,11 +22,14 @@ import LiveViewerCount from '@/components/LiveViewerCount'
 import TrustScore from '@/components/TrustScore'
 import { useAuth } from '@/hooks/useAuth'
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
+import { fetchBlockedDatesForListing } from '@/hooks/useBookings'
 import toast from '@/lib/toast'
 import { handleSupabaseError } from '@/lib/handleError'
 import DetailPageSkeleton from '@/components/DetailPageSkeleton'
 import AuthModal from '@/components/AuthModal'
 import Breadcrumb from '@/components/Breadcrumb'
+import { DayPicker } from 'react-day-picker'
+import 'react-day-picker/dist/style.css'
 
 export default function ListingClient() {
   const params = useParams()
@@ -53,6 +56,7 @@ export default function ListingClient() {
   const [recentInquiries, setRecentInquiries] = useState(0)
   const [responseRate, setResponseRate] = useState(95)
   const [isSafetyExpanded, setIsSafetyExpanded] = useState(false)
+  const [blockedDates, setBlockedDates] = useState<Date[]>([])
   const [safetyChecks, setSafetyChecks] = useState<Record<string, boolean>>({})
 
   const fetchListing = useCallback(async () => {
@@ -146,6 +150,14 @@ export default function ListingClient() {
           .eq('user_id', user.id)
           .single()
         setIsWishlisted(!!wData)
+      }
+
+      // Fetch blocked dates for booking calendar
+      try {
+        const blocked = await fetchBlockedDatesForListing(id)
+        setBlockedDates(blocked)
+      } catch {
+        // Non-critical — calendar will just show all dates as available
       }
 
       if (typeof window !== 'undefined') {
@@ -291,6 +303,22 @@ export default function ListingClient() {
     })
   }, [listing, priceRows, hourlyBase])
 
+  const nextAvailableDate = useMemo(() => {
+    if (blockedDates.length === 0) return null
+    
+    let checkDate = new Date()
+    checkDate.setHours(0, 0, 0, 0)
+    
+    // Check next 90 days for availability
+    for (let i = 0; i < 90; i++) {
+      const isBlocked = blockedDates.some(d => d.toDateString() === checkDate.toDateString())
+      if (!isBlocked) return checkDate
+      checkDate = new Date(checkDate.getTime() + 24 * 60 * 60 * 1000)
+    }
+    
+    return null
+  }, [blockedDates])
+
   const bestValue = useMemo(() => {
     if (!pricedWithSavings.length) return { label: '', value: 0, hours: 0, savings: 0 }
     return pricedWithSavings.reduce(
@@ -308,7 +336,7 @@ export default function ListingClient() {
   const owner = listing.owner
   const category = listing.category
   const categorySearchHref = category?.slug ? `/search?category=${category.slug}` : '/search'
-  const allImages = listing.images?.length ? listing.images : ['/placeholder.jpg']
+  const allImages = listing.images?.length ? listing.images : ['/placeholder.svg']
   const isOwner = user?.id === listing.owner_id
   const descriptionLong = listing.description.length > 300
   const shortItemId = `#OR${listing.id.replace(/-/g, '').slice(0, 6).toUpperCase()}`
@@ -415,7 +443,7 @@ export default function ListingClient() {
               <MapPin size={14} />
               <span>{[listing.area, listing.city, listing.state].filter(Boolean).join(', ')}</span>
             </div>
-            <div className="flex flex-wrap items-center gap-2 text-sm text-[#717171] dark:text-[#A0A0A0] mb-4">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-[#717171] dark:text-[#A0A0A0] mb-2">
               <span>{category?.name}</span>
               <span>·</span>
               <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getConditionBadgeColor(listing.condition)}`}>
@@ -423,6 +451,28 @@ export default function ListingClient() {
               </span>
               <span>·</span>
               <span>{timeAgo(listing.created_at)}</span>
+            </div>
+
+            {/* Availability Badge */}
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              {blockedDates.length === 0 ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 border border-green-100 dark:border-green-800/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  Available Now
+                </span>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-100 dark:border-amber-800/30">
+                    <CalendarCheck size={12} />
+                    Partially Booked
+                  </span>
+                  {nextAvailableDate && (
+                    <span className="text-xs font-medium text-[#86868B] dark:text-[#98989D]">
+                      Next available: <span className="text-[#1D1D1F] dark:text-white font-semibold">{formatDate(nextAvailableDate.toISOString())}</span>
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* Live Viewers & Inquiries */}
@@ -588,6 +638,58 @@ export default function ListingClient() {
               )}
             </div>
 
+            {/* Availability Calendar (Read Only) */}
+            <div className="rounded-3xl border border-[#EBEBEB] bg-white p-6 dark:border-[#3D3D3D] dark:bg-[#1A1A1A] mb-8 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-[#1D1D1F] dark:text-white">Availability</h2>
+                <div className="flex items-center gap-4">
+                   <div className="flex items-center gap-1.5">
+                     <div className="w-3 h-3 rounded-sm bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#EBEBEB] dark:border-[#3D3D3D]" />
+                     <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider">Available</span>
+                   </div>
+                   <div className="flex items-center gap-1.5">
+                     <div className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" />
+                     <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider">Reserved</span>
+                   </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                 <div className="flex-shrink-0 bg-[#F5F5F7]/50 dark:bg-[#2C2C2E]/50 rounded-[2rem] p-3 border border-[#EBEBEB] dark:border-[#3D3D3D]">
+                    <DayPicker
+                      mode="multiple"
+                      selected={blockedDates}
+                      disabled={[{ before: new Date() }]}
+                      modifiers={{ booked: blockedDates }}
+                      modifiersClassNames={{ booked: 'bg-red-50 text-red-600 dark:bg-red-900/40 dark:text-red-400 font-bold' }}
+                      className="rdp-availability"
+                    />
+                 </div>
+                 <div className="flex-1 space-y-5 py-2">
+                    <p className="text-sm text-[#717171] dark:text-[#A0A0A0] leading-relaxed">
+                      Select your preferred dates in the booking widget to see exact pricing and availability for your trip. Dates marked in red are already reserved.
+                    </p>
+                    <div className="p-4 bg-[#0071E3]/5 dark:bg-[#0071E3]/10 rounded-2xl border border-[#0071E3]/10">
+                       <h4 className="text-sm font-bold text-[#0071E3] mb-1 flex items-center gap-2">
+                         <Shield size={16} />
+                         Instant Confirmation
+                       </h4>
+                       <p className="text-xs text-[#0071E3]/80 leading-relaxed">
+                         All available dates can be requested instantly. Owners typically respond within a few hours to confirm your request.
+                       </p>
+                    </div>
+                    {nextAvailableDate && (
+                      <div className="flex items-center gap-2 px-4 py-3 bg-green-50/50 dark:bg-green-900/10 rounded-2xl border border-green-100 dark:border-green-800/20">
+                        <Calendar size={16} className="text-green-600" />
+                        <span className="text-xs font-semibold text-green-700 dark:text-green-400">
+                          Next full availability from {formatDate(nextAvailableDate.toISOString())}
+                        </span>
+                      </div>
+                    )}
+                 </div>
+              </div>
+            </div>
+
             {/* Terms & Conditions */}
             <div className="h-10" />
             <div className="mb-5">
@@ -718,11 +820,17 @@ export default function ListingClient() {
 
           {/* RIGHT: Sticky Price Card (Desktop) */}
           <div className="hidden lg:block relative z-20">
-            <BookingWidget
-              listing={listing}
-              onContact={handleContact}
-              onMessageOwner={!isOwner ? handleMessageOwner : undefined}
-            />
+            <div className="booking-widget-container">
+              <BookingWidget
+                listing={listing}
+                onContact={handleContact}
+                onMessageOwner={!isOwner ? handleMessageOwner : undefined}
+                isOwner={isOwner}
+                isAuthenticated={isAuthenticated}
+                onOpenAuth={() => setAuthModalOpen(true)}
+                userId={user?.id}
+              />
+            </div>
             
             <div className="mt-8 px-6 bg-white dark:bg-[#1A1A1A] rounded-[2rem] border border-[#EBEBEB] dark:border-[#3D3D3D] py-4 shadow-sm">
               <div className="flex items-center justify-around">
@@ -750,6 +858,19 @@ export default function ListingClient() {
               </div>
             </div>
           </div>
+        </div>
+        
+        {/* Mobile Booking Widget */}
+        <div className="block lg:hidden mt-8">
+          <BookingWidget
+            listing={listing}
+            onContact={handleContact}
+            onMessageOwner={!isOwner ? handleMessageOwner : undefined}
+            isOwner={isOwner}
+            isAuthenticated={isAuthenticated}
+            onOpenAuth={() => setAuthModalOpen(true)}
+            userId={user?.id}
+          />
         </div>
 
         {/* Related Items */}
@@ -831,10 +952,19 @@ export default function ListingClient() {
                 Contact
               </button>
               <button
-                onClick={handleMessageOwner}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    setAuthModalOpen(true)
+                    return
+                  }
+                  // Scroll to booking widget container
+                  const el = document.querySelector('.booking-widget-container');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  else window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="px-4 py-2.5 bg-[#0071E3] text-white text-sm font-semibold rounded-xl hover:bg-[#0055B3] hover:shadow-md transition-all whitespace-nowrap"
               >
-                Message
+                Book Now
               </button>
             </>
           ) : (

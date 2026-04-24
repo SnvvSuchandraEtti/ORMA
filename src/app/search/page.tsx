@@ -144,7 +144,7 @@ function SearchContent() {
           className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl text-sm font-medium transition-all ${
             showFilters || totalFilters > 0
               ? 'border-[#222222] dark:border-white bg-[#222222] dark:bg-white text-white dark:text-[#121212]'
-              : 'border-[#DDDDDD] dark:border-[#3D3D3D] text-[#222222] dark:text-white dark:text-[#121212] hover:border-[#222222] dark:border-white'
+              : 'border-[#DDDDDD] dark:border-[#3D3D3D] text-[#222222] dark:text-white hover:border-[#222222] dark:hover:border-white'
           }`}
         >
           {showFilters ? <X size={16} /> : <SlidersHorizontal size={16} />}
@@ -170,8 +170,8 @@ function SearchContent() {
             onClick={() => updateParam('sort', item.key)}
             className={`rounded-full border px-3 py-1.5 text-sm transition-all ${
               sort === item.key
-                ? 'bg-[#222222] text-white border-[#222222]'
-                : 'border-[#DDDDDD] text-[#222222] hover:border-[#222222]'
+                ? 'bg-[#222222] dark:bg-white text-white dark:text-[#121212] border-[#222222] dark:border-white'
+                : 'border-[#DDDDDD] dark:border-[#3D3D3D] text-[#222222] dark:text-white hover:border-[#222222] dark:hover:border-white'
             }`}
           >
             {item.label}
@@ -185,14 +185,14 @@ function SearchContent() {
             <button
               key={chip.key}
               onClick={() => updateParam(chip.key, '')}
-              className="rounded-full border border-[#DDDDDD] bg-[#F7F7F7] px-3 py-1 text-sm text-[#222222]"
+              className="rounded-full border border-[#DDDDDD] dark:border-[#3D3D3D] bg-[#F7F7F7] dark:bg-[#2C2C2E] px-3 py-1 text-sm text-[#222222] dark:text-white"
             >
               {chip.label} ✕
             </button>
           ))}
           <button
             onClick={clearAllFilters}
-            className="text-sm font-semibold text-[#717171] hover:text-[#222222]"
+            className="text-sm font-semibold text-[#717171] dark:text-[#A0A0A0] hover:text-[#222222] dark:hover:text-white"
           >
             Clear All
           </button>

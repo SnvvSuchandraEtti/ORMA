@@ -250,9 +250,65 @@ export interface MessageWithConversation extends Omit<Message, 'sender'> {
 }
 
 // ----------------------------------------------------------------
+// BOOKINGS
+// ----------------------------------------------------------------
+export type BookingStatus = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'completed'
+
+export interface Booking {
+  id: string
+  listing_id: string
+  renter_id: string
+  owner_id: string
+  start_date: string
+  end_date: string
+  total_days: number
+  price_per_day: number
+  security_deposit: number
+  subtotal: number
+  platform_fee: number
+  total_amount: number
+  status: BookingStatus
+  renter_message: string | null
+  owner_response: string | null
+  created_at: string
+  updated_at: string
+
+  // Optional joined relations
+  listing?: ListingWithDetails
+  renter?: Profile
+  owner?: Profile
+}
+
+export interface AvailabilityBlock {
+  id: string
+  listing_id: string
+  booking_id: string
+  blocked_from: string
+  blocked_to: string
+  reason: string
+}
+
+export interface CreateBookingPayload {
+  listing_id: string
+  renter_id: string
+  owner_id: string
+  start_date: string
+  end_date: string
+  total_days: number
+  price_per_day: number
+  security_deposit: number
+  subtotal: number
+  platform_fee: number
+  total_amount: number
+  renter_message?: string
+}
+
+
+
+// ----------------------------------------------------------------
 // NOTIFICATIONS
 // ----------------------------------------------------------------
-export type NotificationType = 'inquiry' | 'review' | 'system' | 'milestone' | 'welcome'
+export type NotificationType = 'inquiry' | 'review' | 'system' | 'milestone' | 'welcome' | 'booking_request' | 'booking_update'
 
 export interface Notification {
   id: string

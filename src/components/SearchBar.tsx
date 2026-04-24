@@ -22,6 +22,7 @@ type SuggestionItem =
   | { type: 'trending'; label: string; value: string }
   | { type: 'listing'; label: string; value: string }
   | { type: 'category'; label: string; value: string; count: number }
+const suggestionsCache = new Map<string, { listings: string[], categories: { slug: string, name: string, count: number }[] }>()
 
 export default function SearchBar() {
   const supabase = createClient()
@@ -84,6 +85,15 @@ export default function SearchBar() {
       return
     }
 
+    const cacheKey = trimmed.toLowerCase()
+    if (suggestionsCache.has(cacheKey)) {
+      const cached = suggestionsCache.get(cacheKey)!
+      setListingSuggestions(cached.listings)
+      setCategorySuggestions(cached.categories)
+      setIsLoadingSuggestions(false)
+      return
+    }
+
     let isCancelled = false
 
     const timer = window.setTimeout(async () => {
@@ -117,19 +127,17 @@ export default function SearchBar() {
         }
 
         const uniqueTitles = Array.from(new Set((listingsRes.data || []).map((item) => item.title))).slice(0, 5)
+        const categories = categoryCountsRes.length > 0 ? categoryCountsRes : []
+        
+        suggestionsCache.set(cacheKey, { listings: uniqueTitles, categories })
         setListingSuggestions(uniqueTitles)
-
-        if (categoryCountsRes.length > 0) {
-          setCategorySuggestions(categoryCountsRes)
-        } else {
-          setCategorySuggestions([])
-        }
+        setCategorySuggestions(categories)
       } catch (error) {
         console.error('Error fetching suggestions:', error)
       } finally {
         setIsLoadingSuggestions(false)
       }
-    }, 300)
+    }, 250)
 
     return () => {
       isCancelled = true

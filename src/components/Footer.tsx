@@ -187,7 +187,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-[#D2D2D7] dark:border-[#38383A] pt-10 space-y-8">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-2 text-[12px] text-[#86868B]">
-            <span className="text-[#6E6E73] dark:text-[#98989D] font-medium">© 2025 ORMA, Inc.</span>
+            <span className="text-[#6E6E73] dark:text-[#98989D] font-medium">© {new Date().getFullYear()} ORMA, Inc.</span>
             <span className="opacity-40">·</span>
             <Link href="/privacy" className="hover:text-[#0071E3] transition-colors">
               Privacy
@@ -215,28 +215,36 @@ export default function Footer() {
             <span className="text-[13px] font-medium text-[#1D1D1F] dark:text-white">Follow us:</span>
             <div className="flex items-center gap-3">
               <a
-                href="#"
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full border border-[#D2D2D7] dark:border-[#38383A] flex items-center justify-center text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white hover:border-[#1D1D1F] dark:hover:border-white transition-colors"
                 aria-label="ORMA on Instagram"
               >
                 <Instagram size={18} />
               </a>
               <a
-                href="#"
+                href="https://x.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full border border-[#D2D2D7] dark:border-[#38383A] flex items-center justify-center text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white hover:border-[#1D1D1F] dark:hover:border-white transition-colors"
                 aria-label="ORMA on X"
               >
                 <TwitterIcon className="w-[18px] h-[18px]" />
               </a>
               <a
-                href="#"
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full border border-[#D2D2D7] dark:border-[#38383A] flex items-center justify-center text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white hover:border-[#1D1D1F] dark:hover:border-white transition-colors"
                 aria-label="ORMA on LinkedIn"
               >
                 <Linkedin size={18} />
               </a>
               <a
-                href="#"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full border border-[#D2D2D7] dark:border-[#38383A] flex items-center justify-center text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white hover:border-[#1D1D1F] dark:hover:border-white transition-colors"
                 aria-label="ORMA on YouTube"
               >

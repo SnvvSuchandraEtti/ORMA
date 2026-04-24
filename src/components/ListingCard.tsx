@@ -3,6 +3,8 @@
 import { useState, useCallback, useEffect, useRef, useMemo, memo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Heart, ChevronLeft, ChevronRight, Star } from 'lucide-react'
@@ -23,7 +25,7 @@ interface ListingCardProps {
 }
 
 const BLUR_DATA_URL =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxNiAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTAiIGZpbGw9IiNlNWU1ZTUiLz48L3N2Zz4='
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYzIihlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxNiAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTAiIGZpbGw9IiNlNWU1ZTUiLz48L3N2Zz4='
 
 const ListingCard = memo(function ListingCard({
   listing,
@@ -147,32 +149,41 @@ const ListingCard = memo(function ListingCard({
             .from('wishlists')
             .insert({ listing_id: listing.id, user_id: user.id })
           if (error) throw error
-          toast.success('Saved to wishlist 💙')
+          toast.success('Saved to wishlist')
         }
-        onWishlistToggle?.(listing.id)
-      } catch {
+        if (onWishlistToggle) onWishlistToggle(listing.id)
+      } catch (err: any) {
         setWishlisted(prev)
-        toast.error('Something went wrong')
+        toast.error(err.message || 'Error updating wishlist')
       } finally {
         setWishlistLoading(false)
       }
     },
-    [isAuthenticated, wishlisted, listing.id, onOpenAuth, onWishlistToggle, supabase]
+    [isAuthenticated, listing.id, wishlisted, supabase, onWishlistToggle, onOpenAuth, router]
   )
 
+  const cardVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+        transition: {
+          duration: 0.5,
+          delay: index * 0.05,
+        },
+    },
+  }
+
   return (
-    <motion.article 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
-      aria-label={`${listing.title} - rental listing`}
-      className="h-full"
+    <motion.div
+      variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-20px' }}
+      className="group cursor-pointer block w-full outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-[22px] transition-all"
+      onClick={() => router.push(`/listing/${listing.id}`)}
     >
-      <Link
-        href={`/listing/${listing.id}`}
-        className="group block h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-2xl"
-      >
+      <div className="flex flex-col h-full">
         {/* Image Container */}
         <div
           className="relative overflow-hidden rounded-2xl aspect-[20/19] bg-[#F5F5F7] dark:bg-[#1C1C1E] transition-all duration-300 group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_0_1px_rgba(0,0,0,0.04)]"
@@ -215,33 +226,25 @@ const ListingCard = memo(function ListingCard({
             </div>
           )}
 
-          {/* Wishlist Heart — Coral when saved */}
-          <button
-            onClick={handleWishlist}
-            onPointerDown={(e) => e.stopPropagation()}
-            disabled={wishlistLoading}
-            className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 hover:scale-110 active:scale-95 transition-all shadow-lg"
-            aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-          >
-            <Heart
-              size={20}
-              className={`transition-all duration-300 ${
-                wishlisted
-                  ? 'fill-[#FF385C] stroke-[#FF385C]'
-                  : 'fill-transparent stroke-white stroke-[2.5]'
-              }`}
-            />
-          </button>
-
-          {/* Badges Container (Top-Left) */}
-          <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-none">
-            {/* NEW Badge: Created within last 7 days */}
+          {/* Badges */}
+          <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+            {listing.owner?.is_verified && (
+              <div className="bg-white/90 dark:bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-full border border-blue-100 dark:border-blue-900/30 flex items-center gap-1 shadow-sm">
+                <svg className="w-3.5 h-3.5 text-[#0071E3]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span className="text-[10px] font-bold text-[#1D1D1F] dark:text-white uppercase tracking-tight">Verified</span>
+              </div>
+            )}
+            <div className="bg-green-500/90 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm self-start">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-[10px] font-bold text-white uppercase tracking-tight">Available</span>
+            </div>
             {new Date(listing.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
               <div className="rounded-full bg-[#0071E3] px-2.5 py-1 text-[10px] font-semibold text-white uppercase tracking-wider shadow-lg self-start">
                 NEW
               </div>
             )}
-            {/* POPULAR Badge: Views > 500 */}
             {listing.views_count > 500 && (
               <div className="rounded-full bg-[#FFD60A] px-2.5 py-1 text-[10px] font-semibold text-[#1D1D1F] uppercase tracking-wider shadow-lg self-start">
                 POPULAR 🔥
@@ -249,12 +252,19 @@ const ListingCard = memo(function ListingCard({
             )}
           </div>
 
-          {/* Quick Response Badge */}
-          {listing.owner?.is_verified && (
-            <div className="absolute bottom-4 left-4 z-10 rounded-full bg-white/90 backdrop-blur-xl border border-white/20 px-2.5 py-1 text-[10px] font-semibold text-[#1D1D1F] shadow-lg pointer-events-none">
-              ✓ Verified
-            </div>
-          )}
+          {/* Wishlist Button */}
+          <button
+            onClick={handleWishlist}
+            className="absolute top-3 right-3 p-2 rounded-full bg-black/20 hover:bg-black/30 backdrop-blur-sm transition-all active:scale-90 group z-10"
+            aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          >
+            <Heart
+              size={18}
+              className={`transition-all duration-300 ${
+                wishlisted ? 'fill-[#FF385C] stroke-[#FF385C]' : 'text-white'
+              } group-hover:scale-110`}
+            />
+          </button>
 
           {/* Image Navigation Arrows */}
           {images.length > 1 && showArrows && (
@@ -318,47 +328,33 @@ const ListingCard = memo(function ListingCard({
           <p className="mt-0.5 text-[13px] text-[#86868B] dark:text-[#98989D]">
             <span className="text-[#86868B] dark:text-[#98989D]">by </span>
             {listing.owner?.id ? (
-              <Link
-                href={`/user/${listing.owner.id}`}
-                onClick={(e) => e.stopPropagation()}
-                className="font-semibold text-[#1D1D1F] dark:text-white hover:underline"
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/user/${listing.owner?.id}`);
+                }}
+                className="font-semibold text-[#1D1D1F] dark:text-white hover:underline cursor-pointer"
               >
                 {listing.owner?.full_name || 'Owner'}
-              </Link>
+              </span>
             ) : (
-              <span>{listing.owner?.full_name || 'Owner'}</span>
+              'Owner'
             )}
+            <span className="mx-1">·</span>
+            {formatDistanceToNow(new Date(listing.created_at))} ago
           </p>
-          <p className="text-[13px] text-[#86868B] dark:text-[#98989D] mt-0.5">
-            Listed {formatDistanceToNow(new Date(listing.created_at), { addSuffix: true })}
-          </p>
-          {listing.owner?.updated_at && (
-            <div className="mt-1">
-              {new Date(listing.owner.updated_at) > new Date(Date.now() - 24 * 60 * 60 * 1000) ? (
-                <span className="text-[10px] font-semibold text-[#28CD41] dark:text-[#28CD41] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#28CD41] animate-pulse"></span>Active today
-                </span>
-              ) : new Date(listing.owner.updated_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) ? (
-                <span className="text-[10px] font-semibold text-[#FF9F0A] dark:text-[#FF9F0A] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF9F0A]"></span>Active this week
-                </span>
-              ) : null}
-            </div>
-          )}
           <div className="mt-2.5 flex items-baseline gap-1">
-            <span className="text-[15px] font-semibold text-[#1D1D1F] dark:text-white tracking-tight">
+            <span className="text-[15px] font-bold text-[#1D1D1F] dark:text-white">
               {getRentalPriceDisplay(listing)}
             </span>
+            <span className="text-[14px] font-normal text-[#1D1D1F] dark:text-white">day</span>
           </div>
         </div>
-
-        {/* Owner hint for accessibility */}
-        <span className="sr-only">
-          Listed by {listing.owner?.full_name || getInitials(listing.owner?.full_name)}
-        </span>
-      </Link>
-    </motion.article>
+      </div>
+    </motion.div>
   )
 })
+
+ListingCard.displayName = 'ListingCard'
 
 export default ListingCard

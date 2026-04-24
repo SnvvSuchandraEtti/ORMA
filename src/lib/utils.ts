@@ -5,13 +5,16 @@ import type { Listing } from '@/types'
  * Format a number as Indian Rupee currency
  * e.g., 1500 → "₹1,500"
  */
-export function formatPrice(amount: number): string {
+export function formatPrice(amount: number | null | undefined): string {
+  const numericAmount = Number(amount)
+  if (isNaN(numericAmount)) return '₹0'
+  
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(numericAmount)
 }
 
 /**

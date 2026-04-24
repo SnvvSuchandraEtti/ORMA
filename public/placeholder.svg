@@ -1,5 +1,9 @@
-<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="300" fill="#EEEEEE"/>
-  <path d="M120 220L180 140L220 190L260 160L300 220H120Z" fill="#CCCCCC"/>
-  <circle cx="160" cy="120" r="20" fill="#CCCCCC"/>
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#e0e0e0" />
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0 L0 0 0 20" fill="none" stroke="#c0c0c0" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="200" height="200" fill="url(#grid)" opacity="0.3" />
 </svg>

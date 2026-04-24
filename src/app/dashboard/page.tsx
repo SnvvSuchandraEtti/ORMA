@@ -43,6 +43,8 @@ export default function OwnerDashboard() {
   const [estimatedRevenue, setEstimatedRevenue] = useState(0)
   const [statusCounts, setStatusCounts] = useState({ active: 0, rented: 0, inactive: 0, other: 0 })
   const [chartData, setChartData] = useState<{ date: string, count: number }[]>([])
+  const [recentBookings, setRecentBookings] = useState<any[]>([])
+  const [totalBookings, setTotalBookings] = useState(0)
 
   const fetchDashboardData = useCallback(async () => {
     if (!user) return
@@ -99,10 +101,26 @@ export default function OwnerDashboard() {
       setTotalViews(views)
       setTotalInquiries(inqs)
       setAverageRating(ratedListingsCount > 0 ? (totalRatingSum / ratedListingsCount) : 0)
-      setEstimatedRevenue(estRev)
       setStatusCounts(counts)
 
-      // 4. Generate Mock Chart Data (Since we don't have historical view logs)
+      // 4. Fetch Real Booking Data & Revenue
+      const { data: bookingsData } = await supabase
+        .from('bookings')
+        .select('*, renter:profiles(full_name, avatar_url), listing:listings(title, images)')
+        .eq('owner_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (bookingsData) {
+        setRecentBookings(bookingsData.slice(0, 5))
+        setTotalBookings(bookingsData.length)
+        
+        const rev = (bookingsData || [])
+          .filter(b => ['approved', 'completed'].includes(b.status))
+          .reduce((sum, b) => sum + (Number(b.total_amount) || 0), 0)
+        setEstimatedRevenue(rev)
+      }
+
+      // 5. Generate Mock Chart Data (Since we don't have historical view logs)
       // We'll create a 7-day array, distributing totalViews randomly with a slight upward trend
       const data = []
       let remainingViews = views
@@ -152,12 +170,13 @@ export default function OwnerDashboard() {
     )
   }
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    const val = Number(amount) || 0
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0
-    }).format(amount)
+    }).format(val)
   }
 
   // Top listings
@@ -239,12 +258,12 @@ export default function OwnerDashboard() {
                <div className="p-2 bg-rose-50 dark:bg-rose-900/20 rounded-lg text-rose-600 dark:text-rose-400">
                  <span className="font-serif italic font-bold text-lg leading-none">₹</span>
                </div>
-               <h3 className="font-medium text-sm">Est. Revenue</h3>
+               <h3 className="font-medium text-sm">Revenue</h3>
              </div>
              <p className="text-3xl font-bold text-[#222222] dark:text-white tracking-tight">{formatCurrency(estimatedRevenue)}</p>
              <div className="mt-2 flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-400">
                <TrendingUp size={14} />
-               <span>↑ 12%</span>
+               <span>from {totalBookings} bookings</span>
              </div>
           </motion.div>
         </motion.div>
@@ -346,34 +365,46 @@ export default function OwnerDashboard() {
               transition={{ delay: 0.5, type: 'spring', stiffness: 300, damping: 24 }}
               className="bg-white dark:bg-[#1E1E1E] border border-[#EBEBEB] dark:border-[#3D3D3D] rounded-2xl p-6 shadow-sm"
             >
-              <h2 className="text-lg font-semibold text-[#222222] dark:text-white mb-4">Recent Inquiries</h2>
-              {inquiries.length === 0 ? (
+              <h2 className="text-lg font-semibold text-[#222222] dark:text-white mb-4">Recent Bookings</h2>
+              {recentBookings.length === 0 ? (
                 <div className="text-center py-6 text-[#717171] dark:text-[#A0A0A0]">
-                  No recent inquiries found.
+                  No booking requests yet.
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {inquiries.map((inq: MessageWithConversation) => (
-                    <div key={inq.id} className="flex gap-3 items-start">
-                      <div className="mt-0.5 bg-gray-100 dark:bg-[#2D2D2D] p-1.5 rounded-full flex-shrink-0">
-                        <MessageSquare size={14} className="text-[#222222] dark:text-[#DDDDDD]" />
+                  {recentBookings.map((booking: any) => (
+                    <div key={booking.id} className="flex gap-3 items-start">
+                      <div className={cn(
+                        "mt-0.5 p-1.5 rounded-full flex-shrink-0",
+                        booking.status === 'pending' ? "bg-amber-100 text-amber-600" :
+                        booking.status === 'approved' ? "bg-green-100 text-green-600" :
+                        "bg-gray-100 text-gray-600"
+                      )}>
+                        <Package size={14} />
                       </div>
-                      <div>
-                        <p className="text-sm text-[#222222] dark:text-white">
-                          <span className="font-semibold">{inq.sender?.full_name || 'Someone'}</span> asked about <span className="font-medium">{inq.conversation?.listings?.title || 'a listing'}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-[#222222] dark:text-white leading-tight">
+                          <span className="font-bold">{booking.renter?.full_name || 'Someone'}</span> requested <span className="font-medium">{booking.listing?.title || 'item'}</span>
                         </p>
-                        <p className="text-xs text-[#717171] dark:text-[#A0A0A0] mt-1">
-                          {formatDistanceToNow(new Date(inq.created_at), { addSuffix: true })}
-                        </p>
+                        <div className="flex items-center justify-between mt-1">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-[#717171] dark:text-[#A0A0A0]">
+                            {booking.status}
+                          </p>
+                          <p className="text-[10px] text-[#86868B]">
+                            {formatDistanceToNow(new Date(booking.created_at), { addSuffix: true })}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))}
-                  <Link href="/messages" className="block text-center text-sm font-semibold text-[#0071E3] hover:underline pt-2">
-                    View all messages
+                  <Link href="/bookings" className="block text-center text-sm font-semibold text-[#0071E3] hover:underline pt-2">
+                    Manage all bookings
                   </Link>
                 </div>
               )}
             </motion.div>
+
+            {/* Recent Inquiries */}
 
           </div>
         </div>

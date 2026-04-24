@@ -14,6 +14,8 @@ const iconMap: Record<string, string> = {
   system: '⚪',
   milestone: '🔥',
   welcome: '🎉',
+  booking_request: '📋',
+  booking_update: '✅',
 }
 
 function formatRelativeTime(dateIso: string) {

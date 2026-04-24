@@ -148,7 +148,7 @@ Let's dissect the features that have been built into the ORMA codebase.
 - **Automatic Geolocation:** Using `useUserLocation.ts`, the app requests browser location, reverse-geocodes via OpenStreetMap/Nominatim, and sets the user's city automatically.
 - **Infinite Scrolling:** Listings don't paginate with numbers. As the user scrolls down, `react-intersection-observer` triggers a request for the next 20 items, creating an endless feed.
 - **Advanced Filtering:** Users can filter by Category (via a horizontal scrollable icon bar), Price Range, Condition (Excellent/Good/Fair), and specific features ("Delivery Available", "Verified Owners Only").
-- **Local-First Sorting:** The custom `useInfiniteListings` hook pulls data from Supabase and automatically ranks listings in the user's immediate city higher than distant ones.
+- **City Filtering:** The custom `useInfiniteListings` hook supports strict city-based filtering via `.eq('city', ...)`, ensuring only listings from the selected city are returned.
 
 ### B. The Listing Display (ListingCard & Details Page)
 - **Swipeable Image Carousels:** On mobile, users can swipe left/right on a listing card to view all photos without clicking into it.
@@ -941,9 +941,9 @@ The UI follows an **Apple-inspired minimalist aesthetic** with the following cha
 
 ### Low Priority — Polish & Optimization
 - [ ] **PWA Caching** — Service worker currently bypasses cache entirely (network-only)
-- [ ] **Server-Side Search** — `useInfiniteListings` does client-side city prioritization, not server-side
-- [ ] **Social Media Links** — Footer social links all point to `#`
-- [ ] **PWA Icons** — manifest.json references `/icon-192.png` and `/icon-512.png` which may not exist
+- [x] **Server-Side City Filter** — `useInfiniteListings` now uses strict `.eq()` filtering on city (fixed from client-side sort)
+- [ ] **Social Media Links** — Footer social links updated to platform URLs (instagram.com, x.com, linkedin.com, youtube.com)
+- [x] **PWA Icons** — Generated proper ORMA brand icons for icon-192.png and icon-512.png
 - [ ] **Automated Testing** — No test files (unit, integration, or E2E)
 - [ ] **Error Monitoring** — No Sentry or similar error tracking
 - [ ] **Analytics** — No Google Analytics, Mixpanel, or PostHog
@@ -954,13 +954,23 @@ The UI follows an **Apple-inspired minimalist aesthetic** with the following cha
 - [ ] **manifest.json theme_color** — Still set to `#FF385C` (old coral) instead of `#0071E3` (new blue)
 
 ### Known Bugs / Technical Debt
+- [x] **Search query mismatch** — Fixed: multi-word search now splits terms and matches each independently via `.or()` with `ilike`
+- [x] **City filter logical discrepancy** — Fixed: replaced fuzzy `ilike` sort with strict `.eq()` filter
+- [x] **Inactive share button on desktop** — Fixed: `handleShare` correctly falls back to `ShareModal` when Web Share API is unavailable
+- [x] **Broken fallback images** — Fixed: created `/public/placeholder.svg` and updated all references from `.jpg` to `.svg`
+- [x] **Hydration / DOM nesting errors** — Fixed: replaced nested `<Link>` inside `ListingCard` with `<span>` + `router.push()`
+- [x] **Search not matching by category** — Fixed: search now queries category names/slugs and includes `category_id` + `brand` in OR conditions
+- [x] **Copyright year hardcoded** — Fixed: `Footer.tsx` now uses `new Date().getFullYear()` instead of hardcoded "2025"
+- [x] **Social media links dead (#)** — Fixed: all four footer social links now have real platform URLs with `target="_blank"`
+- [x] **PWA icons corrupt** — Fixed: generated proper ORMA brand icons (blue background)
+- [x] **Dark mode search sort buttons invisible** — Fixed: added dark mode CSS classes to sort buttons, filter chips, and "Clear All" text
+- [x] **Location prompt uses window.confirm()** — Fixed: removed ugly browser dialog, now uses browser's native geolocation permission prompt
+- [x] **CSP blocks geolocation API** — Fixed: added `https://nominatim.openstreetmap.org` to `connect-src` in CSP headers
 - [ ] **Dashboard chart data is mock** — 7-day chart distributes total views randomly, not from real historical data
 - [ ] **Dashboard percentage changes are random** — `Math.floor(Math.random() * 20) + 1` generates fake growth percentages
-- [ ] **Location prompt uses `window.confirm()`** — Should use a proper modal instead of browser dialog
 - [ ] **Supabase client recreated on every render** — `createClient()` called inside components without memoization
 - [ ] **`eslint` dependencies in `@types`** — `@types/dompurify` and `@types/leaflet` are in `dependencies` instead of `devDependencies`
 - [ ] **No database migrations** — Schema uses raw SQL files, not a migration system
-- [ ] **Copyright year** — Footer shows "© 2025 ORMA, Inc." — should be dynamic
 
 ---
 

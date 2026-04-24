@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { Search, Menu, User, Heart, Plus, LogOut, Settings, List, MessageCircle, TrendingUp } from 'lucide-react'
+import { Search, Menu, User, Heart, Plus, LogOut, Settings, List, MessageCircle, TrendingUp, CalendarCheck } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { getInitials } from '@/lib/utils'
 import Image from 'next/image'
@@ -176,6 +176,10 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
                       <Link href="/my-listings" className="flex items-center gap-3 px-4 py-3 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] rounded-xl mx-2 text-sm text-[#1D1D1F] dark:text-white" role="menuitem">
                         <List size={16} className="text-[#86868B] dark:text-[#98989D]" />
                         My Listings
+                      </Link>
+                      <Link href="/bookings" className="flex items-center gap-3 px-4 py-3 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] rounded-xl mx-2 text-sm text-[#1D1D1F] dark:text-white" role="menuitem">
+                        <CalendarCheck size={16} className="text-[#86868B] dark:text-[#98989D]" />
+                        Bookings
                       </Link>
                       <Link href="/wishlist" className="flex items-center gap-3 px-4 py-3 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] rounded-xl mx-2 text-sm text-[#1D1D1F] dark:text-white" role="menuitem">
                         <Heart size={16} className="text-[#86868B] dark:text-[#98989D]" />

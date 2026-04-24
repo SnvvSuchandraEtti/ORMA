@@ -35,13 +35,8 @@ export function useUserLocation() {
     setError(null)
     localStorage.setItem('orma_location_prompted', 'true')
 
-    const allowed = window.confirm('ORMA wants to know your location to show nearby rentals')
-    if (!allowed) {
-      localStorage.setItem('orma_location_denied', 'true')
-      setPermissionDenied(true)
-      setLoading(false)
-      return
-    }
+    // Let the browser's native geolocation permission dialog handle the prompt
+    // instead of showing an ugly window.confirm()
 
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser')

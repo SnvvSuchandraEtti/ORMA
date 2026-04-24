@@ -65,8 +65,8 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 
       const conversations = (data || []) as Conversation[]
       
-      // Calculate unread count matching the new conversations
-      const cIds = conversations.map(c => c.id)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      const cIds = conversations.map(c => c.id).filter(id => id && uuidRegex.test(id))
       let unreads = 0
       
       if (cIds.length > 0) {
@@ -102,7 +102,8 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
     if (!error) {
       // Recalculate unread count by re-fetching (or local decrement based on precise count, but re-fetch is safer for now, actually let's just re-fetch unreads silently to be safe, or just call fetchConversations without loading state)
       const { conversations } = get()
-      const cIds = conversations.map(c => c.id)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      const cIds = conversations.map(c => c.id).filter(id => id && uuidRegex.test(id))
       if(cIds.length > 0) {
         const { count } = await supabase
           .from('messages')

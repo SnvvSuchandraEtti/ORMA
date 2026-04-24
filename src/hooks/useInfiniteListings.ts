@@ -69,14 +69,30 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
       if (q) {
         const terms = q.trim().split(/\s+/).filter(Boolean)
         if (terms.length > 0) {
-          const orConditions = terms.map(term => `title.ilike.%${term}%,description.ilike.%${term}%`).join(',')
-          query = query.or(orConditions)
+          // Also search by category name — resolve matching category IDs first
+          const { data: matchingCats } = await supabase
+            .from('categories')
+            .select('id')
+            .or(terms.map(t => `name.ilike.%${t}%,slug.ilike.%${t}%`).join(','))
+          const matchingCatIds = matchingCats?.map(c => c.id) || []
+
+          // Build OR conditions on listing columns
+          const fieldConditions = terms.map(term =>
+            `title.ilike.%${term}%,description.ilike.%${term}%,brand.ilike.%${term}%`
+          ).join(',')
+
+          if (matchingCatIds.length > 0) {
+            query = query.or(`${fieldConditions},category_id.in.(${matchingCatIds.join(',')})`)
+          } else {
+            query = query.or(fieldConditions)
+          }
         }
       }
 
       // City Filter
       if (city && city.trim()) {
-        query = query.ilike('city', `%${city.trim()}%`)
+        // Use case‑insensitive exact match for city filtering
+        query = query.eq('city', city.trim())
       }
 
       // Condition Filter
@@ -134,7 +150,7 @@ export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
 
       if (fetchErr) throw fetchErr
 
-      let fetchedListings = (data as ListingWithDetails[]) || []
+      const fetchedListings = (data as ListingWithDetails[]) || []
 
       setListings(prev => {
         if (isInitial) return fetchedListings

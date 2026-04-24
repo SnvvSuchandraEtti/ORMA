@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { X, Package, Info, HelpCircle, Mail, FileText, Shield, Settings, LogOut, MessageCircle, TrendingUp } from 'lucide-react'
+import { X, Package, Info, HelpCircle, Mail, FileText, Shield, Settings, LogOut, MessageCircle, TrendingUp, CalendarCheck } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import ThemeToggle from '@/components/ThemeToggle'
 import { useMessageStore } from '@/store/messageStore'
@@ -41,6 +41,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
     ...(isAuthenticated ? [{ icon: TrendingUp, label: 'Dashboard', href: '/dashboard' }] : []),
     ...(isAuthenticated ? [{ icon: MessageCircle, label: 'Messages', href: '/messages', badge: unreadCount }] : []),
     ...(isAuthenticated ? [{ icon: Package, label: 'My Listings', href: '/my-listings' }] : []),
+    ...(isAuthenticated ? [{ icon: CalendarCheck, label: 'Bookings', href: '/bookings' }] : []),
     { icon: HelpCircle, label: 'How ORMA works', href: '/how-it-works' },
     { icon: Info, label: 'About', href: '/about' },
     { icon: Mail, label: 'Contact', href: '/contact' },
