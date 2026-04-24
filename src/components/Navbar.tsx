@@ -6,7 +6,6 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Search, Menu, User, Heart, Plus, LogOut, Settings, List, MessageCircle, TrendingUp, CalendarCheck } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { getInitials } from '@/lib/utils'
-import Image from 'next/image'
 import { Suspense } from 'react'
 import SearchBar from '@/components/SearchBar'
 import ThemeToggle from '@/components/ThemeToggle'
@@ -115,16 +114,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
                 <Menu size={18} className="text-[#1D1D1F] dark:text-white" />
                 {/* Avatar */}
                 <div className="w-8 h-8 rounded-full bg-[#86868B] flex items-center justify-center text-white text-xs font-semibold overflow-hidden">
-                  {isAuthenticated && profile?.avatar_url ? (
-                    <Image
-                      src={profile.avatar_url}
-                      alt={`${profile.full_name || 'User'}'s profile picture`}
-                      width={32}
-                      height={32}
-                      className="object-cover w-full h-full"
-                      unoptimized
-                    />
-                  ) : isAuthenticated && profile?.full_name ? (
+                  {isAuthenticated && profile?.full_name ? (
                     <span>{getInitials(profile.full_name)}</span>
                   ) : (
                     <User size={16} />

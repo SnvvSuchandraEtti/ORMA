@@ -105,11 +105,7 @@ function BookingCard({
               </Link>
               <div className="flex items-center gap-2 mt-1">
                 <div className="w-5 h-5 rounded-full bg-[#86868B] flex items-center justify-center text-white text-[9px] font-bold overflow-hidden flex-shrink-0">
-                  {otherUser?.avatar_url ? (
-                    <Image src={otherUser.avatar_url} alt="" width={20} height={20} className="object-cover w-full h-full" unoptimized />
-                  ) : (
                     <span>{getInitials(otherUser?.full_name)}</span>
-                  )}
                 </div>
                 <span className="text-xs text-[#717171] dark:text-[#A0A0A0]">
                   {viewAs === 'owner' ? 'From' : 'Owner:'} <span className="font-semibold text-[#222222] dark:text-white">{otherUser?.full_name || 'User'}</span>

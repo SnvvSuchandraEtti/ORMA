@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { X, Phone, MessageCircle, AlertCircle } from 'lucide-react'
-import Image from 'next/image'
 import type { Profile } from '@/types'
 import { getInitials, getWhatsAppLink } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
@@ -86,11 +85,7 @@ export default function ContactModal({ isOpen, onClose, owner, listing }: Contac
               {/* Owner info */}
               <div className="flex items-center gap-5 bg-[#F5F5F7] dark:bg-[#2C2C2E] p-6 rounded-2xl">
                 <div className="relative w-16 h-16 rounded-2xl bg-[#86868B] flex items-center justify-center text-white text-xl font-bold overflow-hidden flex-shrink-0">
-                  {owner.avatar_url ? (
-                    <Image src={owner.avatar_url} alt={`${owner.full_name || 'Owner'}'s profile`} width={64} height={64} className="object-cover w-full h-full" unoptimized />
-                  ) : (
                     <span>{getInitials(owner.full_name)}</span>
-                  )}
                 </div>
                 
                 <div>

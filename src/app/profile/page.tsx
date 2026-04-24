@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { User, MapPin, Phone, Edit3, List, Heart, Star, Calendar, TrendingUp, Shield } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { getInitials, formatDate } from '@/lib/utils'
@@ -84,11 +83,7 @@ function ProfileContent() {
         <div className="md:col-span-1">
           <div className="border border-[#DDDDDD] rounded-2xl p-6 text-center">
             <div className="w-20 h-20 rounded-full bg-[#717171] flex items-center justify-center text-white text-2xl font-semibold mx-auto mb-3 overflow-hidden">
-              {profile?.avatar_url ? (
-                <Image src={profile.avatar_url} alt={profile.full_name || 'User'} width={80} height={80} className="object-cover w-full h-full" unoptimized />
-              ) : (
                 <span>{getInitials(profile?.full_name)}</span>
-              )}
             </div>
             <h2 className="font-semibold text-[#222222] text-lg">{profile?.full_name || 'ORMA User'}</h2>
             {profile?.is_verified && <p className="text-sm text-[#222222] mt-0.5">✓ Verified</p>}

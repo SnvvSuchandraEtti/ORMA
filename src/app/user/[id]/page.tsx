@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import Image from 'next/image'
 import { Star, MapPin, Calendar, Package } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Profile, ListingWithDetails } from '@/types'
@@ -70,11 +69,7 @@ export default function UserProfilePage() {
           <div className="relative group">
             <div className="w-24 h-24 rounded-full bg-white dark:bg-[#1E1E1E] p-1 shadow-xl shadow-black/5 ring-1 ring-black/5 dark:ring-white/10 transition-transform group-hover:scale-105 duration-300">
               <div className="w-full h-full rounded-full bg-[#717171] text-white flex items-center justify-center text-3xl font-bold overflow-hidden">
-                {owner.avatar_url ? (
-                  <Image src={owner.avatar_url} alt={owner.full_name || 'User'} width={96} height={96} className="object-cover w-full h-full" unoptimized />
-                ) : (
                   <span>{getInitials(owner.full_name)}</span>
-                )}
               </div>
             </div>
             {owner.is_verified && (

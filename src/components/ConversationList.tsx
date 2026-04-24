@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 import type { Conversation } from '@/types'
 
@@ -53,18 +52,9 @@ export default function ConversationList({
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#0071E3] rounded-r-full" />
               )}
               <div className="relative w-12 h-12 flex-shrink-0 rounded-full overflow-hidden bg-gray-200 dark:bg-[#3D3D3D]">
-                {otherProfile?.avatar_url ? (
-                  <Image 
-                    src={otherProfile.avatar_url} 
-                    alt={otherProfile.full_name || 'User'} 
-                    fill 
-                    className="object-cover" 
-                  />
-                ) : (
                   <div className="w-full h-full flex items-center justify-center text-[#222222] dark:text-white font-semibold">
                     {otherProfile?.full_name?.charAt(0) || '?'}
                   </div>
-                )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-baseline mb-1">

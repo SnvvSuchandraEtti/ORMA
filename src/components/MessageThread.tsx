@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState, useRef } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatDistanceToNow, format } from 'date-fns'
@@ -113,13 +112,9 @@ export default function MessageThread({ conversation, currentUserId, onBack }: M
           </button>
         )}
         <div className="relative w-10 h-10 rounded-full flex-shrink-0 bg-gray-200 dark:bg-[#3D3D3D] overflow-hidden">
-           {otherProfile?.avatar_url ? (
-             <Image src={otherProfile.avatar_url} alt="Avatar" fill className="object-cover" />
-           ) : (
              <div className="w-full h-full flex items-center justify-center font-bold">
                {otherProfile?.full_name?.charAt(0) || '?'}
              </div>
-           )}
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-base text-[#222222] dark:text-white tracking-tight">{otherProfile?.full_name || 'User'}</h3>

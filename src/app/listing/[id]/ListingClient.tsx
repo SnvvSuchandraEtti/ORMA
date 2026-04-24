@@ -497,11 +497,7 @@ export default function ListingClient() {
             <div className="flex items-center gap-4 py-2">
               <Link href={`/user/${owner?.id}`} className="flex-shrink-0">
                 <div className="w-12 h-12 rounded-full bg-[#717171] flex items-center justify-center text-white font-semibold overflow-hidden">
-                  {owner?.avatar_url ? (
-                    <Image src={owner.avatar_url} alt={owner.full_name || 'Owner'} width={48} height={48} className="object-cover w-full h-full" unoptimized />
-                  ) : (
                     <span>{getInitials(owner?.full_name)}</span>
-                  )}
                 </div>
               </Link>
               <div className="flex-1 min-w-0">
@@ -789,11 +785,7 @@ export default function ListingClient() {
                     <div key={review.id}>
                       <div className="flex items-center gap-3 mb-2">
                         <div className="w-10 h-10 rounded-full bg-[#717171] flex items-center justify-center text-white text-sm font-semibold overflow-hidden flex-shrink-0">
-                          {review.reviewer?.avatar_url ? (
-                            <Image src={review.reviewer.avatar_url} alt={review.reviewer.full_name || 'Reviewer'} width={40} height={40} className="object-cover" unoptimized />
-                          ) : (
                             <span>{getInitials(review.reviewer?.full_name)}</span>
-                          )}
                         </div>
                         <div>
                           <p className="font-semibold text-sm text-[#222222] dark:text-white">{review.reviewer?.full_name || 'Anonymous'}</p>
