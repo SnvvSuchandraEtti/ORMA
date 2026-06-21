@@ -26,6 +26,14 @@ export function handleSupabaseError(
   const message = err?.message ?? ''
   const status = err?.status ?? 0
 
+  // Ignore benign Supabase Auth lock race conditions
+  if (
+    message.includes('was released because another request stole it') ||
+    message.includes('Auth session missing!')
+  ) {
+    return message
+  }
+
   // Network errors
   if (
     message.includes('Failed to fetch') ||
