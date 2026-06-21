@@ -1,0 +1,278 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+   ORMA — Apple-Inspired Theme (CSS-based config)
+   ============================================ */
+@theme {
+  /* ORMA Brand Colors — Apple-inspired palette */
+  --color-orma-primary: #0071E3;
+  --color-orma-primary-dark: #0055B3;
+  --color-orma-primary-light: #E8F4FD;
+  --color-orma-primary-hover: #0077ED;
+  --color-orma-primary-pale: #F5F9FF;
+  --color-orma-secondary: #0071E3;
+  --color-orma-dark: #1D1D1F;
+  --color-orma-gray: #6E6E73;
+  --color-orma-light-gray: #86868B;
+  --color-orma-super-light: #F5F5F7;
+  --color-orma-border: #D2D2D7;
+  --color-orma-border-light: #E8E8ED;
+  --color-orma-star: #FFD60A;
+  --color-orma-success: #28CD41;
+  --color-orma-warning: #FF3B30;
+
+  /* Accent Colors */
+  --color-orma-purple: #BF5AF2;
+  --color-orma-orange: #FF9F0A;
+
+  /* Font */
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Custom Shadows — Apple-style subtle and soft */
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.04), 0 0 1px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 8px 24px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
+  --shadow-navbar: 0 0.5px 0 rgba(0,0,0,0.08);
+  --shadow-search: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-search-hover: 0 4px 20px rgba(0,0,0,0.12);
+  --shadow-modal: 0 16px 40px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.08);
+  --shadow-sticky: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-button: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-glass: 0 4px 30px rgba(0,0,0,0.06);
+
+  /* Border Radius — Apple-style rounded */
+  --radius-card: 16px;
+  --radius-search: 980px;
+  --radius-button: 980px;
+  --radius-modal: 20px;
+  --radius-image: 12px;
+  --radius-input: 12px;
+  --radius-badge: 980px;
+
+  /* Animations */
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-fade-in: fadeIn 0.3s ease-in-out;
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-slide-down: slideDown 0.3s ease-out;
+
+  /* Breakpoints */
+  --breakpoint-xs: 480px;
+
+  /* Max widths */
+  --width-container: 1760px;
+}
+
+/* Keyframes */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================
+   Base Styles — Apple-inspired
+   ============================================ */
+html {
+  scroll-padding-top: 160px;
+}
+
+body {
+  color: #1D1D1F;
+  background-color: #ffffff;
+  font-feature-settings: 'kern', 'liga', 'calt';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  @apply dark:text-white dark:bg-[#000000] transition-colors duration-300;
+}
+
+/* Remove default input styling */
+input, textarea, select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Smooth transition for interactive elements */
+button, a, input, textarea, select {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apple-style selection color */
+::selection {
+  background: rgba(0, 113, 227, 0.2);
+  color: #1D1D1F;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+  background-clip: content-box;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   Apple-style Glassmorphism Utilities
+   ============================================ */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.glass-dark {
+  background: rgba(29, 29, 31, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Apple-style link */
+.apple-link {
+  color: #0071E3;
+  text-decoration: none;
+  cursor: pointer;
+}
+.apple-link:hover {
+  text-decoration: underline;
+}
+
+/* Apple-style divider */
+.apple-divider {
+  height: 1px;
+  background: #D2D2D7;
+  border: none;
+  margin: 0;
+}
+
+/* ============================================
+   Custom Utility Classes
+   ============================================ */
+
+/* Hide scrollbar but allow scroll */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Shimmer loading effect */
+.shimmer {
+  background: linear-gradient(90deg, #F5F5F7 25%, #E8E8ED 50%, #F5F5F7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(8px);
+}
+
+/* Image aspect ratio for listing cards */
+.aspect-card {
+  aspect-ratio: 20 / 19;
+}
+
+/* Line clamps */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 1;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 2;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 3;
+}
+
+/* ============================================
+   Accessibility — Focus Indicators
+   ============================================ */
+*:focus-visible {
+  outline: 2px solid var(--color-orma-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove outline on mouse-click (only shows on keyboard) */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   Accessibility — Skip to Content
+   ============================================ */
+.skip-to-content {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 12px 24px;
+  background-color: #0071E3;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ============================================
+   Accessibility — Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

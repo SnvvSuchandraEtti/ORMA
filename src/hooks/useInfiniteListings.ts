@@ -1,0 +1,195 @@
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import type { ListingWithDetails } from '@/types'
+import { handleSupabaseError } from '@/lib/handleError'
+
+export interface UseInfiniteListingsOptions {
+  q?: string | null
+  city?: string | null
+  category?: string | null
+  condition?: string | null
+  minPrice?: string | null
+  maxPrice?: string | null
+  sort?: string | null
+  verified?: boolean
+  delivery?: boolean
+  availableNow?: boolean
+  startDate?: string | null
+  endDate?: string | null
+  guests?: string | null
+  pageSize?: number
+}
+
+export function useInfiniteListings(options: UseInfiniteListingsOptions = {}) {
+  const {
+    q,
+    city,
+    category,
+    condition,
+    minPrice,
+    maxPrice,
+    sort,
+    verified,
+    delivery,
+    availableNow,
+    startDate,
+    endDate,
+    guests,
+    pageSize = 20
+  } = options
+
+  const [listings, setListings] = useState<ListingWithDetails[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [page, setPage] = useState(0)
+  const [error, setError] = useState<string | null>(null)
+
+  const supabase = useMemo(() => createClient(), [])
+
+  const fetchPage = useCallback(async (pageIndex: number, isInitial = false) => {
+    try {
+      if (isInitial) {
+        setIsLoading(true)
+        setError(null)
+      } else {
+        setIsLoadingMore(true)
+      }
+
+      const from = pageIndex * pageSize
+      const to = from + pageSize - 1
+
+      let query = supabase
+        .from('listings')
+        .select('*, owner:profiles(*), category:categories(*)')
+        .eq('status', 'active')
+        .eq('is_available', true)
+
+      // Search Query
+      if (q) {
+        const terms = q.trim().split(/\s+/).filter(Boolean)
+        if (terms.length > 0) {
+          // Also search by category name — resolve matching category IDs first
+          const { data: matchingCats } = await supabase
+            .from('categories')
+            .select('id')
+            .or(terms.map(t => `name.ilike.%${t}%,slug.ilike.%${t}%`).join(','))
+          const matchingCatIds = matchingCats?.map(c => c.id) || []
+
+          // Build OR conditions on listing columns
+          const fieldConditions = terms.map(term =>
+            `title.ilike.%${term}%,description.ilike.%${term}%,brand.ilike.%${term}%`
+          ).join(',')
+
+          if (matchingCatIds.length > 0) {
+            query = query.or(`${fieldConditions},category_id.in.(${matchingCatIds.join(',')})`)
+          } else {
+            query = query.or(fieldConditions)
+          }
+        }
+      }
+
+      // City Filter
+      if (city && city.trim()) {
+        // Use case‑insensitive exact match for city filtering
+        query = query.eq('city', city.trim())
+      }
+
+      // Condition Filter
+      if (condition) {
+        query = query.eq('condition', condition)
+      }
+      if (delivery) {
+        query = query.eq('delivery_available', true)
+      }
+      if (availableNow) {
+        query = query.eq('is_available', true)
+      }
+
+      // Price Filters
+      if (minPrice) {
+        query = query.gte('price_per_day', Number(minPrice))
+      }
+      if (maxPrice) {
+        query = query.lte('price_per_day', Number(maxPrice))
+      }
+
+      // Category Filter (Needs to resolve ID first)
+      if (category) {
+        const { data: catData } = await supabase
+          .from('categories')
+          .select('id')
+          .ilike('slug', category)
+          .limit(1)
+          .maybeSingle()
+        if (catData) {
+          query = query.eq('category_id', catData.id)
+        } else {
+          // If the category is somehow invalid or doesn't match any,
+          // ensure we return 0 results rather than returning everything
+          query = query.eq('category_id', -1)
+        }
+      }
+
+      // Apply Sort
+      if (sort === 'price_asc') {
+        query = query.order('price_per_day', { ascending: true })
+      } else if (sort === 'price_desc') {
+        query = query.order('price_per_day', { ascending: false })
+      } else if (sort === 'rating') {
+        query = query.order('average_rating', { ascending: false })
+      } else if (sort === 'recommended') {
+        query = query.order('views_count', { ascending: false }).order('average_rating', { ascending: false })
+      } else if (sort === 'popular') {
+        query = query.order('views_count', { ascending: false }).order('created_at', { ascending: false })
+      } else if (sort === 'newest') {
+        query = query.order('created_at', { ascending: false })
+      } else {
+        query = query.order('created_at', { ascending: false })
+      }
+
+      // Standard Pagination Range
+      query = query.range(from, to)
+
+      const { data, error: fetchErr } = await query
+
+      if (fetchErr) throw fetchErr
+
+      const fetchedListings = (data as ListingWithDetails[]) || []
+
+      setListings(prev => {
+        if (isInitial) return fetchedListings
+        // Deduplicate
+        const existingIds = new Set(prev.map(l => l.id))
+        return [...prev, ...fetchedListings.filter(l => !existingIds.has(l.id))]
+      })
+
+      setHasMore(fetchedListings.length === pageSize)
+      setPage(pageIndex)
+
+    } catch (err: unknown) {
+      handleSupabaseError(err, 'fetchListings')
+      const message = err instanceof Error ? err.message : 'Failed to fetch listings'
+      setError(message)
+    } finally {
+      if (isInitial) {
+        setIsLoading(false)
+      } else {
+        setIsLoadingMore(false)
+      }
+    }
+  }, [availableNow, category, city, condition, delivery, endDate, guests, maxPrice, minPrice, pageSize, q, sort, startDate, supabase])
+
+  // Reset & load Initial
+  useEffect(() => {
+    fetchPage(0, true)
+  }, [fetchPage])
+
+  const loadMore = useCallback(() => {
+    if (!isLoading && !isLoadingMore && hasMore) {
+      fetchPage(page + 1, false)
+    }
+  }, [isLoading, isLoadingMore, hasMore, fetchPage, page])
+
+  return { listings, isLoading, isLoadingMore, hasMore, loadMore, error }
+}
