@@ -23,7 +23,7 @@ export async function fetchBookingsForOwner(userId: string): Promise<Booking[]> 
     throw error
   }
 
-  return (data || []) as Booking[]
+  return (data || []).map(b => ({ ...b, total_amount: b.total_amount || b.total_price })) as Booking[]
 }
 
 /**
@@ -43,7 +43,7 @@ export async function fetchBookingsForRenter(userId: string): Promise<Booking[]>
     throw error
   }
 
-  return (data || []) as Booking[]
+  return (data || []).map(b => ({ ...b, total_amount: b.total_amount || b.total_price })) as Booking[]
 }
 
 /**
@@ -130,14 +130,8 @@ export async function createBookingRequest(payload: CreateBookingPayload): Promi
       owner_id: payload.owner_id,
       start_date: payload.start_date,
       end_date: payload.end_date,
-      total_days: payload.total_days,
-      price_per_day: payload.price_per_day,
-      security_deposit: payload.security_deposit,
-      subtotal: payload.subtotal,
-      platform_fee: payload.platform_fee,
-      total_amount: payload.total_amount,
-      status: 'pending',
-      renter_message: payload.renter_message || null,
+      total_price: payload.total_amount, // Map back to live schema's total_price
+      status: 'pending'
     })
     .select()
     .single()
