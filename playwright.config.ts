@@ -12,9 +12,7 @@ export default defineConfig({
     browserName: 'chromium',
     channel: 'msedge',
     headless: true,
-    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
   },
   webServer: {
     command: 'npm run start',

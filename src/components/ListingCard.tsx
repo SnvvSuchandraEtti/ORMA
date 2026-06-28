@@ -182,6 +182,7 @@ const ListingCard = memo(function ListingCard({
       viewport={{ once: true, margin: '-20px' }}
       className="group cursor-pointer block w-full outline-none focus-visible:ring-2 focus-visible:ring-[#0071E3] rounded-[22px] transition-all"
       onClick={() => router.push(`/listing/${listing.id}`)}
+      data-testid="listing-card"
     >
       <div className="flex flex-col h-full">
         {/* Image Container */}

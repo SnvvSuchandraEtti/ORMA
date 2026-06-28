@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import fs from 'fs'
 
 test.describe('Comprehensive User Flow', () => {
   let errors: string[] = []
@@ -23,7 +24,18 @@ test.describe('Comprehensive User Flow', () => {
     await page.goto('http://localhost:3000')
     await expect(page).toHaveTitle(/ORMA/i)
 
+    // Dismiss Onboarding Modal if present (with try-catch for wait)
+    const justBrowsingBtn = page.locator('text="Just browsing"')
+    try {
+      await justBrowsingBtn.waitFor({ state: 'visible', timeout: 3000 })
+      await justBrowsingBtn.click()
+      await page.waitForTimeout(600) // wait for framer motion exit animation
+    } catch (e) {
+      // Modal didn't appear, continue
+    }
+
     // 2. Login
+    await page.click('button[aria-label="User menu"]')
     await page.click('button:has-text("Log in")')
     await page.waitForSelector('text=Welcome Back', { timeout: 10000 })
     
@@ -36,8 +48,8 @@ test.describe('Comprehensive User Flow', () => {
     console.log('Login successful')
 
     // 3. Open Listing
-    const listingCard = page.locator('article[aria-label*="rental listing"]').first()
-    await expect(listingCard).toBeVisible()
+    const listingCard = page.locator('[data-testid="listing-card"]').first()
+    await expect(listingCard).toBeVisible({ timeout: 15000 })
     await listingCard.click()
     
     await page.waitForSelector('h1', { timeout: 10000 })
@@ -56,7 +68,7 @@ test.describe('Comprehensive User Flow', () => {
 
     // 5. Try List Item
     await page.goto('http://localhost:3000/list-your-item')
-    await page.waitForSelector('h1:has-text("List your item")', { timeout: 10000 })
+    await page.waitForSelector('h2:has-text("What kind of item are you listing?")', { timeout: 10000 })
     
     // Fill out Step 1 (Category)
     await page.click('button:has-text("Cars")')
@@ -75,7 +87,6 @@ test.describe('Comprehensive User Flow', () => {
     }
     
     // Write errors to a file so we can read it
-    const fs = require('fs')
     fs.writeFileSync('d:/ORMA/test_errors.json', JSON.stringify(errors, null, 2))
   })
 })
