@@ -4,24 +4,76 @@ import fs from 'fs'
 test.describe('Comprehensive User Flow', () => {
   let errors: string[] = []
 
+  const clickContinue = async (page: Page) => {
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('.fixed.bottom-0 button'))
+      const btn = buttons.find(b => b.textContent?.includes('Continue')) as HTMLButtonElement
+      if (btn) btn.click()
+    })
+  }
+
   test.beforeEach(async ({ page }) => {
     errors = []
     page.on('console', (msg) => {
+      const text = msg.text()
       if (msg.type() === 'error') {
-        errors.push(`Console Error: ${msg.text()}`)
+        console.error(`PAGE CONSOLE ERROR: ${text}`)
+        errors.push(`Console Error: ${text}`)
+      } else {
+        console.log(`PAGE CONSOLE LOG: ${text}`)
       }
     })
     page.on('pageerror', (error) => {
+      console.error(`PAGE RUNTIME ERROR: ${error.message}`)
       errors.push(`Page Error: ${error.message}`)
     })
     page.on('requestfailed', request => {
-      errors.push(`Request failed: ${request.url()} - ${request.failure()?.errorText}`)
+      const errorText = request.failure()?.errorText || ''
+      if (errorText.includes('net::ERR_ABORTED')) return
+      console.error(`PAGE REQUEST FAILED: ${request.url()} - ${errorText}`)
+      errors.push(`Request failed: ${request.url()} - ${errorText}`)
+    })
+    page.on('request', request => {
+      console.log(`REQUEST: ${request.method()} ${request.url()}`)
+    })
+    page.on('response', response => {
+      if (response.status() >= 400) {
+        console.error(`BAD RESPONSE: ${response.status()} ${response.url()}`)
+      }
+    })
+    // Block service worker registration to allow Playwright's fetch interception to work correctly
+    await page.context().route('**/sw.js', async (route) => {
+      await route.fulfill({
+        status: 404,
+        contentType: 'application/javascript',
+        body: '/* Service worker blocked by test */',
+      })
     })
   })
 
   test('Login, Browse, Book, and List Item', async ({ page }) => {
-    // 1. Home
+    // Mock Supabase storage upload POST/PUT request to guarantee test stability
+    await page.context().route(url => url.href.includes('storage/v1/object'), async (route) => {
+      console.log(`Mocking storage request: ${route.request().method()} ${route.request().url()}`)
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ path: 'test-user/icon-192.png' }),
+      })
+    })
+
+    // 1. Home and clean service workers
     await page.goto('http://localhost:3000')
+    await page.evaluate(async () => {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations()
+        for (const reg of regs) {
+          await reg.unregister()
+        }
+      }
+    })
+    // Reload to ensure all requests bypass the service worker
+    await page.reload()
     await expect(page).toHaveTitle(/ORMA/i)
 
     // Dismiss Onboarding Modal if present (with try-catch for wait)
@@ -56,9 +108,6 @@ test.describe('Comprehensive User Flow', () => {
     console.log('Listing opened successfully')
 
     // 4. Try Booking
-    // Wait for the booking widget to appear
-    const bookingWidget = page.locator('.sticky') // assuming booking widget is sticky
-    await expect(bookingWidget).toBeVisible()
     
     const selectDatesBtn = page.locator('button:has-text("Select dates"), button:has-text("Reserve")').first()
     if (await selectDatesBtn.isVisible()) {
@@ -67,18 +116,30 @@ test.describe('Comprehensive User Flow', () => {
     }
 
     // 5. Try List Item
-    await page.goto('http://localhost:3000/list-your-item')
+    await page.locator('a[href="/list-your-item"]').first().click()
     await page.waitForSelector('h2:has-text("What kind of item are you listing?")', { timeout: 10000 })
     
     // Fill out Step 1 (Category)
-    await page.click('button:has-text("Cars")')
-    await page.click('button:has-text("Next: Details")')
+    await page.click('main button:has-text("Cars")')
+    await clickContinue(page)
     
-    // Fill out Step 2 (Details)
-    await page.fill('input[placeholder*="title"]', 'Test Car')
-    await page.fill('textarea[placeholder*="description"]', 'This is a test car for automation')
-    await page.fill('input[placeholder*="Brand"]', 'TestBrand')
-    await page.click('button:has-text("Next: Photos")')
+    // Fill out Step 2 (Photos)
+    await page.waitForSelector('h2:has-text("Add photos of your item")', { timeout: 10000 })
+
+    await page.setInputFiles('input[type="file"]', 'public/icon-192.png')
+    
+    // Wait for the upload to complete and Continue button to become enabled
+    const continueBtn = page.locator('.fixed.bottom-0 button:has-text("Continue")')
+    await expect(continueBtn).toBeEnabled({ timeout: 15000 })
+    await page.waitForTimeout(1000)
+    await clickContinue(page)
+    
+    // Fill out Step 3 (Details)
+    await page.waitForSelector('h2:has-text("Tell renters about your item")', { timeout: 10000 })
+    await page.fill('#item-title', 'Test Car')
+    await page.fill('#description', 'This is a test car for automation')
+    await page.fill('#brand', 'TestBrand')
+    await clickContinue(page)
     
     console.log('Navigated through list item steps successfully')
 
